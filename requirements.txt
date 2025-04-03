@@ -1,0 +1,16 @@
+langchain_community
+langchain_core
+sentence-transformers
+numpy
+pandas
+python-dotenv
+streamlit==1.43.0
+streamlit_authenticator
+torch==2.6.0
+transformers
+bitsandbytes
+einops
+trl
+peft
+pymongo
+st-pages

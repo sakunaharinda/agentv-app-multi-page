@@ -1,0 +1,14 @@
+[[pages]]
+path = "get_started.py"
+name = "Getting Started"
+icon = "📄"
+
+[[pages]]
+name = "Cool apps"
+icon = ":pig:"
+is_section = true
+
+[[pages]]
+path = "inputs.py"
+name = "Inputs"
+icon = ":material/history:"
