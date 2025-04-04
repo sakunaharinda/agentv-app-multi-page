@@ -59,8 +59,8 @@ pg = st.navigation(
     
     {
         "": [starting_page],
-        "Generate": [generate_doc, generate_single],
-        "Review": [correct_pol_page, incorrect_pol_page]
+        "Policy Generation": [generate_doc, generate_single],
+        "Policy Review": [correct_pol_page, incorrect_pol_page]
     }
     
 )

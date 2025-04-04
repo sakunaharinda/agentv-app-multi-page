@@ -4,7 +4,6 @@ from utils import store_value
 from feedback import *
 from loading import get_entity_hierarchy
 
-@st.cache_data(show_spinner=False)
 def set_hierarchy(hierarchy_file):
     
     try:
