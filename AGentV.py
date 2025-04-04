@@ -1,7 +1,10 @@
 
 import streamlit as st
 
-from utils import init
+from init_ui import init
+import torch
+
+torch.classes.__path__ = []
 
 st.set_page_config(layout="wide")
 

@@ -2,6 +2,7 @@ import streamlit as st
 from utils import store_value
 from loading import get_entity_hierarchy
 from feedback import *
+from hierarchy_visualizer import set_hierarchy
 
 st.markdown(
         f"""
@@ -30,24 +31,10 @@ with st.container(height=450, border=False):
     # load_value("hierarchy_upload")
     with st.container(border=False, height=160):
         hierarchy_file = st.file_uploader("Upload the organization hierarchy", key='_hierarchy_upload', help='Upload the organization hierarchy specified in YAML format', type=['yaml', 'yml'], on_change=store_value, args=("hierarchy_upload",))
-    
-    # _,andcol,_ = st.columns([2.9,1,2.9])
-    # andcol.markdown("### and click")
             
     _,col1, col2,_ = st.columns([0.15, 1,1, 0.15])
     
-    try:
-        if hierarchy_file is not None:
-            main_hierarchy, hierarchies = get_entity_hierarchy(hierarchy_file)
-            st.session_state['main_hierarchy'] = main_hierarchy
-            st.session_state['hierarchies'] = hierarchies
-            
-            st.session_state.enable_generation = True
-            
-            # TODO Generate vectorstores with caching
-            
-    except Exception as e:
-        error("The hierarchy file cannot be processed. Please ensure that it adheres to YAML guidelines and upload it again")
+    set_hierarchy(hierarchy_file)
         
     gen_doc = col1.button(f"Upload a Policy Document", key='gen_doc', type='secondary', icon=":material/article:", use_container_width=True, disabled= not st.session_state.enable_generation)
     
