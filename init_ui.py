@@ -8,11 +8,6 @@ def set_state(state, value):
         
         
 def init():
-    set_state('start_title', 'Getting Started')
-    set_state('generate_doc_title', 'Generate from a Document')
-    set_state('generate_single_title', 'Generate from a Sentence')
-    set_state('cor_policies_title', 'Correct Policies')
-    set_state('inc_policies_title', 'Incorrect Policies')
     
     set_state('start_icon', '')
     set_state('inputs_icon', '')
@@ -30,6 +25,16 @@ def init():
     set_state('is_generating', False)
     set_state('written_nlacps', [])
     
+    
+    st.session_state.num_correct_policies = len(st.session_state.corrected_policies)
+    st.session_state.num_incorrect_policies = len(st.session_state.inc_policies)
+    
+    set_state('start_title', 'Getting Started')
+    set_state('generate_doc_title', 'Generate from a Document')
+    set_state('generate_single_title', 'Generate from a Sentence')
+    set_state('cor_policies_title', f'Correct Policies')
+    set_state('inc_policies_title', f'Incorrect Policies')
+    
     if 'expand' not in st.session_state:
         st.session_state.expand = True
     else:
@@ -43,6 +48,4 @@ def init():
         
         st.session_state['models'] = ModelStore(fake=False)
     
-    st.session_state.num_correct_policies = len(st.session_state.corrected_policies)
-    st.session_state.num_incorrect_policies = len(st.session_state.inc_policies)
     

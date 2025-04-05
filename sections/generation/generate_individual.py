@@ -10,7 +10,10 @@ from feedback import *
 @st.fragment
 def generate_sent(hierarchy, models):
 
-    st.title("Policy Generation")
+    st.session_state['sentence_page'] = True
+    st.session_state['document_page'] = False
+    
+    st.title("Policy Generation from a Sentence")
 
     # st.markdown(
     #         f"""
@@ -29,7 +32,7 @@ def generate_sent(hierarchy, models):
 
     visualize_hierarchy_expander(key='policy_sent_hierarchy')
 
-    nlacp_container = st.container(height=350)
+    nlacp_container = st.container(height=330)
 
     for written_p in st.session_state.written_nlacps:
         with nlacp_container.chat_message("user", avatar=":material/create:"):
@@ -61,13 +64,13 @@ def generate_sent(hierarchy, models):
         
             agentv_single(nlacp_container, cur_nlacp, models.id_tokenizer, models.id_model, models.gen_tokenizer, models.gen_model, models.ver_model, models.ver_tokenizer, models.loc_tokenizer, models.loc_model, models.vectorestores, hierarchy, True)
             
-            if len(st.session_state.results['interrupted_errors']) > 0:
+            if len(st.session_state.results_individual['interrupted_errors']) > 0:
                 st.session_state.written_nlacps.append(
                     WrittenPolicy(
                         id = str(uuid4()),
                         sentence=cur_nlacp,
                         policy=[],
-                        error=st.session_state.results['interrupted_errors'][0]
+                        error=st.session_state.results_individual['interrupted_errors'][0]
                     )
                 )
                 
@@ -77,7 +80,7 @@ def generate_sent(hierarchy, models):
                     WrittenPolicy(
                         id = str(uuid4()),
                         sentence=cur_nlacp,
-                        policy=st.session_state.results['final_policies'][0]
+                        policy=st.session_state.results_individual['final_policies'][0]
                     )
                 )
             

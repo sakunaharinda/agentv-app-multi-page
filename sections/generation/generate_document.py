@@ -7,6 +7,8 @@ from ml_layer import agentv_batch
 @st.fragment
 def generate_doc(hierarchy, models):
 
+    st.session_state['document_page'] = True
+    st.session_state['sentence_page'] = False
     # st.markdown(
     #         f"""
     #         <style>
@@ -22,7 +24,7 @@ def generate_doc(hierarchy, models):
     #         unsafe_allow_html=True,
     #     )
 
-    st.title("Policy Generation")
+    st.title("Policy Generation from a Document")
 
     visualize_hierarchy_expander(key='policy_doc_hierarchy')
 
@@ -50,8 +52,10 @@ def generate_doc(hierarchy, models):
             st.rerun()
             
     
-    summary = get_summary()
-    status_container.text_area("Summary", summary, help=f"A summary of the completed access control policy generation process, outlining the total number of sentences found in the input document, the number of access control requirement found among the sentences, the number of correctly translated access control requirements into structured access control policies (See **Correct Policies** tab), and the number of failed translations (See **Incorrect Policies** tab)",disabled=True, height=150)
+    show_summary(status_container)
+    
+    
+    
             
 
 hierarchy = st.session_state.hierarchies

@@ -488,7 +488,7 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
                 )
             
         
-        st.session_state['results'] = results.to_dict()
+        st.session_state['results_individual'] = results.to_dict()
         st.session_state.is_generating = False
     
     
@@ -648,7 +648,7 @@ def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_toke
                 label="Generation complete!", state="complete", expanded=False
             )
         
-        st.session_state['results'] = results.to_dict()
+        st.session_state['results_document'] = results.to_dict()
         st.session_state.is_generating = False
         # st.session_state['policy_create_status'] = ac_engine.create_multiple_policies(results.final_correct_policies)
     

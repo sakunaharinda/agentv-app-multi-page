@@ -55,10 +55,10 @@ def load_vectorstore(component, entity_list, save_location = "data/vectorstores"
     
     return vector_store
     
-
-def build_vectorstores(hierarchies, save_path = 'data/entities'):
+@st.cache_resource(show_spinner=False)
+def build_vectorstores(_hierarchies, save_path = 'data/entities'):
     
-    subjects, actions, resources, conditions = extract_entities(hierarchies, save_path)
+    subjects, actions, resources, conditions = extract_entities(_hierarchies, save_path)
     
     stores = {}
     progress_text = "Processing the hierarchy ..."
