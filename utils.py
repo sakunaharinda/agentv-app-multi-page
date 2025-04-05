@@ -341,5 +341,17 @@ def load_value(key):
     if key not in st.session_state:
         st.session_state[key] = None
     st.session_state["_"+key] = st.session_state[key]
+    
+def on_click_generate():
+    st.session_state.is_generating = True
+    
+def get_summary():
+    if 'results' in st.session_state:
+        
+        assert st.session_state.results['final_verification'].count(11) == len(st.session_state.results['final_correct_policies']), 'There is a mismatch between correct policies and correctly verified policies'
+    
+        summary = f"No. of sentences: {len(st.session_state.results['sentences'])}\nNo. of access requirement: {len(st.session_state.results['generated_nlacps'])}\nCorrectly generated policies: {st.session_state.results['final_verification'].count(11)}\nIncorrectly generated policies: {len(st.session_state.results['generated_nlacps']) - st.session_state.results['final_verification'].count(11)}"
+        
+        return summary
 
     

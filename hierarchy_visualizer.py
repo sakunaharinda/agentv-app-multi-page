@@ -3,23 +3,26 @@ import streamlit.components.v1 as components
 from utils import store_value
 from feedback import *
 from loading import get_entity_hierarchy
+from vectorstore import build_vectorstores
 
+@st.cache_resource(show_spinner=False)
 def set_hierarchy(hierarchy_file):
     
-    try:
-        if hierarchy_file is not None:
-            main_hierarchy, hierarchies = get_entity_hierarchy(hierarchy_file)
-            st.session_state['main_hierarchy'] = main_hierarchy
-            st.session_state['hierarchies'] = hierarchies
+    # try:
+    if hierarchy_file is not None:
+        main_hierarchy, hierarchies = get_entity_hierarchy(hierarchy_file)
+        st.session_state['main_hierarchy'] = main_hierarchy
+        st.session_state['hierarchies'] = hierarchies
+        
+        st.session_state.enable_generation = True
+        
+        st.session_state.models.vectorestores = build_vectorstores(hierarchies)
+        
+        
+        return main_hierarchy
             
-            st.session_state.enable_generation = True
-            
-            # TODO Generate vectorstores with caching
-            
-            return main_hierarchy
-            
-    except Exception as e:
-        error("The hierarchy file cannot be processed. Please ensure that it adheres to YAML guidelines and upload it again")
+    # except Exception as e:
+    #     error("The hierarchy file cannot be processed. Please ensure that it adheres to YAML guidelines and upload it again")
 
 @st.dialog("Upload the Organization Hierarchy")
 def ask_hierarchy():
@@ -28,9 +31,10 @@ def ask_hierarchy():
     
     hierarchy_file = st.file_uploader("Upload the organization hierarchy", key='_hierarchy_upload', help='Upload the organization hierarchy specified in YAML format', type=['yaml', 'yml'], on_change=store_value, args=("hierarchy_upload",))
             
-    set_hierarchy(hierarchy_file)
     
-    ct = st.container(height=100, border=False)
+    with st.container(height=50, border=False):
+        set_hierarchy(hierarchy_file)
+    
     col1, col2 = st.columns([1,1])
     with col1:
         req_submit = st.button("OK", key='ok_hierarchy', type='primary', use_container_width=True, disabled=not st.session_state.enable_generation)
@@ -138,18 +142,18 @@ def display_hierarchy(main_hierarchy, show_hierarchy, height=300, vertical_paddi
                 markmap(action_m, height=height, vertical_padding=vertical_padding)
             elif show_hierarchy == "Resources":
                 markmap(resource_m, height=height, vertical_padding=vertical_padding)
-            else:
-                markmap(condition_m, height=height, vertical_padding=vertical_padding)
+            # else:
+            #     markmap(condition_m, height=height, vertical_padding=vertical_padding)
                 
 @st.fragment
-def visualize_hierarchy_expander(main_hierarchy, key):
+def visualize_hierarchy_expander(key):
     
     if st.session_state.main_hierarchy is not None:
         with st.expander("Organization Hierarchy", expanded=st.session_state.expand):
-            _,hcol,_ = st.columns([1,2,1])
-            show_hierarchy = hcol.segmented_control(label="Organization hierarchy", label_visibility='hidden', options=["Subjects", "Actions", "Resources", "Conditions"], selection_mode='single', default="Subjects", key=key)
+            _,hcol,_ = st.columns([2,2,2])
+            show_hierarchy = hcol.segmented_control(label="Organization hierarchy", label_visibility='hidden', options=["Subjects", "Actions", "Resources"], selection_mode='single', default="Subjects", key=key)
             
-            display_hierarchy(main_hierarchy, show_hierarchy, height=350, vertical_padding=40)
+            display_hierarchy(st.session_state.main_hierarchy, show_hierarchy, height=350, vertical_padding=40)
             
     else:
         ask_hierarchy()

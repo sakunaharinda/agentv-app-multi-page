@@ -99,7 +99,7 @@ def load_models():
     gen_model, gen_tokenizer = load_gen_model()
     ver_model, ver_tokenizer = load_ver_model()
     loc_model, loc_tokenizer = load_loc_model()
-    vectorestores = load_vectorstores("../data/vectorstores")
+    vectorestores = None #load_vectorstores("data/vectorstores")
     
     return id_model, id_tokenizer, gen_model, gen_tokenizer, ver_model, ver_tokenizer, loc_model, loc_tokenizer, vectorestores
     

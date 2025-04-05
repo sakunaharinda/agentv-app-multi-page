@@ -5,6 +5,7 @@ from init_ui import init
 import torch
 
 torch.classes.__path__ = []
+print("rerun")
 
 st.set_page_config(layout="wide")
 
@@ -51,8 +52,8 @@ init()
 starting_page = st.Page("sections/get_started.py", title=st.session_state.start_title, icon=st.session_state.start_icon, default=True)
 generate_doc = st.Page("sections/generation/generate_document.py", title=st.session_state.generate_doc_title, icon="")
 generate_single = st.Page("sections/generation/generate_individual.py", title=st.session_state.generate_single_title, icon="")
-correct_pol_page = st.Page("sections/correct_policies.py", title=st.session_state.cor_policies_title, icon="")
-incorrect_pol_page = st.Page("sections/incorrect_policies.py", title=st.session_state.inc_policies_title, icon="")
+correct_pol_page = st.Page("sections/review/correct_policies.py", title=st.session_state.cor_policies_title, icon="")
+incorrect_pol_page = st.Page("sections/review/incorrect_policies.py", title=st.session_state.inc_policies_title, icon="")
 
 
 pg = st.navigation(

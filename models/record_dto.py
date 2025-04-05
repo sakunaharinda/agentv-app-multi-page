@@ -13,6 +13,7 @@ class Results:
     final_verification: List[int] = field(default_factory = list)
     final_policies: List[dict] = field(default_factory = list)
     final_correct_policies: List[dict] = field(default_factory = list)
+    interrupted_errors: List[str] = field(default_factory = list)
     
     def to_dict(self):
         return {
@@ -25,7 +26,23 @@ class Results:
             'init_verification': self.init_verification,
             'final_verification': self.final_verification,
             'final_policies': self.final_policies,
-            'final_correct_policies': self.final_correct_policies
+            'final_correct_policies': self.final_correct_policies,
+            'interrupted_errors': self.interrupted_errors
+        }
+        
+@dataclass
+class WrittenPolicy:
+    id: str = "1"
+    sentence: str = ""
+    policy: List[dict] = field(default_factory = list)
+    error: str = None
+    
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'sentence': self.sentence,
+            'policy': self.policy,
+            'error': self.error
         }
         
 

@@ -20,7 +20,7 @@ _ = load_dotenv('../.env')
 
 ITERATIONS = 2
 
-torch.classes.__path__ = []
+# torch.classes.__path__ = []
 
 
 @st.cache_data(show_spinner=False)
@@ -80,7 +80,7 @@ def verify_policies(_loader, _model, results: Results):
     assert policies == list(map(str,results.generated_policies)),'Mismatch between verifier policy ordering and the original ordering'
     
     results.init_verification = np.argmax(all_preds, axis=-1).tolist()
-    return results
+    # return results
 
 
 @st.cache_data(show_spinner=False)
@@ -370,9 +370,9 @@ def align_policy(policy, _vectorstore: dict, _hierarchy: Hierarchy):
     return expand_policy(unique_pols, _hierarchy.subject_hierarchy, _hierarchy.action_hierarchy, _hierarchy.resource_hierarchy)
 
 # @st.cache_data(show_spinner=False)
-def agentv_single(_ac_engine: AccessControlEngine, _status_container, nlacp, _id_tokenizer, _id_model, _gen_tokenizer, _gen_model, _ver_model, _ver_tokenizer, _loc_tokenizer, _loc_model, _vectorstores, _hierarchy: Hierarchy, do_align=True):
+def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_tokenizer, _gen_model, _ver_model, _ver_tokenizer, _loc_tokenizer, _loc_model, _vectorstores, _hierarchy: Hierarchy, do_align=True):
     
-    with _status_container.status("Generating policies ...", expanded=True) as _status:
+    with _status_container.status("Generating the policy ...", expanded=True) as _status:
 
         results = Results()
         
@@ -389,11 +389,12 @@ def agentv_single(_ac_engine: AccessControlEngine, _status_container, nlacp, _id
                 state="error",
                 expanded=False,
             )
+            
+            results.interrupted_errors.append("The entered sentence is not an access control requirement. Please refine the sentence and re-submit again.")
         else:
             results.nlacps.append(nlacp)
             
             if do_align:
-                st.write("Retrieving context ...")
                 ents = get_available_entities(nlacp, _vectorstores, n=3)
                 
                 st.write("Translating ...")
@@ -427,8 +428,7 @@ def agentv_single(_ac_engine: AccessControlEngine, _status_container, nlacp, _id
                         _gen_tokenizer,
                         _gen_model,
                     )
-                results.final_verification.append(ver_result)
-                results.final_policies.append(policy)
+                
                 
                 if ver_result == 11:
                     
@@ -445,7 +445,6 @@ def agentv_single(_ac_engine: AccessControlEngine, _status_container, nlacp, _id
                         json_policy
                     )
                     results.final_correct_policies.append(json_policy)
-                    st.session_state['policy_create_status'] = _ac_engine.create_policy(json_policy)
                     handlers.cor_policy_nav_last()
                 else:
                     if ver_result != 10:
@@ -472,21 +471,34 @@ def agentv_single(_ac_engine: AccessControlEngine, _status_container, nlacp, _id
                     )
                     # handlers.inc_policy_nav_last()
                     handlers.inc_policy_nav_next()
+                    
+                results.final_verification.append(ver_result)
+                results.final_policies.append(policy)
 
-            _status.update(
-                label="Generation complete!", state="complete", expanded=False
-            )
+                _status.update(
+                    label="Generation complete!", state="complete", expanded=False
+                )
+            else:
+                results.interrupted_errors.append("Sorry! AGentV has failed to process the access control policy generated from the entered sentence. Please rephrase the sentence and re-submit again.")
+                
+                _status.update(
+                    label="AGentV has failed to parse the access control policy",
+                    state="error",
+                    expanded=False,
+                )
+            
+        
         st.session_state['results'] = results.to_dict()
         st.session_state.is_generating = False
     
     
 # @st.cache_data(show_spinner=False)
-def agentv_batch(ac_engine: AccessControlEngine, _status_container, content, _id_tokenizer, _id_model, _gen_tokenizer, _gen_model, _ver_model, _ver_tokenizer, _loc_tokenizer, _loc_model, _vectorstores, _hierarchy: Hierarchy):
+def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_tokenizer, _gen_model, _ver_model, _ver_tokenizer, _loc_tokenizer, _loc_model, _vectorstores, _hierarchy: Hierarchy, do_align = True):
+    
+    print(_vectorstores)
     
     with _status_container.status("Generating policies ...", expanded=True) as _status:
         results = Results()
-        
-        st.write("Preprocessing ...")
         
         sentences = preprocess_document(content)['content']
         results.sentences = sentences
@@ -498,11 +510,14 @@ def agentv_batch(ac_engine: AccessControlEngine, _status_container, content, _id
         id_loader = data_loaders.get_loader(results, Task.NLACP_ID, max_len=256, batch_size=8)
         results = get_nlacps(id_loader, _id_model, results)
         
-        st.write("Retrieving context ...")
         
         for nlacp in results.nlacps:
             
-            ents = get_available_entities(nlacp, _vectorstores, n=3)
+            if do_align:
+            
+                ents = get_available_entities(nlacp, _vectorstores, n=3)
+            else:
+                ents = {}
             
             results.nlacps_context.append([nlacp, ents])
         
@@ -510,10 +525,13 @@ def agentv_batch(ac_engine: AccessControlEngine, _status_container, content, _id
         st.write("Translating ...")
         
         for nlacp,context in results.nlacps_context:
-        
-            policy, success = generate_policy(
-                nlacp, _gen_tokenizer, _gen_model, context=context
-            )
+            
+            if do_align:
+                policy, success = generate_policy(
+                    nlacp, _gen_tokenizer, _gen_model, context=context
+                )
+            else:
+                policy, success = generate_policy(nlacp, _gen_tokenizer, _gen_model)
         
             if success:
                 
@@ -526,7 +544,7 @@ def agentv_batch(ac_engine: AccessControlEngine, _status_container, content, _id
         
         ver_loader = data_loaders.get_loader(results, Task.POLICY_VER, max_len=1024, batch_size=8)
         
-        results = verify_policies(ver_loader, _ver_model, results)
+        verify_policies(ver_loader, _ver_model, results)
         
         st.write("Refining the translation ...")
         
@@ -540,7 +558,8 @@ def agentv_batch(ac_engine: AccessControlEngine, _status_container, content, _id
             
             if ver == 11:
                 
-                policy = align_policy(policy, _vectorstores, _hierarchy)
+                if do_align:
+                    policy = align_policy(policy, _vectorstores, _hierarchy)
                 
                 json_policy = JSONPolicyRecord.from_dict({
                     'policyId': str(uuid4()),
@@ -567,7 +586,8 @@ def agentv_batch(ac_engine: AccessControlEngine, _status_container, content, _id
                 
                 if ver == 11:
                     
-                    policy = align_policy(policy, _vectorstores, _hierarchy)
+                    if do_align:
+                        policy = align_policy(policy, _vectorstores, _hierarchy)
                     
                     json_policy = JSONPolicyRecord.from_dict({
                         'policyId': str(uuid4()),
@@ -630,7 +650,7 @@ def agentv_batch(ac_engine: AccessControlEngine, _status_container, content, _id
         
         st.session_state['results'] = results.to_dict()
         st.session_state.is_generating = False
-        st.session_state['policy_create_status'] = ac_engine.create_multiple_policies(results.final_correct_policies)
+        # st.session_state['policy_create_status'] = ac_engine.create_multiple_policies(results.final_correct_policies)
     
             
             

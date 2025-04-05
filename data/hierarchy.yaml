@@ -1,0 +1,69 @@
+subjects:
+  - hcp:
+    - lhcp
+    - dlhcp
+    - er personnel
+    - uap
+    - lt
+  - administration:
+    - administrator
+    - software tester
+  - patient representative:
+    - patient
+    - personal representative
+    - publich health agent
+
+actions:
+  - access:
+    - view
+    - write
+    - read
+  - edit
+  - enter
+  - modify
+  - alter
+  - update
+  - maintain
+  - create
+  - assign
+  - revoke
+  - designate
+
+resources:
+  - medical record:
+    - full medical record
+    - approved medical record
+    - emergency medical record
+  - test result
+  - security credential
+  - security audit
+  - medical diagnosis
+  - demographic data:
+    - patient demographic data
+  - access log:
+    - system-wide access log
+    - patient-record access log
+  - personnel:
+    - hcp:
+      - lhcp
+      - dlhcp
+      - er personnel
+      - uap
+      - lt
+    - administration:
+      - administrator
+      - software tester
+    - patient representative:
+      - patient
+      - personal representative
+      - publich health agent
+
+conditions:
+  - patient_consent:
+    - provided
+    - not_provided
+  - situation:
+    - emergency
+    - normal
+  
+
