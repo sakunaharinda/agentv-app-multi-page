@@ -38,7 +38,7 @@ def generating_wo_hierarchy():
 def review_incorrects(incorrects):
     
     st.write(f"You have {incorrects} incorrectly generated polic{'y' if incorrects==1 else 'ies'} to review. Do you want review {'it' if incorrects==1 else 'them'} now?")
-    warning("Applying the incorrectly generated policies to the policy database without reviewing may result in access control failure that could lead to data breaches.'")
+    warning("Applying the incorrectly generated policies to the policy database without reviewing may result in access control failure that could lead to data breaches.")
     
     gencol1, gencol2 = st.columns([1,1])
     

@@ -1,9 +1,11 @@
 import streamlit as st
-from handlers import *
-from loading import *
+from handlers import get_cor_nlacp, get_cor_policy, cor_policy_nav_prev, cor_policy_nav_next 
+from loading import load_policy
+from ac_engine_service import AccessControlEngine
+from sections.review.review_utils import publish_all, publish_cur
 
 @st.fragment
-def show_correct_policies():
+def show_correct_policies(ac_engine: AccessControlEngine):
     
     st.title("Correct Policies")
     
@@ -32,37 +34,47 @@ def show_correct_policies():
 
     cdf = load_policy(get_cor_policy())
 
-    with st.container(border=False, height=350):
-        if len(st.session_state.corrected_policies)>0:
-            corr_df = st.dataframe(cdf, use_container_width=True, key="correct_policies")
+    cor_pol_container = st.container(border=False, height=350)
+    if len(st.session_state.corrected_policies)>0:
+        corr_df = cor_pol_container.dataframe(cdf, use_container_width=True, key="correct_policies")
 
 
     with st.container(border=False, height=100):
-        out_col1, out_col2, out_col3 = st.columns([1, 1, 1])
+        out_col1, out_col2 = st.columns([1, 1])
         # json_btn = viz_col1.button('Export as JSON', use_container_width=True, key='json_btn')
-        out_col3.download_button(
-            label="Export as JSON",
-            file_name="policies.json",
-            mime="application/json",
-            data=load_json_output(st.session_state.corrected_policies),
-            use_container_width=True,
-            disabled=len(st.session_state.corrected_policies) < 1,
-        )
-        try_single = out_col2.button(
-            "Test Policy",
+
+        publish_all_btn = out_col2.button(
+            "Publish All Policies to Database",
             type="secondary",
             use_container_width=True,
-            key="try_single",
+            key="publish_all",
             disabled=len(st.session_state.corrected_policies) < 1,
         )
         
-        try_overall = out_col1.button(
-            "Test System",
+        publish_cur_btn = out_col1.button(
+            "Publish Policy to Database",
             type="primary",
             use_container_width=True,
-            key="try_overall",
+            key="publish_cur",
             disabled=len(st.session_state.corrected_policies) < 1,
         )
         
-
-show_correct_policies()
+        if publish_cur_btn:
+            
+            status = publish_cur(ac_engine)
+            if status == 200:
+                cor_pol_container.success("Policy is published sucessfully!", icon='✅')
+            else:
+                cor_pol_container.error(f"An error occured with the error code {status} while trying to publish the policy.", icon='🚨')
+                
+        elif publish_all_btn:
+            
+            status = publish_all(ac_engine)
+            # if status == 200:
+            #     cor_pol_container.success("Policy is publiched sucessfully!", icon='✅')
+            # else:
+            #     cor_pol_container.error(f"An error occured with the error code {status} while trying to publish the policy.", icon='🚨')
+            
+        
+ac_engine = AccessControlEngine()
+show_correct_policies(ac_engine)
