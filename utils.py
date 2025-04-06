@@ -345,14 +345,5 @@ def load_value(key):
 def on_click_generate():
     st.session_state.is_generating = True
     
-def show_summary(status_container):
-    
-    if 'results_document' in st.session_state:
-        
-        assert st.session_state.results_document['final_verification'].count(11) == len(st.session_state.results_document['final_correct_policies']), 'There is a mismatch between correct policies and correctly verified policies'
-    
-        summary = f"No. of sentences: {len(st.session_state.results_document['sentences'])}\nNo. of access requirement: {len(st.session_state.results_document['generated_nlacps'])}\nCorrectly generated policies: {st.session_state.results_document['final_verification'].count(11)}\nIncorrectly generated policies: {len(st.session_state.results_document['generated_nlacps']) - st.session_state.results_document['final_verification'].count(11)}"
-        
-        status_container.text_area("Summary", summary, help=f"A summary of the completed access control policy generation process, outlining the total number of sentences found in the input document, the number of access control requirement found among the sentences, the number of correctly translated access control requirements into structured access control policies (See **Correct Policies** page), and the number of failed translations (See **Incorrect Policies** page)",disabled=True, height=150)
 
     

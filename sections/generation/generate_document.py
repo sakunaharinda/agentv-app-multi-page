@@ -1,7 +1,8 @@
 import streamlit as st
-from utils import *
+from utils import on_click_generate
 from ml_layer import agentv_batch
-
+from sections.generation.generation_utils import generating_wo_hierarchy, show_summary, review_incorrects
+import time
 
 @st.fragment
 def generate_doc(hierarchy, models):
@@ -45,11 +46,21 @@ def generate_doc(hierarchy, models):
             )
             st.session_state.is_generating = False
         else:
-            st.session_state['is_generating'] = True
+            # if st.session_state.hierarchy_upload == None and not st.session_state.generate_wo_context:
+                
+            #     generating_wo_hierarchy()
+                
+            # else:
+                
             content = policy_doc.getvalue().decode('utf-8')
         
-            agentv_batch(status_container, content, models.id_tokenizer, models.id_model, models.gen_tokenizer, models.gen_model, models.ver_model, models.ver_tokenizer, models.loc_tokenizer, models.loc_model, models.vectorestores, hierarchy, do_align=True)
-            st.rerun()
+            agentv_batch(status_container, content, models.id_tokenizer, models.id_model, models.gen_tokenizer, models.gen_model, models.ver_model, models.ver_tokenizer, models.loc_tokenizer, models.loc_model, models.vectorestores, hierarchy, do_align=st.session_state.do_align)
+            
+            # st.session_state.generate_wo_context = False
+            # st.rerun()
+            incorrects = len(st.session_state.results_document['final_verification'])-st.session_state.results_document['final_verification'].count(11)
+            if (not st.session_state.reviewed) and incorrects>0:
+                review_incorrects(incorrects)
             
     
     show_summary(status_container)

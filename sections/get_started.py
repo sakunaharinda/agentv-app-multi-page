@@ -1,5 +1,5 @@
 import streamlit as st
-from utils import store_value
+from utils import store_value, load_value
 from loading import get_entity_hierarchy
 from feedback import *
 from hierarchy_visualizer import set_hierarchy
@@ -32,7 +32,7 @@ with st.container(height=470, border=False):
     with st.container(border=False, height=160):
         hierarchy_file = st.file_uploader("Upload the organization hierarchy", key='_hierarchy_upload', help='Upload the organization hierarchy specified in YAML format', type=['yaml', 'yml'], on_change=store_value, args=("hierarchy_upload",))
         
-        print(hierarchy_file)
+        print(st.session_state._hierarchy_upload)
             
     pbar = st.container(height=50, border=False)
     
@@ -54,6 +54,3 @@ elif gen_sent:
 
 with pbar:
     set_hierarchy(hierarchy_file)
-
-# if started_btn:
-#     st.switch_page('sections/generation/generate_document.py')

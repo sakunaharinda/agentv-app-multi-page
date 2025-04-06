@@ -4,7 +4,7 @@ from models.record_dto import WrittenPolicy
 from loading import load_policy
 from ml_layer import agentv_single
 from uuid import uuid4
-from feedback import *
+from sections.generation.generation_utils import generating_wo_hierarchy
 
 @st.fragment
 def generate_sent(hierarchy, models):
@@ -57,12 +57,16 @@ def generate_sent(hierarchy, models):
             st.session_state.is_generating = False
             st.rerun()
         else:
-            st.session_state['is_generating'] = True
+            # if st.session_state.hierarchy_upload == None and not st.session_state.generate_wo_context:
+            #     st.session_state.is_generating = False
+            #     generating_wo_hierarchy()
+                
+            # else:
             
             with nlacp_container.chat_message("user", avatar=":material/create:"):
                 st.markdown(cur_nlacp)
         
-            agentv_single(nlacp_container, cur_nlacp, models.id_tokenizer, models.id_model, models.gen_tokenizer, models.gen_model, models.ver_model, models.ver_tokenizer, models.loc_tokenizer, models.loc_model, models.vectorestores, hierarchy, True)
+            agentv_single(nlacp_container, cur_nlacp, models.id_tokenizer, models.id_model, models.gen_tokenizer, models.gen_model, models.ver_model, models.ver_tokenizer, models.loc_tokenizer, models.loc_model, models.vectorestores, hierarchy, do_align=st.session_state.do_align)
             
             if len(st.session_state.results_individual['interrupted_errors']) > 0:
                 st.session_state.written_nlacps.append(
@@ -83,7 +87,7 @@ def generate_sent(hierarchy, models):
                         policy=st.session_state.results_individual['final_policies'][0]
                     )
                 )
-            
+            st.session_state.generate_wo_context = False
             st.rerun()
             
             

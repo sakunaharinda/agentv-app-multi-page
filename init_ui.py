@@ -25,7 +25,10 @@ def init():
     set_state('is_generating', False)
     set_state('written_nlacps', [])
     set_state('vs_generated', False)
-    
+    set_state('hierarchy_upload', None)
+    set_state('do_align', True)
+    set_state('generate_wo_context', False)
+    set_state('reviewed', False)
     
     st.session_state.num_correct_policies = len(st.session_state.corrected_policies)
     st.session_state.num_incorrect_policies = len(st.session_state.inc_policies)
