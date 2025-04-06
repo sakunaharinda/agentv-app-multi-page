@@ -39,7 +39,7 @@ st.markdown(
 
             
             [data-testid="stSidebarNav"] ul li {{
-                margin-bottom: 10px; /* Adjust the value as needed */
+                margin-bottom: 5px; /* Adjust the value as needed */
             }}
             
         </style>
@@ -60,6 +60,7 @@ generate_doc = st.Page("sections/generation/generate_document.py", title=st.sess
 generate_single = st.Page("sections/generation/generate_individual.py", title=st.session_state.generate_single_title, icon="")
 correct_pol_page = st.Page("sections/review/correct_policies.py", title=st.session_state.cor_policies_title, icon="")
 incorrect_pol_page = st.Page("sections/review/incorrect_policies.py", title=st.session_state.inc_policies_title, icon="")
+policy_viz_page = st.Page("sections/review/policy_visualization.py", title=st.session_state.policy_viz_title, icon="")
 
 
 pg = st.navigation(
@@ -67,7 +68,7 @@ pg = st.navigation(
     {
         "": [starting_page],
         "Policy Generation": [generate_doc, generate_single],
-        "Policy Review": [correct_pol_page, incorrect_pol_page]
+        "Policy Review": [correct_pol_page, incorrect_pol_page, policy_viz_page]
     }
     
 )

@@ -38,6 +38,7 @@ def init():
     set_state('generate_single_title', 'Generate from a Sentence')
     set_state('cor_policies_title', f'Correct Policies')
     set_state('inc_policies_title', f'Incorrect Policies')
+    set_state('policy_viz_title', 'Policy Visualization')
 
     
     if 'expand' not in st.session_state:
