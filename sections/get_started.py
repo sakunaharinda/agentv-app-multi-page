@@ -8,7 +8,7 @@ st.markdown(
         f"""
         <style>
             .st-key-gen_doc button,
-            .stButton button {{
+            .st-key-gen_sent button {{
                 height: 100px;
                 font-size: 100px !important;
                 border-radius: 2rem;
@@ -31,6 +31,8 @@ with st.container(height=470, border=False):
     # load_value("hierarchy_upload")
     with st.container(border=False, height=160):
         hierarchy_file = st.file_uploader("Upload the organization hierarchy", key='_hierarchy_upload', help='Upload the organization hierarchy specified in YAML format', type=['yaml', 'yml'], on_change=store_value, args=("hierarchy_upload",))
+        
+        print(hierarchy_file)
             
     pbar = st.container(height=50, border=False)
     

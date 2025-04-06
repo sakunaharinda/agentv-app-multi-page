@@ -5,7 +5,7 @@ from feedback import *
 from loading import get_entity_hierarchy
 from vectorstore import build_vectorstores
 
-@st.cache_resource(show_spinner=False)
+
 def set_hierarchy(hierarchy_file):
     
     # try:
@@ -16,7 +16,7 @@ def set_hierarchy(hierarchy_file):
         
         st.session_state.enable_generation = True
         
-        st.session_state.models.vectorestores = build_vectorstores(hierarchies)
+        st.session_state.models.vectorestores = build_vectorstores(hierarchies.to_dict())
         
     if st.session_state.vs_generated:
         st.session_state.vs_generated = False
@@ -158,4 +158,19 @@ def visualize_hierarchy_expander(key):
             
     else:
         ask_hierarchy()
+
+@st.fragment
+@st.dialog("Organization Hierarchy", width='large')
+def visualize_hierarchy_dialog():
+    
+    if st.session_state.main_hierarchy is not None:
+        _,hcol,_ = st.columns([0.70,1,0.5])
+        show_hierarchy = hcol.segmented_control(label="Organization hierarchy", label_visibility='hidden', options=["Subjects", "Actions", "Resources"], selection_mode='single', default="Subjects")
+            
+        display_hierarchy(st.session_state.main_hierarchy, show_hierarchy, height=350, vertical_padding=40)
+    
+    ok = st.button("OK", key='ok', type='primary', use_container_width=True)
+    
+    if ok:
+        st.rerun()
             

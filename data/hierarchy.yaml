@@ -1,6 +1,8 @@
 subjects:
   - hcp:
-    - lhcp
+    - lhcp:
+      - doctor
+      - nurse
     - dlhcp
     - er personnel
     - uap

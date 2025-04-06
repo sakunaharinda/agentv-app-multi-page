@@ -29,12 +29,12 @@ def create_ent_list(h_dict: dict, combine_key_val = False, save_path = None):
     return l
 
 
-def extract_entities(hierarchies: Hierarchy, save_path = None):
+def extract_entities(hierarchies: dict, save_path = None):
     
-    subjects = create_ent_list(hierarchies.subject_hierarchy, save_path= save_path + "/subjects.json" if save_path is not None else None)
-    actions = create_ent_list(hierarchies.action_hierarchy, save_path= save_path + "/actions.json" if save_path is not None else None)
-    resources = create_ent_list(hierarchies.resource_hierarchy, save_path= save_path + "/resources.json" if save_path is not None else None)
-    conditions = create_ent_list(hierarchies.condition_hierarchy, combine_key_val=True, save_path= save_path + "/conditions.json" if save_path is not None else None)
+    subjects = create_ent_list(hierarchies['subject_hierarchy'], save_path= save_path + "/subjects.json" if save_path is not None else None)
+    actions = create_ent_list(hierarchies['action_hierarchy'], save_path= save_path + "/actions.json" if save_path is not None else None)
+    resources = create_ent_list(hierarchies['resource_hierarchy'], save_path= save_path + "/resources.json" if save_path is not None else None)
+    conditions = create_ent_list(hierarchies['condition_hierarchy'], combine_key_val=True, save_path= save_path + "/conditions.json" if save_path is not None else None)
     
     return subjects, actions, resources, conditions 
     
@@ -56,9 +56,9 @@ def load_vectorstore(component, entity_list, save_location = "data/vectorstores"
     return vector_store
     
 @st.cache_resource(show_spinner=False)
-def build_vectorstores(_hierarchies, save_path = 'data/entities'):
+def build_vectorstores(hierarchies, save_path = 'data/entities'):
     
-    subjects, actions, resources, conditions = extract_entities(_hierarchies, save_path)
+    subjects, actions, resources, conditions = extract_entities(hierarchies, save_path)
     
     stores = {}
     progress_text = "Processing the hierarchy ..."

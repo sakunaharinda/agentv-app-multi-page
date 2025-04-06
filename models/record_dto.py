@@ -58,4 +58,12 @@ class Hierarchy:
         self.resource_hierarchy = hierarchies[2]
         self.condition_hierarchy = hierarchies[3]
         
+    def to_dict(self):
+        return {
+            'subject_hierarchy': self.subject_hierarchy,
+            'action_hierarchy': self.action_hierarchy,
+            'resource_hierarchy': self.resource_hierarchy,
+            'condition_hierarchy': self.condition_hierarchy
+        }
+        
         

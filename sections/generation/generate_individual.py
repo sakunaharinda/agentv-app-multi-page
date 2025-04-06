@@ -1,5 +1,4 @@
 import streamlit as st
-from hierarchy_visualizer import visualize_hierarchy_expander
 from utils import *
 from models.record_dto import WrittenPolicy
 from loading import load_policy
@@ -30,9 +29,9 @@ def generate_sent(hierarchy, models):
     #         unsafe_allow_html=True,
     #     )
 
-    visualize_hierarchy_expander(key='policy_sent_hierarchy')
+    # visualize_hierarchy_expander(key='policy_sent_hierarchy')
 
-    nlacp_container = st.container(height=340, border=False)
+    nlacp_container = st.container(height=360, border=False)
 
     for written_p in st.session_state.written_nlacps:
         with nlacp_container.chat_message("user", avatar=":material/create:"):

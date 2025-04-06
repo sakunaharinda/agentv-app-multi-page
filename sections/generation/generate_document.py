@@ -1,5 +1,4 @@
 import streamlit as st
-from hierarchy_visualizer import visualize_hierarchy_expander
 from utils import *
 from ml_layer import agentv_batch
 
@@ -26,11 +25,11 @@ def generate_doc(hierarchy, models):
 
     st.title("Policy Generation from a Document")
 
-    visualize_hierarchy_expander(key='policy_doc_hierarchy')
+    # visualize_hierarchy_expander(key='policy_doc_hierarchy')
 
 
     # with st.container(border=True, height=210) as status:
-    status_container = st.container(border=False, height=245)
+    status_container = st.container(border=False, height=265)
     
     with st.container(border=False, height=162):
         policy_doc = st.file_uploader("Upload a high-level requirement specification document", key='policy_doc', help='Upload a high-level requirement specification document written in natural language (i.e., English), that specifies who can access what information in the organization.', type=['md'])

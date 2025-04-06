@@ -3,6 +3,7 @@ import streamlit as st
 
 from init_ui import init
 import torch
+from hierarchy_visualizer import visualize_hierarchy_dialog
 
 torch.classes.__path__ = []
 print("rerun")
@@ -24,7 +25,7 @@ st.markdown(
                 font-weight: bold;
             }}
             [data-testid="stSidebarNav"] ul {{
-                padding-top: 100px;
+                padding-top: 50px;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
@@ -48,6 +49,11 @@ st.markdown(
     
     
 init()
+
+h_btn = st.sidebar.button("Organization Hierarchy", use_container_width=True, key='org_hierarchy', type='primary', disabled=(not st.session_state.hierarchies))
+if h_btn:
+    visualize_hierarchy_dialog()
+
 
 starting_page = st.Page("sections/get_started.py", title=st.session_state.start_title, icon=st.session_state.start_icon, default=True)
 generate_doc = st.Page("sections/generation/generate_document.py", title=st.session_state.generate_doc_title, icon="")
