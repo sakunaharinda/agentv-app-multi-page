@@ -24,6 +24,7 @@ def init():
     set_state('corrected_policies', [])
     set_state('is_generating', False)
     set_state('written_nlacps', [])
+    set_state('vs_generated', False)
     
     
     st.session_state.num_correct_policies = len(st.session_state.corrected_policies)
@@ -34,6 +35,7 @@ def init():
     set_state('generate_single_title', 'Generate from a Sentence')
     set_state('cor_policies_title', f'Correct Policies')
     set_state('inc_policies_title', f'Incorrect Policies')
+
     
     if 'expand' not in st.session_state:
         st.session_state.expand = True

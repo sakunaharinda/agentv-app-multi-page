@@ -69,12 +69,6 @@ def build_vectorstores(_hierarchies, save_path = 'data/entities'):
         if i==3:
             progress_text = "Uploaded hierarchy is processed successfully!"
         vs_build_bar.progress((i+1)*25, text=progress_text)
-    # stores = {
-    #     "subject": load_vectorstore('subject', subjects),
-    #     "action": load_vectorstore('action', actions),
-    #     "resource": load_vectorstore('resource', resources),
-    #     # "purpose": vector_store_purposes,
-    #     "condition": load_vectorstore('condition', conditions),
-    # }
     
+    st.session_state.vs_generated = True
     return stores

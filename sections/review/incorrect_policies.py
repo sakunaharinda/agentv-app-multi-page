@@ -1,9 +1,82 @@
+import ast
 import streamlit as st
-from handlers import *
-from loading import *
-from ml_layer import *
+from handlers import get_inc_policy, get_inc_nlacp, inc_policy_nav_prev, inc_policy_nav_next, cor_policy_nav_last
+from loading import load_policy
+from ml_layer import align_policy
+from models.ac_engine_dto import JSONPolicyRecord
+from uuid import uuid4
+from models.record_dto import Hierarchy
+from feedback import warning
 
-def show_incorrect_policies(models, hierarchy):
+@st.cache_data(show_spinner=False)
+def update_options(df, subjects, actions, resources):
+    
+    for i in range(len(df)):
+        subject = df.iloc[i]['subject']
+        action = df.iloc[i]['action']
+        resource = df.iloc[i]['resource']
+        
+        if subject not in subjects:
+            subjects.append(subject)
+        if action not in actions:
+            actions.append(action)
+        if resource not in resources:
+            resources.append(resource)
+            
+    return subjects, actions, resources
+
+@st.cache_data(show_spinner=False)
+def get_options(h: dict):
+    values = []
+    for k, v in h.items():
+        values.append(k)
+        values.extend(v)
+        
+    return sorted(list(set(values)))
+
+
+@st.dialog("Submit the Corrected Policy")
+def confirm_submission(edited_df, models, hierarchy):
+    
+    st.write("Are you sure you want to submit the edited policy?")
+    warning("You will not be able to change the policy again after submission!")
+    
+        
+    col1, col2 = st.columns([1,1])
+    with col1:
+        submit = st.button("Yes", key='submit_policy', type='primary', use_container_width=True)
+        
+    with col2:
+        back = st.button("No", key='cancel_submit', type='secondary', use_container_width=True)
+        
+    if submit:
+        
+        edited_df = edited_df.drop('rule', axis='columns')
+        corrected_policy = [v for _, v in edited_df.to_dict("index").items()]
+        policy = align_policy(corrected_policy, models.vectorestores, hierarchy)
+        json_policy = JSONPolicyRecord.from_dict({
+            'policyId': str(uuid4()),
+            'policyDescription': st.session_state.inc_policy_out,
+            'policy': policy
+        })
+        
+        st.session_state.corrected_policies.append(
+            json_policy
+        )
+        
+        # st.session_state['policy_create_status'] = ac_engine.create_policy(json_policy)
+        st.session_state.inc_policies[st.session_state.inc_count]['policy'] = ast.literal_eval(edited_df.to_json(orient='records'))
+        
+        st.session_state.inc_policies[st.session_state.inc_count]['solved'] = True
+        
+        cor_policy_nav_last()
+        st.rerun()
+            
+    elif back:
+        st.rerun()
+
+@st.fragment
+def show_incorrect_policies(models, hierarchy: Hierarchy):
     
     st.title("Incorrect Policies")
     
@@ -30,16 +103,20 @@ def show_incorrect_policies(models, hierarchy):
         use_container_width=True,
     )
 
-    with st.container(border=False, height=340):
+    with st.container(border=False, height=350):
         if (len(st.session_state.inc_policies)>0):
             cur_inc_policy = st.session_state.inc_policies[st.session_state.inc_count]
             if cur_inc_policy["solved"] == True:
                 st.success("The policy is corrected and submitted sucessfully!", icon="✅")
             else:
                 st.error(cur_inc_policy["warning"], icon="🚨")
+                
             
             df = load_policy(get_inc_policy())
-            df.insert(0, 'id', [i+1 for i in range(len(df))])
+            df.insert(0, 'rule', [i+1 for i in range(len(df))])
+            
+            subjects, actions, resources = update_options(df, get_options(hierarchy.subject_hierarchy), get_options(hierarchy.action_hierarchy), get_options(hierarchy.resource_hierarchy))
+            
             edited_df = st.data_editor(
                 df,
                 use_container_width=True,
@@ -55,34 +132,36 @@ def show_incorrect_policies(models, hierarchy):
                             "deny",
                         ],
                         required=True,
-                    )
+                    ),
+                    "subject": st.column_config.SelectboxColumn(
+                        "subject",
+                        help="The subject of the access control rule",
+                        width="small",
+                        options=subjects,
+                        required=True
+                    ),
+                    "action": st.column_config.SelectboxColumn(
+                        "action",
+                        help="The action of the access control rule",
+                        width="small",
+                        options=actions,
+                        required=True
+                    ),
+                    "resource": st.column_config.SelectboxColumn(
+                        "resource",
+                        help="The resource of the access control rule",
+                        width="small",
+                        options=resources,
+                        required=True
+                    ),
                 },
             )
 
     submit = st.button(
-        label="Submit", type="primary", use_container_width=True, key="submit_btn", disabled=len(st.session_state.inc_policies)<1
+        label="Submit", type="primary", use_container_width=True, key="submit_btn", disabled=(len(st.session_state.inc_policies)<1) or (cur_inc_policy["solved"] == True)
     )
     if submit:
-        edited_df = edited_df.drop('id', axis='columns')
-        corrected_policy = [v for _, v in edited_df.to_dict("index").items()]
-        policy = align_policy(corrected_policy, models.vectorestores, hierarchy)
-        json_policy = JSONPolicyRecord.from_dict({
-            'policyId': str(uuid4()),
-            'policyDescription': st.session_state.inc_policy_out,
-            'policy': policy
-        })
-        
-        st.session_state.corrected_policies.append(
-            json_policy
-        )
-        
-        # st.session_state['policy_create_status'] = ac_engine.create_policy(json_policy)
-        st.session_state.inc_policies[st.session_state.inc_count]['policy'] = ast.literal_eval(edited_df.to_json(orient='records'))
-        
-        st.session_state.inc_policies[st.session_state.inc_count]['solved'] = True
-        
-        handlers.cor_policy_nav_last()
-        st.rerun()
+        confirm_submission(edited_df, models, hierarchy)
         
 hierarchy = st.session_state.hierarchies
 models = st.session_state.models

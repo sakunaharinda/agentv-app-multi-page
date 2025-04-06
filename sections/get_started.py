@@ -32,8 +32,7 @@ with st.container(height=470, border=False):
     with st.container(border=False, height=160):
         hierarchy_file = st.file_uploader("Upload the organization hierarchy", key='_hierarchy_upload', help='Upload the organization hierarchy specified in YAML format', type=['yaml', 'yml'], on_change=store_value, args=("hierarchy_upload",))
             
-    with st.container(height=50, border=False):
-        set_hierarchy(hierarchy_file)
+    pbar = st.container(height=50, border=False)
     
     _,col1, col2,_ = st.columns([0.15, 1,1, 0.15])
     gen_doc = col1.button(f"Upload a Policy Document", key='gen_doc', type='secondary', icon=":material/article:", use_container_width=True, disabled= not st.session_state.enable_generation)
@@ -48,6 +47,11 @@ if gen_doc:
 elif gen_sent:
     
     st.switch_page('sections/generation/generate_individual.py')
+    
+
+
+with pbar:
+    set_hierarchy(hierarchy_file)
 
 # if started_btn:
 #     st.switch_page('sections/generation/generate_document.py')

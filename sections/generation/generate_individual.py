@@ -32,7 +32,7 @@ def generate_sent(hierarchy, models):
 
     visualize_hierarchy_expander(key='policy_sent_hierarchy')
 
-    nlacp_container = st.container(height=330)
+    nlacp_container = st.container(height=340, border=False)
 
     for written_p in st.session_state.written_nlacps:
         with nlacp_container.chat_message("user", avatar=":material/create:"):
@@ -44,7 +44,7 @@ def generate_sent(hierarchy, models):
             else:
                 st.error(body=written_p.error, icon="🚨")
 
-    cur_nlacp = st.text_input(label="Enter the NLACP", label_visibility='collapsed', placeholder="E.g., The LHCP can read medical records.")
+    cur_nlacp = st.text_input(label="Enter an access control requirement", help="Write a high-level access control requirement in natural language (i.e., English)", label_visibility='visible', placeholder="E.g., The LHCP can read medical records.")
         
     generate_button = st.button(label='Generate', type='primary', key='generate_sent_btn', use_container_width=True, disabled=st.session_state.is_generating, on_click=on_click_generate, help=f"Click to start generating access control policies")
 
@@ -55,6 +55,7 @@ def generate_sent(hierarchy, models):
                 "Please enter an access control requirement in natural language (i.e., English) before starting the generation.",
                 icon="🚨",
             )
+            st.session_state.is_generating = False
             st.rerun()
         else:
             st.session_state['is_generating'] = True

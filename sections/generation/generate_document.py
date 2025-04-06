@@ -28,22 +28,23 @@ def generate_doc(hierarchy, models):
 
     visualize_hierarchy_expander(key='policy_doc_hierarchy')
 
-    with st.container(border=False, height=155):
-        policy_doc = st.file_uploader("Upload a high-level requirement specification document", key='policy_doc', help='Upload a high-level requirement specification document written in natural language (i.e., English), that specifies who can access what information in the organization.', type=['md'])
-
 
     # with st.container(border=True, height=210) as status:
-    status_container = st.container(border=False, height=215)
+    status_container = st.container(border=False, height=245)
+    
+    with st.container(border=False, height=162):
+        policy_doc = st.file_uploader("Upload a high-level requirement specification document", key='policy_doc', help='Upload a high-level requirement specification document written in natural language (i.e., English), that specifies who can access what information in the organization.', type=['md'])
 
     generate_button = st.button(label='Generate', type='primary', key='generate_doc_btn', use_container_width=True, disabled=st.session_state.is_generating, on_click=on_click_generate, help=f"Click to start generating access control policies")
 
     if st.session_state.is_generating:
 
         if policy_doc is None:
-            st.error(
+            status_container.error(
                 "Please upload a high-level requirement specification document before starting the generation.",
                 icon="🚨",
             )
+            st.session_state.is_generating = False
         else:
             st.session_state['is_generating'] = True
             content = policy_doc.getvalue().decode('utf-8')
@@ -54,9 +55,6 @@ def generate_doc(hierarchy, models):
     
     show_summary(status_container)
     
-    
-    
-            
 
 hierarchy = st.session_state.hierarchies
 models = st.session_state.models

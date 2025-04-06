@@ -18,8 +18,9 @@ def set_hierarchy(hierarchy_file):
         
         st.session_state.models.vectorestores = build_vectorstores(hierarchies)
         
-        
-        return main_hierarchy
+    if st.session_state.vs_generated:
+        st.session_state.vs_generated = False
+        st.rerun()
             
     # except Exception as e:
     #     error("The hierarchy file cannot be processed. Please ensure that it adheres to YAML guidelines and upload it again")
