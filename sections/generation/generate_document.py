@@ -38,7 +38,7 @@ def generate_doc(hierarchy, models):
         with st.container(border=False, height=162):
             policy_doc = st.file_uploader("Upload a high-level requirement specification document", key='policy_doc', help='Upload a high-level requirement specification document written in natural language (i.e., English), that specifies who can access what information in the organization.', type=['md'])
 
-        generate_button = st.button(label='Generate', type='primary', key='generate_doc_btn', use_container_width=True, disabled=st.session_state.is_generating, on_click=on_click_generate, help=f"Click to start generating access control policies")
+        generate_button = st.button(label='Generate', type='primary', key='generate_doc_btn', use_container_width=True, disabled=st.session_state.is_generating, on_click=on_click_generate, args=('gen_doc_icon',), help=f"Click to start generating access control policies")
 
     if st.session_state.is_generating:
 
@@ -48,6 +48,7 @@ def generate_doc(hierarchy, models):
                 icon="🚨",
             )
             st.session_state.is_generating = False
+            # st.rerun()
         else:
             # if st.session_state.hierarchy_upload == None and not st.session_state.generate_wo_context:
                 
@@ -58,13 +59,13 @@ def generate_doc(hierarchy, models):
             content = policy_doc.getvalue().decode('utf-8')
         
             agentv_batch(status_container, content, models.id_tokenizer, models.id_model, models.gen_tokenizer, models.gen_model, models.ver_model, models.ver_tokenizer, models.loc_tokenizer, models.loc_model, models.vectorestores, hierarchy, do_align=st.session_state.do_align)
-            
+            st.session_state.is_generating = False
             # st.session_state.generate_wo_context = False
             # st.rerun()
             incorrects = len(st.session_state.results_document['final_verification'])-st.session_state.results_document['final_verification'].count(11)
             if (not st.session_state.reviewed) and incorrects>0:
                 review_incorrects(incorrects)
-            
+            st.rerun()
     
     show_summary(status_container)
     # footer_container.float("bottom: 10px;")

@@ -342,8 +342,13 @@ def load_value(key):
         st.session_state[key] = None
     st.session_state["_"+key] = st.session_state[key]
     
-def on_click_generate():
+def on_click_generate(page_icon):
     st.session_state.is_generating = True
+    change_page_icon(page_icon)
+    
+def change_page_icon(state, icon = ":material/task_alt:"):
+    
+    st.session_state[state] = icon
     
 
     

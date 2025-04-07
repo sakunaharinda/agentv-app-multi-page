@@ -3,6 +3,7 @@ from handlers import get_pdp_nlacp, pdp_policy_nav_prev, pdp_policy_nav_next, ge
 from loading import load_policy
 from sections.testing.policy_tester import PolicyTester
 from ac_engine_service import AccessControlEngine
+from utils import change_page_icon
 
 @st.fragment
 def test_policies(policy_tester: PolicyTester):
@@ -60,12 +61,12 @@ def test_policies(policy_tester: PolicyTester):
         )
         
         if test_policy_btn:
-            
+            change_page_icon('test_icon')
             policy_tester.test_policy(st.session_state.pdp_policies[st.session_state.pdp_count])
             # st.write(st.session_state.corrected_policies[st.session_state.cor_count])
             
         elif test_system_btn:
-            
+            change_page_icon('test_icon')
             policy_tester.test_overall()
 
 hierarchy = st.session_state.hierarchies

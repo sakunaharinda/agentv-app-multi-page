@@ -5,6 +5,7 @@ from loading import load_json_output
 from ac_engine_service import AccessControlEngine
 from zipfile import ZipFile, ZIP_DEFLATED
 import pathlib
+from utils import change_page_icon
 
 def save_policies(ac_engine: AccessControlEngine, save_path = 'downloads'):
     
@@ -71,7 +72,9 @@ def save_policies(ac_engine: AccessControlEngine, save_path = 'downloads'):
                 use_container_width=True,
                 disabled=len(st.session_state.corrected_policies) < 1,
                 icon=':material/data_object:',
-                key='save_json'
+                key='save_json',
+                on_click=change_page_icon,
+                args=('save_icon',)
             )
         
         with open(f'{save_path}/xacml.zip', 'rb') as f:
@@ -83,7 +86,9 @@ def save_policies(ac_engine: AccessControlEngine, save_path = 'downloads'):
                 use_container_width=True, 
                 disabled= (len(st.session_state.corrected_policies) == 0),
                 file_name="xacml.zip",
-                data=f
+                data=f,
+                on_click=change_page_icon,
+                args=('save_icon',)
                 )
             
     

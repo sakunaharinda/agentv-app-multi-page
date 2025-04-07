@@ -3,6 +3,8 @@ from code_editor import code_editor
 import xml.etree.ElementTree as ET
 from ac_engine_service import AccessControlEngine
 from models.ac_engine_dto import XACMLPolicyRecord
+from utils import change_page_icon
+from sections.generation.generation_utils import write_feedback
 
 @st.fragment
 def write_xacml(ac_engine: AccessControlEngine):
@@ -103,6 +105,7 @@ def write_xacml(ac_engine: AccessControlEngine):
         )
     
     if submit:
+        change_page_icon("write_xacml_icon")
         policy_xml = code_editor_response["text"]
         try:
             policy_root = ET.fromstring(policy_xml)
@@ -113,10 +116,7 @@ def write_xacml(ac_engine: AccessControlEngine):
                     policy=policy_xml
                 )
             )
-            if status == 200:
-                feedback_container.success("Policy is published sucessfully!", icon='✅')
-            else:
-                feedback_container.error(f"An error occured with the error code {status} while trying to publish the policy.", icon='🚨')
+            write_feedback(status)
         except Exception as e:
             print(e)
             feedback_container.error(body=str(e), icon='🚨')

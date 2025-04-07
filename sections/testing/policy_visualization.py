@@ -3,6 +3,7 @@ from typing import List
 import streamlit as st
 import numpy as np
 from models.ac_engine_dto import JSONPolicyRecord
+from utils import change_page_icon
 
 @st.cache_data(show_spinner = False)
 def create_access_matrix(correct_policies: List[JSONPolicyRecord]):
@@ -63,7 +64,7 @@ _, viz_col, _ = st.columns([1,1,1])
         
 
 st.title("Policy Visualization")
-    
+change_page_icon('viz_icon')
 if len(st.session_state.corrected_policies)>0:
     with st.container(height=400, border=False):
 

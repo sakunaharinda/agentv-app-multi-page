@@ -7,6 +7,7 @@ from models.ac_engine_dto import JSONPolicyRecord
 from uuid import uuid4
 from models.record_dto import Hierarchy
 from feedback import warning
+from utils import change_page_icon
 
 @st.cache_data(show_spinner=False)
 def update_options(df, subjects, actions, resources):
@@ -161,6 +162,7 @@ def show_incorrect_policies(models, hierarchy: Hierarchy):
         label="Submit", type="primary", use_container_width=True, key="submit_btn", disabled=(len(st.session_state.inc_policies)<1) or (cur_inc_policy["solved"] == True)
     )
     if submit:
+        change_page_icon('incorrect_pol_icon')
         confirm_submission(edited_df, models, hierarchy)
         
 hierarchy = st.session_state.hierarchies

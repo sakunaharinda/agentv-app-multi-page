@@ -54,3 +54,20 @@ def review_incorrects(incorrects):
         
     st.session_state.reviewed = True
     
+    
+@st.dialog(title="Publish to Policy Database")
+def write_feedback(status_code):
+    
+    if status_code == 200:
+        
+        st.success("The policy is published to the policy database successfully!", icon='✅')
+        
+    else:
+        
+        st.error(f"An error occured with the HTTP status code {status_code} while trying to publish the policy.", icon='🚨')
+        
+    ok = st.button("OK", key='ok_publish_xacml', use_container_width=True, type='primary')
+    
+    if ok:
+        st.rerun()
+    

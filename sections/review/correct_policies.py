@@ -2,7 +2,8 @@ import streamlit as st
 from handlers import get_cor_nlacp, get_cor_policy, cor_policy_nav_prev, cor_policy_nav_next, pdp_policy_nav_last, pdp_policy_nav_next 
 from loading import load_policy
 from ac_engine_service import AccessControlEngine
-from sections.review.review_utils import publish_all, publish_cur
+from sections.review.review_utils import publish_all, publish_cur, policy_db_feedback
+from utils import change_page_icon
 
 @st.fragment
 def show_correct_policies(ac_engine: AccessControlEngine):
@@ -60,6 +61,7 @@ def show_correct_policies(ac_engine: AccessControlEngine):
         )
         
         if publish_cur_btn:
+            change_page_icon('correct_pol_icon')
             cur_policy = st.session_state.corrected_policies[st.session_state.cor_count]
             status = publish_cur(ac_engine)
             if status == 200:
@@ -70,7 +72,7 @@ def show_correct_policies(ac_engine: AccessControlEngine):
                 cor_pol_container.error(f"An error occured with the HTTP status code {status} while trying to publish the policy.", icon='🚨')
                 
         elif publish_all_btn:
-            
+            change_page_icon('correct_pol_icon')
             status = publish_all(ac_engine)
             
             # TODO: Add a dialog to show success message
@@ -79,9 +81,8 @@ def show_correct_policies(ac_engine: AccessControlEngine):
                 st.session_state.pdp_policies.extend(st.session_state.corrected_policies)
                 st.session_state.pdp_policies = list(set(st.session_state.pdp_policies))
                 pdp_policy_nav_next()
-            #     cor_pol_container.success("Policy is publiched sucessfully!", icon='✅')
-            # else:
-            #     cor_pol_container.error(f"An error occured with the error code {status} while trying to publish the policy.", icon='🚨')
+            
+            policy_db_feedback(status)
             
         
 ac_engine = AccessControlEngine()

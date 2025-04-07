@@ -1,5 +1,5 @@
 import streamlit as st
-from utils import store_value, load_value
+from utils import store_value, change_page_icon
 from loading import get_entity_hierarchy
 from feedback import *
 from hierarchy_visualizer import set_hierarchy
@@ -50,15 +50,15 @@ with full_container:
         
 
 if gen_doc:
-    
+    change_page_icon('start_icon')
     st.switch_page('sections/generation/generate_document.py')
     
 elif gen_sent:
-    
+    change_page_icon('start_icon')
     st.switch_page('sections/generation/generate_individual.py')
     
 elif write_xacml:
-    
+    change_page_icon('start_icon')
     st.switch_page('sections/generation/write_policy.py')
     
 

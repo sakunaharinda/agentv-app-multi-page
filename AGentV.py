@@ -53,17 +53,17 @@ init()
 
 starting_page = st.Page("sections/get_started.py", title=st.session_state.start_title, icon=st.session_state.start_icon, default=True)
 
-generate_doc = st.Page("sections/generation/generate_document.py", title=st.session_state.generate_doc_title, icon="")
-generate_single = st.Page("sections/generation/generate_individual.py", title=st.session_state.generate_single_title, icon="")
-write_xacml = st.Page("sections/generation/write_policy.py", title=st.session_state.write_xacml_title, icon="")
+generate_doc = st.Page("sections/generation/generate_document.py", title=st.session_state.generate_doc_title, icon=st.session_state.gen_doc_icon)
+generate_single = st.Page("sections/generation/generate_individual.py", title=st.session_state.generate_single_title, icon=st.session_state.gen_sent_icon)
+write_xacml = st.Page("sections/generation/write_policy.py", title=st.session_state.write_xacml_title, icon=st.session_state.write_xacml_icon)
 
-correct_pol_page = st.Page("sections/review/correct_policies.py", title=st.session_state.cor_policies_title, icon="")
-incorrect_pol_page = st.Page("sections/review/incorrect_policies.py", title=st.session_state.inc_policies_title, icon="")
+correct_pol_page = st.Page("sections/review/correct_policies.py", title=st.session_state.cor_policies_title, icon=st.session_state.correct_pol_icon)
+incorrect_pol_page = st.Page("sections/review/incorrect_policies.py", title=st.session_state.inc_policies_title, icon=st.session_state.incorrect_pol_icon)
 
-policy_viz_page = st.Page("sections/testing/policy_visualization.py", title=st.session_state.policy_viz_title, icon="")
-policy_test_page = st.Page("sections/testing/test_policies.py", title=st.session_state.policy_test_title, icon="")
+policy_viz_page = st.Page("sections/testing/policy_visualization.py", title=st.session_state.policy_viz_title, icon=st.session_state.viz_icon)
+policy_test_page = st.Page("sections/testing/test_policies.py", title=st.session_state.policy_test_title, icon=st.session_state.test_icon)
 
-policy_export_page = st.Page("sections/export/policy_export.py", title=st.session_state.policy_export_title, icon="")
+policy_export_page = st.Page("sections/export/policy_export.py", title=st.session_state.policy_export_title, icon=st.session_state.save_icon)
 
 if st.session_state.started:
     

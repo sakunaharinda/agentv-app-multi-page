@@ -11,9 +11,15 @@ def set_state(state, value):
 def init():
     
     set_state('start_icon', '')
-    set_state('inputs_icon', '')
-    set_state('cor_policies_icon', '')
-    set_state('inc_policies_icon', '')
+    set_state('correct_pol_icon', '')
+    set_state('incorrect_pol_icon', '')
+    set_state('gen_doc_icon', '')
+    set_state('gen_sent_icon', '')
+    set_state('write_xacml_icon', '')
+    set_state('viz_icon', '')
+    set_state('test_icon', '')
+    set_state('save_icon', '')
+    
     
     set_state('enable_generation', False)
     set_state('main_hierarchy', None)

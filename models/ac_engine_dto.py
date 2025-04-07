@@ -54,7 +54,6 @@ class JSONPolicyRecord:
     
     def __eq__(self, __value: object) -> bool:
         return (
-            self.policyId == __value.policyId and
             self.policyDescription == __value.policyDescription and
             self.policy == __value.policy
         )
