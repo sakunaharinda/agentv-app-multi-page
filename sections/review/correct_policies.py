@@ -34,7 +34,7 @@ def show_correct_policies(ac_engine: AccessControlEngine):
 
     cdf = load_policy(get_cor_policy())
 
-    cor_pol_container = st.container(border=False, height=350)
+    cor_pol_container = st.container(border=False, height=343)
     if len(st.session_state.corrected_policies)>0:
         corr_df = cor_pol_container.dataframe(cdf, use_container_width=True, key="correct_policies")
 

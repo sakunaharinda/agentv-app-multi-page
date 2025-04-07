@@ -1,21 +1,25 @@
+import os
 import requests
 import uuid
 from models.ac_engine_dto import *
+from dotenv import load_dotenv
 
+_ = load_dotenv()
 
-BASE_URL = "http://130.216.216.35:8081"
+# BASE_URL = os.environ['AC_ENGINE_SERVER_BASE_URL']
 
 
 class AccessControlEngine():
     
-    def __init__(self, base_url = "http://130.216.216.35:8081",
+    def __init__(self, base_url = os.environ['AC_ENGINE_SERVER_BASE_URL'],
                  get_policies_path = '/policy', 
                  get_policy_by_id_path = '/policy/{id}',
                  get_overall_effect_path = '/policy/effectAll',
                  get_effect_path = '/policy/effect',
                  create_policy_path = '/policy/add',
                  create_policies_path = '/policy/addAll',
-                 delete_policy_by_id_path = '/policy/{id}'
+                 delete_policy_by_id_path = '/policy/{id}',
+                 create_policy_xacml_path = '/policy/add/xacml'
                  ):
         self.base_url = base_url
         self.get_policies_url = base_url + get_policies_path
@@ -25,6 +29,7 @@ class AccessControlEngine():
         self.create_policy_url = base_url + create_policy_path
         self.create_policies_url = base_url + create_policies_path
         self.delete_policy_by_id_url = base_url + delete_policy_by_id_path
+        self.create_policy_xacml_url = base_url + create_policy_xacml_path
 
 
     def get_all_policies(self):
@@ -51,6 +56,12 @@ class AccessControlEngine():
         policy_create_request = body.to_dict()
         response = requests.post(self.create_policy_url, json=policy_create_request)
         return response.status_code
+    
+    def create_policy_xacml(self, body: XACMLPolicyRecord):
+        policy_create_request = body.to_dict()
+        response = requests.post(self.create_policy_xacml_url, json=policy_create_request)
+        return response.status_code
+        
     
     def create_multiple_policies(self, body: List[JSONPolicyRecord]):
         policy_create_request = [r.to_dict() for r in body]

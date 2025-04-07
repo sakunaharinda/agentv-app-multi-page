@@ -1,6 +1,7 @@
 import streamlit as st
 from ac_engine_service import AccessControlEngine
 from loading import ModelStore
+from uuid import uuid4
 
 def set_state(state, value):
     if state not in st.session_state:
@@ -39,6 +40,7 @@ def init():
     set_state('cor_policies_title', f'Correct Policies')
     set_state('inc_policies_title', f'Incorrect Policies')
     set_state('policy_viz_title', 'Policy Visualization')
+    set_state('write_xacml_title', 'Write in XACML')
 
     
     if 'expand' not in st.session_state:
@@ -53,5 +55,7 @@ def init():
     if 'models' not in st.session_state:
         
         st.session_state['models'] = ModelStore(fake=False)
+        
+    st.session_state.xacml_uuid = str(uuid4())
     
     

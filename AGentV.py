@@ -56,8 +56,11 @@ if h_btn:
 
 
 starting_page = st.Page("sections/get_started.py", title=st.session_state.start_title, icon=st.session_state.start_icon, default=True)
+
 generate_doc = st.Page("sections/generation/generate_document.py", title=st.session_state.generate_doc_title, icon="")
 generate_single = st.Page("sections/generation/generate_individual.py", title=st.session_state.generate_single_title, icon="")
+write_xacml = st.Page("sections/generation/write_policy.py", title=st.session_state.write_xacml_title, icon="")
+
 correct_pol_page = st.Page("sections/review/correct_policies.py", title=st.session_state.cor_policies_title, icon="")
 incorrect_pol_page = st.Page("sections/review/incorrect_policies.py", title=st.session_state.inc_policies_title, icon="")
 policy_viz_page = st.Page("sections/review/policy_visualization.py", title=st.session_state.policy_viz_title, icon="")
@@ -67,7 +70,7 @@ pg = st.navigation(
     
     {
         "": [starting_page],
-        "Policy Generation": [generate_doc, generate_single],
+        "Policy Generation": [generate_doc, generate_single, write_xacml],
         "Policy Review": [correct_pol_page, incorrect_pol_page, policy_viz_page]
     }
     

@@ -30,7 +30,7 @@ def generate_doc(hierarchy, models):
 
 
     # with st.container(border=True, height=210) as status:
-    status_container = st.container(border=False, height=265)
+    status_container = st.container(border=False, height=305)
     
     with st.container(border=False, height=162):
         policy_doc = st.file_uploader("Upload a high-level requirement specification document", key='policy_doc', help='Upload a high-level requirement specification document written in natural language (i.e., English), that specifies who can access what information in the organization.', type=['md'])

@@ -31,7 +31,7 @@ def generate_sent(hierarchy, models):
 
     # visualize_hierarchy_expander(key='policy_sent_hierarchy')
 
-    nlacp_container = st.container(height=360, border=False)
+    nlacp_container = st.container(height=400, border=False)
 
     for written_p in st.session_state.written_nlacps:
         with nlacp_container.chat_message("user", avatar=":material/create:"):

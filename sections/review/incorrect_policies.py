@@ -103,7 +103,7 @@ def show_incorrect_policies(models, hierarchy: Hierarchy):
         use_container_width=True,
     )
 
-    with st.container(border=False, height=350):
+    with st.container(border=False, height=343):
         if (len(st.session_state.inc_policies)>0):
             cur_inc_policy = st.session_state.inc_policies[st.session_state.inc_count]
             if cur_inc_policy["solved"] == True:

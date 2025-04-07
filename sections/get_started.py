@@ -8,6 +8,7 @@ st.markdown(
         f"""
         <style>
             .st-key-gen_doc button,
+            .st-key-write_xacml button,
             .st-key-gen_sent button {{
                 height: 100px;
                 font-size: 100px !important;
@@ -36,10 +37,12 @@ with st.container(height=470, border=False):
             
     pbar = st.container(height=50, border=False)
     
-    _,col1, col2,_ = st.columns([0.15, 1,1, 0.15])
-    gen_doc = col1.button(f"Upload a Policy Document", key='gen_doc', type='secondary', icon=":material/article:", use_container_width=True, disabled= not st.session_state.enable_generation)
+    _,col1, col2,col3,_ = st.columns([0.05, 1,1,1, 0.05])
+    gen_doc = col1.button(f"Generate from a **Document**", key='gen_doc', type='secondary', icon=":material/article:", use_container_width=True, disabled= not st.session_state.enable_generation)
     
-    gen_sent = col2.button(f"Write a Policy", key='gen_sent', type='secondary', icon=":material/create:", use_container_width=True, disabled= not st.session_state.enable_generation)
+    gen_sent = col2.button(f"Generate from a **Sentence**", key='gen_sent', type='secondary', icon=":material/create:", use_container_width=True, disabled= not st.session_state.enable_generation)
+    
+    write_xacml = col3.button(f"Write in **XACML**", key='write_xacml', type='secondary', icon=":material/code:", use_container_width=True, disabled= not st.session_state.enable_generation)
         
 
 if gen_doc:
@@ -49,6 +52,10 @@ if gen_doc:
 elif gen_sent:
     
     st.switch_page('sections/generation/generate_individual.py')
+    
+elif write_xacml:
+    
+    st.switch_page('sections/generation/write_policy.py')
     
 
 

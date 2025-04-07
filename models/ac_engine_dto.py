@@ -61,6 +61,9 @@ class XACMLPolicyRecord:
             id = data.get('id', '0'),
             policy=data.get('policy','')
         )
+        
+    def to_dict(self):
+        return asdict(self)
 
 @dataclass     
 class PolicyEffectRequest:
