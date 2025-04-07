@@ -92,6 +92,7 @@ def write_xacml(ac_engine: AccessControlEngine):
     )
     
     feedback_container = st.container(border=False, height=55)
+    feedback_container.warning("Policies manually created with XACML will not be appeared in the **Policy Visualization**, but can be tested in the **Policy Testing** stage.", icon="⚠️")
     
     submit = st.button(
             "Publish Policy to Database",

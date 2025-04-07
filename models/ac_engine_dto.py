@@ -1,9 +1,9 @@
 from dataclasses import dataclass, field, asdict
-from typing import List
+from typing import List, Tuple
 import uuid
 
 
-@dataclass
+@dataclass(frozen=True)
 class ACR:
     decision: str
     subject: str
@@ -11,6 +11,26 @@ class ACR:
     resource: str
     purpose: str
     condition: str
+    
+    def __eq__(self, __value: object) -> bool:
+        return (
+            self.decision == __value.decision and
+            self.subject == __value.subject and
+            self.action == __value.action and
+            self.resource == __value.resource and
+            self.purpose == __value.purpose and
+            self.condition == __value.condition
+        )
+        
+    def __hash__(self) -> int:
+        return hash((
+            self.decision,
+            self.subject,
+            self.action,
+            self.resource,
+            self.purpose,
+            self.condition
+        ))
 
 @dataclass
 class JSONPolicyRecord:
@@ -31,6 +51,27 @@ class JSONPolicyRecord:
         
     def to_dict(self):
         return asdict(self)
+    
+    def __eq__(self, __value: object) -> bool:
+        return (
+            self.policyId == __value.policyId and
+            self.policyDescription == __value.policyDescription and
+            self.policy == __value.policy
+        )
+        
+    def __hash__(self) -> int:
+        # Convert the list of ACR objects to a tuple for hashing
+        policy_tuple = tuple(frozenset((
+            acr.decision,
+            acr.subject,
+            acr.action,
+            acr.resource,
+            acr.purpose,
+            acr.condition
+        ) for acr in self.policy))
+        
+        # Hash the combination of immutable attributes
+        return hash((self.policyId, self.policyDescription, policy_tuple))
     
     def get_null_policy():
         

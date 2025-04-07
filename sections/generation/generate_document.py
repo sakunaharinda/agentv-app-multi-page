@@ -2,7 +2,6 @@ import streamlit as st
 from utils import on_click_generate
 from ml_layer import agentv_batch
 from sections.generation.generation_utils import generating_wo_hierarchy, show_summary, review_incorrects
-import time
 
 @st.fragment
 def generate_doc(hierarchy, models):
@@ -32,10 +31,14 @@ def generate_doc(hierarchy, models):
     # with st.container(border=True, height=210) as status:
     status_container = st.container(border=False, height=305)
     
-    with st.container(border=False, height=162):
-        policy_doc = st.file_uploader("Upload a high-level requirement specification document", key='policy_doc', help='Upload a high-level requirement specification document written in natural language (i.e., English), that specifies who can access what information in the organization.', type=['md'])
+    footer_container = st.container()
+    
+    with footer_container:
+    
+        with st.container(border=False, height=162):
+            policy_doc = st.file_uploader("Upload a high-level requirement specification document", key='policy_doc', help='Upload a high-level requirement specification document written in natural language (i.e., English), that specifies who can access what information in the organization.', type=['md'])
 
-    generate_button = st.button(label='Generate', type='primary', key='generate_doc_btn', use_container_width=True, disabled=st.session_state.is_generating, on_click=on_click_generate, help=f"Click to start generating access control policies")
+        generate_button = st.button(label='Generate', type='primary', key='generate_doc_btn', use_container_width=True, disabled=st.session_state.is_generating, on_click=on_click_generate, help=f"Click to start generating access control policies")
 
     if st.session_state.is_generating:
 
@@ -64,7 +67,7 @@ def generate_doc(hierarchy, models):
             
     
     show_summary(status_container)
-    
+    # footer_container.float("bottom: 10px;")
 
 hierarchy = st.session_state.hierarchies
 models = st.session_state.models

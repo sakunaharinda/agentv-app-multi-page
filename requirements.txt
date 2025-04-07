@@ -17,3 +17,4 @@ st-pages
 faiss-cpu
 faiss-gpu
 streamlit_code_editor
+streamlit-float

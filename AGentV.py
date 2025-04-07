@@ -17,7 +17,7 @@ st.markdown(
         <style>
             [data-testid="stSidebarNav"]::before {{
                 content: "AGentV";
-                margin-top: 20px;
+                margin-top: 10px;
                 font-size: 30px;
                 justify-content: center;
                 display: flex;
@@ -25,7 +25,7 @@ st.markdown(
                 font-weight: bold;
             }}
             [data-testid="stSidebarNav"] ul {{
-                padding-top: 50px;
+                padding-top: 20px;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
@@ -39,7 +39,7 @@ st.markdown(
 
             
             [data-testid="stSidebarNav"] ul li {{
-                margin-bottom: 5px; /* Adjust the value as needed */
+                margin-bottom: 2px; /* Adjust the value as needed */
             }}
             
         </style>
@@ -63,15 +63,20 @@ write_xacml = st.Page("sections/generation/write_policy.py", title=st.session_st
 
 correct_pol_page = st.Page("sections/review/correct_policies.py", title=st.session_state.cor_policies_title, icon="")
 incorrect_pol_page = st.Page("sections/review/incorrect_policies.py", title=st.session_state.inc_policies_title, icon="")
-policy_viz_page = st.Page("sections/review/policy_visualization.py", title=st.session_state.policy_viz_title, icon="")
 
+policy_viz_page = st.Page("sections/testing/policy_visualization.py", title=st.session_state.policy_viz_title, icon="")
+policy_test_page = st.Page("sections/testing/test_policies.py", title=st.session_state.policy_test_title, icon="")
+
+policy_export_page = st.Page("sections/export/policy_export.py", title=st.session_state.policy_export_title, icon="")
 
 pg = st.navigation(
     
     {
         "": [starting_page],
         "Policy Generation": [generate_doc, generate_single, write_xacml],
-        "Policy Review": [correct_pol_page, incorrect_pol_page, policy_viz_page]
+        "Policy Review": [correct_pol_page, incorrect_pol_page],
+        "Policy Testing": [policy_viz_page, policy_test_page],
+        "Policy Exporting": [policy_export_page]
     }
     
 )

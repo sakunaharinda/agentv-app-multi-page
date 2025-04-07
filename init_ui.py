@@ -23,6 +23,9 @@ def init():
     set_state('cor_count', -1)
     set_state('inc_policies', [])
     set_state('corrected_policies', [])
+    set_state('pdp_count', -1)
+    set_state('pdp_policies', [])
+    
     set_state('is_generating', False)
     set_state('written_nlacps', [])
     set_state('vs_generated', False)
@@ -39,8 +42,10 @@ def init():
     set_state('generate_single_title', 'Generate from a Sentence')
     set_state('cor_policies_title', f'Correct Policies')
     set_state('inc_policies_title', f'Incorrect Policies')
-    set_state('policy_viz_title', 'Policy Visualization')
+    set_state('policy_viz_title', 'Visualize Policies')
     set_state('write_xacml_title', 'Write in XACML')
+    set_state('policy_test_title', "Test Policies")
+    set_state('policy_export_title', "Save Policies")
 
     
     if 'expand' not in st.session_state:

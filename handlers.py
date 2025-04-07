@@ -22,6 +22,17 @@ def cor_policy_nav_prev():
 def cor_policy_nav_last():
     st.session_state.cor_count = len(st.session_state.corrected_policies)-1
     
+def pdp_policy_nav_next():
+    st.session_state.pdp_count+=1
+    st.session_state.pdp_count = min(st.session_state.pdp_count, len(st.session_state.pdp_policies)-1)
+        
+def pdp_policy_nav_prev():
+    st.session_state.pdp_count-=1
+    st.session_state.pdp_count = max(st.session_state.pdp_count, 0)
+    
+def pdp_policy_nav_last():
+    st.session_state.pdp_count = len(st.session_state.pdp_policies)-1
+    
 def get_inc_nlacp():
     if len(st.session_state.inc_policies)<1:
         return ""
@@ -42,6 +53,17 @@ def get_cor_policy():
     if len(st.session_state.corrected_policies)<1:
         return []
     return st.session_state.corrected_policies[st.session_state.cor_count].to_dict()['policy']
+
+def get_pdp_nlacp():
+    if len(st.session_state.pdp_policies)<1:
+        return ""
+    return st.session_state.pdp_policies[st.session_state.pdp_count].to_dict()['policyDescription']
+    
+    
+def get_pdp_policy():
+    if len(st.session_state.pdp_policies)<1:
+        return []
+    return st.session_state.pdp_policies[st.session_state.pdp_count].to_dict()['policy']
     
 
 def submit_callback():
