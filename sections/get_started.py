@@ -3,6 +3,9 @@ from utils import store_value, load_value
 from loading import get_entity_hierarchy
 from feedback import *
 from hierarchy_visualizer import set_hierarchy
+from streamlit_float import *
+
+float_init()
 
 st.markdown(
         f"""
@@ -21,10 +24,12 @@ st.markdown(
         unsafe_allow_html=True,
     )
 
-st.title("Good Evening, Sakuna ")
 
+full_container = st.container()
 
-with st.container(height=470, border=False):
+with full_container:
+    st.title("Welcome to AGentV")
+    
     st.container(height=20, border=False)
     
     st.markdown("## To start the policy generation, ")
@@ -33,7 +38,6 @@ with st.container(height=470, border=False):
     with st.container(border=False, height=160):
         hierarchy_file = st.file_uploader("Upload the organization hierarchy", key='_hierarchy_upload', help='Upload the organization hierarchy specified in YAML format', type=['yaml', 'yml'], on_change=store_value, args=("hierarchy_upload",))
         
-        print(st.session_state._hierarchy_upload)
             
     pbar = st.container(height=50, border=False)
     
@@ -61,3 +65,5 @@ elif write_xacml:
 
 with pbar:
     set_hierarchy(hierarchy_file)
+    
+full_container.float("top: 20%;")

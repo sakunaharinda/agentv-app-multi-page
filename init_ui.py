@@ -46,6 +46,7 @@ def init():
     set_state('write_xacml_title', 'Write in XACML')
     set_state('policy_test_title', "Test Policies")
     set_state('policy_export_title', "Save Policies")
+    set_state('started', False)
 
     
     if 'expand' not in st.session_state:

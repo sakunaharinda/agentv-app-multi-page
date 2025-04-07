@@ -67,7 +67,7 @@ def show_correct_policies(ac_engine: AccessControlEngine):
                 cor_pol_container.success("Policy is published sucessfully!", icon='✅')
                 pdp_policy_nav_last()
             else:
-                cor_pol_container.error(f"An error occured with the error code {status} while trying to publish the policy.", icon='🚨')
+                cor_pol_container.error(f"An error occured with the HTTP status code {status} while trying to publish the policy.", icon='🚨')
                 
         elif publish_all_btn:
             

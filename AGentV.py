@@ -50,10 +50,6 @@ st.markdown(
     
 init()
 
-h_btn = st.sidebar.button("Organization Hierarchy", use_container_width=True, key='org_hierarchy', type='primary', disabled=(not st.session_state.hierarchies))
-if h_btn:
-    visualize_hierarchy_dialog()
-
 
 starting_page = st.Page("sections/get_started.py", title=st.session_state.start_title, icon=st.session_state.start_icon, default=True)
 
@@ -69,17 +65,27 @@ policy_test_page = st.Page("sections/testing/test_policies.py", title=st.session
 
 policy_export_page = st.Page("sections/export/policy_export.py", title=st.session_state.policy_export_title, icon="")
 
-pg = st.navigation(
+if st.session_state.started:
     
-    {
+    pages = {
         "": [starting_page],
         "Policy Generation": [generate_doc, generate_single, write_xacml],
-        "Policy Review": [correct_pol_page, incorrect_pol_page],
+        "Policy Review": [incorrect_pol_page, correct_pol_page],
         "Policy Testing": [policy_viz_page, policy_test_page],
         "Policy Exporting": [policy_export_page]
     }
     
-)
+    h_btn = st.sidebar.button("Organization Hierarchy", use_container_width=True, key='org_hierarchy', type='primary', disabled=(not st.session_state.hierarchies))
+    if h_btn:
+        visualize_hierarchy_dialog()
+    
+else:
+    
+    pages = {
+        "": [starting_page]
+    }
+
+pg = st.navigation(pages)
 
 
 pg.run()

@@ -18,6 +18,8 @@ def set_hierarchy(hierarchy_file):
         
         st.session_state.models.vectorestores = build_vectorstores(hierarchies.to_dict())
         
+        st.session_state.started = True # To show all the tabs
+        
     if st.session_state.vs_generated:
         st.session_state.vs_generated = False
         st.rerun()
