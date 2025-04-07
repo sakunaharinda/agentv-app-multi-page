@@ -65,7 +65,7 @@ def save_policies(ac_engine: AccessControlEngine, save_path = 'downloads'):
         
         _,col1, col2,_ = st.columns([0.15, 1,1, 0.15])
         save_json = col1.download_button(
-                label="Export as JSON",
+                label="Save as JSON",
                 file_name="policies.json",
                 mime="application/json",
                 data=load_json_output(st.session_state.corrected_policies),

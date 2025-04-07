@@ -60,6 +60,11 @@ def init():
     else:
         st.session_state.expand = False
         
+    if 'first_time' not in st.session_state:
+        st.session_state.first_time = True
+    else:
+        st.session_state.first_time = False
+        
     if 'ac_engine' not in st.session_state:
 
         st.session_state["ac_engine"] = AccessControlEngine()

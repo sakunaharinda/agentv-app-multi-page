@@ -4,6 +4,7 @@ from loading import get_entity_hierarchy
 from feedback import *
 from hierarchy_visualizer import set_hierarchy
 from streamlit_float import *
+from introduction import intro
 
 float_init()
 
@@ -23,6 +24,9 @@ st.markdown(
         """,
         unsafe_allow_html=True,
     )
+
+if st.session_state.first_time:
+    intro()
 
 
 full_container = st.container()

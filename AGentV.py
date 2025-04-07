@@ -4,6 +4,7 @@ import streamlit as st
 from init_ui import init
 import torch
 from hierarchy_visualizer import visualize_hierarchy_dialog
+from introduction import intro
 
 torch.classes.__path__ = []
 print("rerun")
@@ -17,7 +18,7 @@ st.markdown(
         <style>
             [data-testid="stSidebarNav"]::before {{
                 content: "AGentV";
-                margin-top: 10px;
+                margin-top: 5px;
                 font-size: 30px;
                 justify-content: center;
                 display: flex;
@@ -25,7 +26,7 @@ st.markdown(
                 font-weight: bold;
             }}
             [data-testid="stSidebarNav"] ul {{
-                padding-top: 20px;
+                padding-top: 10px;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;
@@ -39,7 +40,7 @@ st.markdown(
 
             
             [data-testid="stSidebarNav"] ul li {{
-                margin-bottom: 2px; /* Adjust the value as needed */
+                margin-bottom: 1px; /* Adjust the value as needed */
             }}
             
         </style>
@@ -75,9 +76,13 @@ if st.session_state.started:
         "Policy Exporting": [policy_export_page]
     }
     
-    h_btn = st.sidebar.button("Organization Hierarchy", use_container_width=True, key='org_hierarchy', type='primary', disabled=(not st.session_state.hierarchies))
+    h_btn = st.sidebar.button("Organization Hierarchy", use_container_width=True, key='org_hierarchy', type='primary', disabled=(not st.session_state.hierarchies), icon=":material/family_history:")
     if h_btn:
         visualize_hierarchy_dialog()
+        
+    help_btn = st.sidebar.button("Help", use_container_width=True, key='help', type='secondary', icon=":material/help:")
+    if help_btn:
+        intro()
     
 else:
     
