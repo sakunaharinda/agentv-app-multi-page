@@ -33,7 +33,13 @@ def generating_wo_hierarchy():
         st.session_state.is_generating = False
         st.switch_page('sections/get_started.py')
     
+
+def on_click_review():
+    st.switch_page('sections/review/incorrect_policies.py')
     
+def on_click_publish():
+    st.switch_page('sections/review/correct_policies.py')
+
 @st.dialog("Review Incorrectly Generated Policies")
 def review_incorrects(incorrects):
     
@@ -53,6 +59,22 @@ def review_incorrects(incorrects):
         st.rerun()
         
     st.session_state.reviewed = True
+    
+
+def review_individual(id, incorrect = False):
+    
+    review_container = st.container()
+    if incorrect:
+        review_container.error("The generated policy is found incorrect. Do you want to review it?", icon="🚨")
+        if review_container.button("Review", key=f'review_btn_{id}', use_container_width=True, type='primary'):
+            on_click_review()
+        
+    else:
+        review_container.info("Do you want to review and publish the generated policy to the policy database?", icon="📑")
+        if review_container.button("Review", key=f'review_btn_{id}', use_container_width=True, type='primary'):
+            on_click_publish()
+        
+    return review_container
     
     
 @st.dialog(title="Publish to Policy Database")

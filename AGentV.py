@@ -66,8 +66,10 @@ policy_test_page = st.Page("sections/testing/test_policies.py", title=st.session
 
 policy_export_page = st.Page("sections/export/policy_export.py", title=st.session_state.policy_export_title, icon=st.session_state.save_icon)
 
-if st.session_state.started:
+# if st.session_state.hierarchy_upload:
+#     st.session_state.enable_generation = True
     
+if st.session_state.started:
     pages = {
         "": [starting_page],
         "Policy Generation": [generate_doc, generate_single, write_xacml],

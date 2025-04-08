@@ -20,7 +20,7 @@ def show_workflow():
             style=normal_cell_style
             ),
         StreamlitFlowNode( id='1', 
-            pos=(100, 0), 
+            pos=(250, 0), 
             data={'content': 'Write in XACML'}, 
             node_type='default', 
             source_position='right', 
@@ -29,7 +29,7 @@ def show_workflow():
             style=normal_cell_style
             ),
         StreamlitFlowNode( id='1.1', 
-            pos=(100, 125), 
+            pos=(250, 125), 
             data={'content': 'Generate from Document'}, 
             node_type='default', 
             source_position='right', 
@@ -38,7 +38,7 @@ def show_workflow():
             style = normal_cell_style
             ),
         StreamlitFlowNode( id='1.2', 
-            pos=(100, 200), 
+            pos=(250, 200), 
             data={'content': 'Generate from Sentence'}, 
             node_type='default', 
             source_position='right', 
@@ -56,8 +56,8 @@ def show_workflow():
         #     style= primary_button_style
         #     ),
         StreamlitFlowNode(  '3', 
-            (330, 125), 
-            {'content': 'Generate'}, 
+            (100, 125), 
+            {'content': 'Policy Generation'}, 
             'default', 
             'right', 
             'left', 
@@ -160,14 +160,15 @@ def show_workflow():
         ]
 
     edges = [
-        StreamlitFlowEdge('0-1', '0', '1', animated=True, marker_end={'type': 'arrow'}),
-        StreamlitFlowEdge('0-1.1', '0', '1.1', animated=True, marker_end={'type': 'arrow'}),
-        StreamlitFlowEdge('0-1.2', '0', '1.2', animated=True, marker_end={'type': 'arrow'}),
-        StreamlitFlowEdge('1.1-3', '1.1', '3', animated=True, marker_end={'type': 'arrow'}),
+        StreamlitFlowEdge('0-3', '0', '3', animated=True, marker_end={'type': 'arrow'}),
+        StreamlitFlowEdge('3-1', '3', '1', animated=True, marker_end={'type': 'arrow'}),
+        StreamlitFlowEdge('3-1.1', '3', '1.1', animated=True, marker_end={'type': 'arrow'}),
+        StreamlitFlowEdge('3-1.2', '3', '1.2', animated=True, marker_end={'type': 'arrow'}),
+        StreamlitFlowEdge('1.1-4', '1.1', '4', animated=True, marker_end={'type': 'arrow'}),
         # StreamlitFlowEdge('1-2', '1', '3', animated=True, marker_end={'type': 'arrow'}),
-        StreamlitFlowEdge('1.2-2', '1.2', '3', animated=True, marker_end={'type': 'arrow'}),
+        StreamlitFlowEdge('1.2-4', '1.2', '4', animated=True, marker_end={'type': 'arrow'}),
             StreamlitFlowEdge('1-12', '1', '12', animated=True, marker_end={'type': 'arrow'}),
-            StreamlitFlowEdge('3-4', '3', '4', animated=True, marker_end={'type': 'arrow'}),
+            # StreamlitFlowEdge('3-4', '3', '4', animated=True, marker_end={'type': 'arrow'}),
             StreamlitFlowEdge('4-5', '4', '5', animated=True, marker_end={'type': 'arrow'}),
             StreamlitFlowEdge('4-6', '4', '6', animated=True, marker_end={'type': 'arrow'}),
             StreamlitFlowEdge('6-7', '6', '7', animated=True, marker_end={'type': 'arrow'}),
@@ -209,7 +210,7 @@ def intro():
         st.write("Before start the policy generation, upload the organization hierarchy as a YAML file.")
         st.success("If the processing of the hierarchy is successful, you will be able access the organization hierarchy as a graph in the side bar.")
     
-    with st.expander("**Step 2: Choose an Input Mode**", icon=":material/input:"):
+    with st.expander("**Step 2: Choose a Generation Mode**", icon=":material/input:"):
         st.write("After the Step 1 you have three options/paths to start the policy generation:")
         st.markdown("- **Option 1: Generate from a Document** – Upload a document containing high-level natural language access control requirements.")
         st.markdown("- **Option 2: Generate from a Sentence** – Manually enter an access control requirement in natural language.")

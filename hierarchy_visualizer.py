@@ -2,30 +2,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 from utils import store_value
 from feedback import *
-from loading import get_entity_hierarchy
-from vectorstore import build_vectorstores
-
-
-def set_hierarchy(hierarchy_file):
-    
-    # try:
-    if hierarchy_file is not None:
-        main_hierarchy, hierarchies = get_entity_hierarchy(hierarchy_file)
-        st.session_state['main_hierarchy'] = main_hierarchy
-        st.session_state['hierarchies'] = hierarchies
-        
-        st.session_state.enable_generation = True
-        
-        st.session_state.models.vectorestores = build_vectorstores(hierarchies.to_dict())
-        
-        st.session_state.started = True # To show all the tabs
-        
-    if st.session_state.vs_generated:
-        st.session_state.vs_generated = False
-        st.rerun()
-            
-    # except Exception as e:
-    #     error("The hierarchy file cannot be processed. Please ensure that it adheres to YAML guidelines and upload it again")
+from utils import set_hierarchy
 
 @st.dialog("Upload the Organization Hierarchy")
 def ask_hierarchy():

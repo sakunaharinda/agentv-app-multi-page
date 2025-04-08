@@ -2,16 +2,15 @@ import streamlit as st
 import uuid
 from models.ac_engine_dto import JSONPolicyRecord, PolicyEffectRequest
 from ac_engine_service import AccessControlEngine
-from models.record_dto import Hierarchy
 
 
 class PolicyTester():
     
-    def __init__(self, hierarchy: Hierarchy, ac_engine: AccessControlEngine):
+    def __init__(self, hierarchy: dict, ac_engine: AccessControlEngine):
         
-        self.subjects = sorted(self.get_values(hierarchy.subject_hierarchy))
-        self.actions = sorted(self.get_values(hierarchy.action_hierarchy))
-        self.resources = sorted(self.get_values(hierarchy.resource_hierarchy))
+        self.subjects = sorted(self.get_values(hierarchy['subject_hierarchy']))
+        self.actions = sorted(self.get_values(hierarchy['action_hierarchy']))
+        self.resources = sorted(self.get_values(hierarchy['resource_hierarchy']))
         
         self.ac_engine = ac_engine
 

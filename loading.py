@@ -85,7 +85,7 @@ def get_entity_hierarchy(hierarchy_file):
     
     main_hierarchy = load_hierarchy_yaml(hierarchy_file)
     
-    subject_h = remove_itself(flatten(main_hierarchy.get('subjects', {})))
+    subject_h = flatten(main_hierarchy.get('subjects', {}))
     action_h = remove_itself(flatten(main_hierarchy.get('actions', {})))
     resource_h = remove_itself(flatten(main_hierarchy.get('resources', {})))
     condition_h = remove_itself(flatten(main_hierarchy.get('conditions', {})))
@@ -100,8 +100,10 @@ def load_models():
     ver_model, ver_tokenizer = load_ver_model()
     loc_model, loc_tokenizer = load_loc_model()
     vectorestores = None #load_vectorstores("data/vectorstores")
+    embedding_model = HuggingFaceEmbeddings(model_name="mixedbread-ai/mxbai-embed-large-v1",
+                                    model_kwargs={'device':"cuda", "trust_remote_code": True})
     
-    return id_model, id_tokenizer, gen_model, gen_tokenizer, ver_model, ver_tokenizer, loc_model, loc_tokenizer, vectorestores
+    return id_model, id_tokenizer, gen_model, gen_tokenizer, ver_model, ver_tokenizer, loc_model, loc_tokenizer, vectorestores, embedding_model
     
 
 @st.cache_resource
@@ -207,7 +209,7 @@ class ModelStore:
     def __init__(self, fake=False):
         
         if fake:
-            self.id_model, self.id_tokenizer, self.gen_model, self.gen_tokenizer, self.ver_model, self.ver_tokenizer, self.loc_model, self.loc_tokenizer, self.vectorestores = 9*[None]
+            self.id_model, self.id_tokenizer, self.gen_model, self.gen_tokenizer, self.ver_model, self.ver_tokenizer, self.loc_model, self.loc_tokenizer, self.vectorestores, self.embedding_model = 10*[None]
         
         else:
-            self.id_model, self.id_tokenizer, self.gen_model, self.gen_tokenizer, self.ver_model, self.ver_tokenizer, self.loc_model, self.loc_tokenizer, self.vectorestores = load_models()
+            self.id_model, self.id_tokenizer, self.gen_model, self.gen_tokenizer, self.ver_model, self.ver_tokenizer, self.loc_model, self.loc_tokenizer, self.vectorestores, self.embedding_model = load_models()

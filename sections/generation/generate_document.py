@@ -65,7 +65,8 @@ def generate_doc(hierarchy, models):
             incorrects = len(st.session_state.results_document['final_verification'])-st.session_state.results_document['final_verification'].count(11)
             if (not st.session_state.reviewed) and incorrects>0:
                 review_incorrects(incorrects)
-            st.rerun()
+            else:
+                st.rerun()
     
     show_summary(status_container)
     # footer_container.float("bottom: 10px;")

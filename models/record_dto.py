@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import List
+from typing import List, Any
 
 @dataclass
 class Results:
@@ -36,13 +36,15 @@ class WrittenPolicy:
     sentence: str = ""
     policy: List[dict] = field(default_factory = list)
     error: str = None
+    is_incorrect: bool = False
     
     def to_dict(self):
         return {
             'id': self.id,
             'sentence': self.sentence,
             'policy': self.policy,
-            'error': self.error
+            'error': self.error,
+            'is_incorrect': self.is_incorrect
         }
         
 
@@ -65,5 +67,30 @@ class Hierarchy:
             'resource_hierarchy': self.resource_hierarchy,
             'condition_hierarchy': self.condition_hierarchy
         }
+        
+    def reverse_component(self, hierarchy: dict):
+        reversed_h = {}
+        for k,v in hierarchy.items():
+            for vv in v:
+                if vv not in reversed_h:
+                    reversed_h[vv] = [k]
+                else:
+                    if k not in reversed_h[vv]:
+                        reversed_h[vv].append(k)
+                        
+        return reversed_h
+        
+    def reversed(self):
+        
+        return {
+            'subject_hierarchy': self.reverse_component(self.subject_hierarchy),
+            'action_hierarchy': self.reverse_component(self.action_hierarchy),
+            'resource_hierarchy': self.reverse_component(self.resource_hierarchy),
+            'condition_hierarchy': self.condition_hierarchy
+        }
+        
+        
+    def __repr__(self) -> str:
+        return f'Hierarchy({self.to_dict()})'
         
         

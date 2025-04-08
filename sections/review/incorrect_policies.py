@@ -77,7 +77,7 @@ def confirm_submission(edited_df, models, hierarchy):
         st.rerun()
 
 @st.fragment
-def show_incorrect_policies(models, hierarchy: Hierarchy):
+def show_incorrect_policies(models, hierarchy):
     
     st.title("Incorrect Policies")
     
@@ -116,7 +116,7 @@ def show_incorrect_policies(models, hierarchy: Hierarchy):
             df = load_policy(get_inc_policy())
             df.insert(0, 'rule', [i+1 for i in range(len(df))])
             
-            subjects, actions, resources = update_options(df, get_options(hierarchy.subject_hierarchy), get_options(hierarchy.action_hierarchy), get_options(hierarchy.resource_hierarchy))
+            subjects, actions, resources = update_options(df, get_options(hierarchy['subject_hierarchy']), get_options(hierarchy['action_hierarchy']), get_options(hierarchy['resource_hierarchy']))
             
             edited_df = st.data_editor(
                 df,

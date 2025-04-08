@@ -11,7 +11,7 @@ import handlers as handlers
 from feedback import *
 from dotenv import load_dotenv
 import requests
-from models.record_dto import Results, Hierarchy
+from models.record_dto import Results
 from models.ac_engine_dto import JSONPolicyRecord
 from uuid import uuid4
 from ac_engine_service import AccessControlEngine
@@ -347,7 +347,7 @@ def filter_policy(policy):
     return uniques
 
 @st.cache_data(show_spinner=False)
-def align_policy(policy, _vectorstore: dict, _hierarchy: Hierarchy):
+def align_policy(policy, _vectorstore: dict, hierarchy: dict):
     unique_pols = []
     
     new_pol = []
@@ -367,10 +367,10 @@ def align_policy(policy, _vectorstore: dict, _hierarchy: Hierarchy):
         if r not in unique_pols:
             unique_pols.append(r)
             
-    return expand_policy(unique_pols, _hierarchy.subject_hierarchy, _hierarchy.action_hierarchy, _hierarchy.resource_hierarchy)
+    return expand_policy(unique_pols, hierarchy['subject_hierarchy'], hierarchy['action_hierarchy'], hierarchy['resource_hierarchy'])
 
 # @st.cache_data(show_spinner=False)
-def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_tokenizer, _gen_model, _ver_model, _ver_tokenizer, _loc_tokenizer, _loc_model, _vectorstores, _hierarchy: Hierarchy, do_align=True):
+def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_tokenizer, _gen_model, _ver_model, _ver_tokenizer, _loc_tokenizer, _loc_model, _vectorstores, hierarchy, do_align=True):
     
     with _status_container.status("Generating the policy ...", expanded=True) as _status:
 
@@ -433,7 +433,7 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
                 if ver_result == 11:
                     
                     if do_align:
-                        policy = align_policy(policy, _vectorstores, _hierarchy)
+                        policy = align_policy(policy, _vectorstores, hierarchy)
                     
                     json_policy = JSONPolicyRecord.from_dict({
                         'policyId': str(uuid4()),
@@ -494,7 +494,7 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
     
     
 # @st.cache_data(show_spinner=False)
-def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_tokenizer, _gen_model, _ver_model, _ver_tokenizer, _loc_tokenizer, _loc_model, _vectorstores, _hierarchy: Hierarchy, do_align = True):
+def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_tokenizer, _gen_model, _ver_model, _ver_tokenizer, _loc_tokenizer, _loc_model, _vectorstores, hierarchy, do_align = True):
     
     print(_vectorstores)
     
@@ -560,7 +560,7 @@ def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_toke
             if ver == 11:
                 
                 if do_align:
-                    policy = align_policy(policy, _vectorstores, _hierarchy)
+                    policy = align_policy(policy, _vectorstores, hierarchy)
                 
                 json_policy = JSONPolicyRecord.from_dict({
                     'policyId': str(uuid4()),
@@ -588,7 +588,7 @@ def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_toke
                 if ver == 11:
                     
                     if do_align:
-                        policy = align_policy(policy, _vectorstores, _hierarchy)
+                        policy = align_policy(policy, _vectorstores, hierarchy)
                     
                     json_policy = JSONPolicyRecord.from_dict({
                         'policyId': str(uuid4()),

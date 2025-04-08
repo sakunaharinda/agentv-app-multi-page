@@ -11,15 +11,19 @@ def publish_all(ac_engine: AccessControlEngine):
     return ac_engine.create_multiple_policies(policies)
 
 @st.dialog(title="Publish to Policy Database")
-def policy_db_feedback(status_code):
+def policy_db_feedback(status_code, single = False):
     
     if status_code == 200:
-        
-        st.success("All the policies are published to the policy database successfully!", icon='✅')
+        if single:
+            st.success("The policy is published to the policy database successfully!", icon='✅')
+        else:
+            st.success("All the policies are published to the policy database successfully!", icon='✅')
         
     else:
-        
-        st.error(f"An error occured with the HTTP status code {status_code} while trying to publish the policies.", icon='🚨')
+        if single:
+            st.error(f"An error occured with the HTTP status code {status_code} while trying to publish the policy to the policy database.", icon='🚨')
+        else:
+            st.error(f"An error occured with the HTTP status code {status_code} while trying to publish the policies to the policy database.", icon='🚨')
         
     ok = st.button("OK", key='ok_publish', use_container_width=True, type='primary')
     

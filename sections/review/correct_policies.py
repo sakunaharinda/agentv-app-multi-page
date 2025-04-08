@@ -66,10 +66,12 @@ def show_correct_policies(ac_engine: AccessControlEngine):
             status = publish_cur(ac_engine)
             if status == 200:
                 st.session_state.pdp_policies.append(cur_policy)
-                cor_pol_container.success("Policy is published sucessfully!", icon='✅')
+                # cor_pol_container.success("Policy is published sucessfully!", icon='✅')
+                st.session_state.pdp_policies = list(set(st.session_state.pdp_policies))
                 pdp_policy_nav_last()
-            else:
-                cor_pol_container.error(f"An error occured with the HTTP status code {status} while trying to publish the policy.", icon='🚨')
+            # else:
+            #     cor_pol_container.error(f"An error occured with the HTTP status code {status} while trying to publish the policy.", icon='🚨')
+            policy_db_feedback(status, single=True)
                 
         elif publish_all_btn:
             change_page_icon('correct_pol_icon')

@@ -40,29 +40,27 @@ def extract_entities(hierarchies: dict, save_path = None):
     
 
 
-@st.cache_resource(show_spinner=False)
+# @st.cache_resource(show_spinner=False)
 def load_vectorstore(component, entity_list, save_location = "data/vectorstores", cache = "/mnt/huggingface/"):
     
     documents = [Document(page_content=ent, metadata={'component': f'{component}'}) for ent in entity_list]
     text_splitter  = RecursiveCharacterTextSplitter(chunk_size=100,chunk_overlap=0)
     text_chunks = text_splitter.split_documents(documents)
-    embeddings = HuggingFaceEmbeddings(model_name="mixedbread-ai/mxbai-embed-large-v1",
-                                    cache_folder = cache,
-                                    model_kwargs={'device':"cuda", "trust_remote_code": True})
+    
 
-    vector_store = FAISS.from_documents(text_chunks,embeddings)
+    vector_store = FAISS.from_documents(text_chunks,st.session_state.models.embedding_model)
     vector_store.save_local(f'{save_location}/{component}_index')
     
     return vector_store
     
-@st.cache_resource(show_spinner=False)
-def build_vectorstores(hierarchies, save_path = 'data/entities'):
+# @st.cache_resource(show_spinner=False)
+def build_vectorstores(pbar, save_path = 'data/entities'):
     
-    subjects, actions, resources, conditions = extract_entities(hierarchies, save_path)
+    subjects, actions, resources, conditions = extract_entities(st.session_state['hierarchies'], save_path)
     
     stores = {}
     progress_text = "Processing the hierarchy ..."
-    vs_build_bar = st.progress(0, text=progress_text)
+    vs_build_bar = pbar.progress(0, text=progress_text)
     
     for i, ent in enumerate([('subject', subjects), ('action', actions), ('resource', resources), ('condition', conditions)]):
         stores[ent[0]] = load_vectorstore(ent[0], ent[1])

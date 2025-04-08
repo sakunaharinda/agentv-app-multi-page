@@ -1,8 +1,6 @@
 import streamlit as st
 from utils import store_value, change_page_icon
-from loading import get_entity_hierarchy
 from feedback import *
-from hierarchy_visualizer import set_hierarchy
 from streamlit_float import *
 from introduction import intro
 
@@ -39,12 +37,13 @@ with full_container:
     st.markdown("## To start the policy generation, ")
     
     # load_value("hierarchy_upload")
-    with st.container(border=False, height=160):
-        hierarchy_file = st.file_uploader("Upload the organization hierarchy", key='_hierarchy_upload', help='Upload the organization hierarchy specified in YAML format', type=['yaml', 'yml'], on_change=store_value, args=("hierarchy_upload",))
-        
-            
+    upload_container =  st.container(border=False, height=160)
     pbar = st.container(height=50, border=False)
     
+    hierarchy_file = upload_container.file_uploader("Upload the organization hierarchy", key='_hierarchy_upload', help='Upload the organization hierarchy specified in YAML format', type=['yaml', 'yml'], on_change=store_value, args=("hierarchy_upload",pbar,))
+        
+            
+
     _,col1, col2,col3,_ = st.columns([0.05, 1,1,1, 0.05])
     gen_doc = col1.button(f"Generate from a **Document**", key='gen_doc', type='secondary', icon=":material/article:", use_container_width=True, disabled= not st.session_state.enable_generation)
     
@@ -67,7 +66,7 @@ elif write_xacml:
     
 
 
-with pbar:
-    set_hierarchy(hierarchy_file)
+# with pbar:
+#     set_hierarchy(hierarchy_file)
     
 full_container.float("top: 20%;")

@@ -4,7 +4,7 @@ from models.record_dto import WrittenPolicy
 from loading import load_policy
 from ml_layer import agentv_single
 from uuid import uuid4
-from sections.generation.generation_utils import generating_wo_hierarchy
+from sections.generation.generation_utils import review_individual
 
 @st.fragment
 def generate_sent(hierarchy, models):
@@ -39,7 +39,8 @@ def generate_sent(hierarchy, models):
             if written_p.error == None:
                 policy = load_policy(written_p.policy)
                 with st.expander("Generated Policy", expanded=False):
-                    st.dataframe(policy, use_container_width=True, key=written_p.id)
+                    st.dataframe(policy, use_container_width=True, key=f'df_{written_p.id}')
+                    review_individual(written_p.id, written_p.is_incorrect)
             else:
                 st.error(body=written_p.error, icon="🚨")
 
@@ -51,6 +52,8 @@ def generate_sent(hierarchy, models):
         generate_button = st.button(label='Generate', type='primary', key='generate_sent_btn', use_container_width=True, disabled=st.session_state.is_generating, on_click=on_click_generate, args=('gen_sent_icon',), help=f"Click to start generating access control policies")
 
     if st.session_state.is_generating:
+        
+        uuid = str(uuid4())
 
         if cur_nlacp == "":
             nlacp_container.error(
@@ -60,11 +63,6 @@ def generate_sent(hierarchy, models):
             st.session_state.is_generating = False
             st.rerun()
         else:
-            # if st.session_state.hierarchy_upload == None and not st.session_state.generate_wo_context:
-            #     st.session_state.is_generating = False
-            #     generating_wo_hierarchy()
-                
-            # else:
             
             with nlacp_container.chat_message("user", avatar=":material/create:"):
                 st.markdown(cur_nlacp)
@@ -74,7 +72,7 @@ def generate_sent(hierarchy, models):
             if len(st.session_state.results_individual['interrupted_errors']) > 0:
                 st.session_state.written_nlacps.append(
                     WrittenPolicy(
-                        id = str(uuid4()),
+                        id = uuid,
                         sentence=cur_nlacp,
                         policy=[],
                         error=st.session_state.results_individual['interrupted_errors'][0]
@@ -85,9 +83,10 @@ def generate_sent(hierarchy, models):
             
                 st.session_state.written_nlacps.append(
                     WrittenPolicy(
-                        id = str(uuid4()),
+                        id = uuid,
                         sentence=cur_nlacp,
-                        policy=st.session_state.results_individual['final_policies'][0]
+                        policy=st.session_state.results_individual['final_policies'][0],
+                        is_incorrect= st.session_state.results_individual['final_verification'][0]!=11
                     )
                 )
 

@@ -6,6 +6,8 @@ import streamlit as st
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
 from models.record_dto import Results
+from loading import get_entity_hierarchy
+from vectorstore import build_vectorstores
 
 class Task(Enum):
     NLACP_ID = 'nlacp_identification',
@@ -335,8 +337,33 @@ class DataLoaders():
             
         return loader
     
-def store_value(key):
+
+def set_hierarchy(hierarchy_file, pbar):
+    
+    # try:
+    if hierarchy_file is not None:
+        main_hierarchy, hierarchies = get_entity_hierarchy(hierarchy_file)
+        print()
+        print(hierarchies.reversed())
+        st.session_state['main_hierarchy'] = main_hierarchy
+        st.session_state['hierarchies'] = hierarchies.to_dict()
+        
+        st.session_state.models.vectorestores = build_vectorstores(pbar)
+        st.session_state.enable_generation = True
+        
+        st.session_state.started = True # To show all the tabs
+        
+    # if st.session_state.vs_generated:
+    #     st.session_state.vs_generated = False
+    #     st.rerun()
+            
+    # except Exception as e:
+    #     error("The hierarchy file cannot be processed. Please ensure that it adheres to YAML guidelines and upload it again")
+    
+def store_value(key, pbar):
     st.session_state[key] = st.session_state["_"+key]
+    set_hierarchy(st.session_state[key], pbar)
+    
 def load_value(key):
     if key not in st.session_state:
         st.session_state[key] = None
