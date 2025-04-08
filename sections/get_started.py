@@ -6,6 +6,9 @@ from introduction import intro
 
 float_init()
 
+def show_all_pages():
+    st.session_state.started = True
+
 st.markdown(
         f"""
         <style>
@@ -45,11 +48,11 @@ with full_container:
             
 
     _,col1, col2,col3,_ = st.columns([0.05, 1,1,1, 0.05])
-    gen_doc = col1.button(f"Generate from a **Document**", key='gen_doc', type='secondary', icon=":material/article:", use_container_width=True, disabled= not st.session_state.enable_generation)
+    gen_doc = col1.button(f"Generate from a **Document**", key='gen_doc', type='secondary', icon=":material/article:", use_container_width=True, disabled= not st.session_state.enable_generation, on_click=show_all_pages)
     
-    gen_sent = col2.button(f"Generate from a **Sentence**", key='gen_sent', type='secondary', icon=":material/create:", use_container_width=True, disabled= not st.session_state.enable_generation)
+    gen_sent = col2.button(f"Generate from a **Sentence**", key='gen_sent', type='secondary', icon=":material/create:", use_container_width=True, disabled= not st.session_state.enable_generation, on_click=show_all_pages)
     
-    write_xacml = col3.button(f"Write in **XACML**", key='write_xacml', type='secondary', icon=":material/code:", use_container_width=True, disabled= not st.session_state.enable_generation)
+    write_xacml = col3.button(f"Write in **XACML**", key='write_xacml', type='secondary', icon=":material/code:", use_container_width=True, disabled= not st.session_state.enable_generation, on_click=show_all_pages)
         
 
 if gen_doc:

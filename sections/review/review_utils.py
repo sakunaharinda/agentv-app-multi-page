@@ -28,4 +28,4 @@ def policy_db_feedback(status_code, single = False):
     ok = st.button("OK", key='ok_publish', use_container_width=True, type='primary')
     
     if ok:
-        st.rerun()
+        st.switch_page("sections/testing/test_policies.py")

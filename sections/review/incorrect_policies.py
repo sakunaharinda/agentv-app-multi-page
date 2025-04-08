@@ -1,11 +1,11 @@
 import ast
 import streamlit as st
-from handlers import get_inc_policy, get_inc_nlacp, inc_policy_nav_prev, inc_policy_nav_next, cor_policy_nav_last
+from handlers import get_inc_policy, get_inc_nlacp, inc_policy_nav_prev, inc_policy_nav_next, cor_policy_nav_last, reset_inc_count_last
 from loading import load_policy
 from ml_layer import align_policy
 from models.ac_engine_dto import JSONPolicyRecord
 from uuid import uuid4
-from models.record_dto import Hierarchy
+import time
 from feedback import warning
 from utils import change_page_icon
 
@@ -69,9 +69,12 @@ def confirm_submission(edited_df, models, hierarchy):
         st.session_state.inc_policies[st.session_state.inc_count]['policy'] = ast.literal_eval(edited_df.to_json(orient='records'))
         
         st.session_state.inc_policies[st.session_state.inc_count]['solved'] = True
+        st.session_state.inc_policies.pop(st.session_state.inc_count)
+        reset_inc_count_last()
         
         cor_policy_nav_last()
-        st.rerun()
+        if len(st.session_state.inc_policies) == 0:
+            st.switch_page("sections/review/correct_policies.py")
             
     elif back:
         st.rerun()
@@ -159,7 +162,7 @@ def show_incorrect_policies(models, hierarchy):
             )
 
     submit = st.button(
-        label="Submit", type="primary", use_container_width=True, key="submit_btn", disabled=(len(st.session_state.inc_policies)<1) or (cur_inc_policy["solved"] == True)
+        label="Submit", type="primary", use_container_width=True, key="submit_btn", disabled=(len(st.session_state.inc_policies)<1)
     )
     if submit:
         change_page_icon('incorrect_pol_icon')
