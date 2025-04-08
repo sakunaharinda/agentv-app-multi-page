@@ -174,3 +174,4 @@ cython_debug/
 .pypirc
 vectorestore_server/.vvenv
 logs
+data/
