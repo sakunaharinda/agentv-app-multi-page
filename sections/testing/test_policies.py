@@ -45,7 +45,7 @@ def test_policies(policy_tester: PolicyTester):
         # json_btn = viz_col1.button('Export as JSON', use_container_width=True, key='json_btn')
 
         test_system_btn = out_col2.button(
-            "Test System",
+            "Test System by Sending an Access Request",
             type="secondary",
             use_container_width=True,
             key="test_all",
@@ -53,7 +53,7 @@ def test_policies(policy_tester: PolicyTester):
         )
         
         test_policy_btn = out_col1.button(
-            "Test Policy",
+            "Test Policy by Sending an Access Request",
             type="primary",
             use_container_width=True,
             key="test_cur",

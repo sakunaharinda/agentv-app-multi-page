@@ -15,17 +15,19 @@ def policy_db_feedback(status_code, single = False):
     
     if status_code == 200:
         if single:
-            st.success("The policy is published to the policy database successfully!", icon='✅')
+            st.success("The policy is published to the policy database successfully!", icon=':material/check_circle:')
         else:
-            st.success("All the policies are published to the policy database successfully!", icon='✅')
+            st.success("All the policies are published to the policy database successfully!", icon=':material/check_circle:')
         
     else:
         if single:
-            st.error(f"An error occured with the HTTP status code {status_code} while trying to publish the policy to the policy database.", icon='🚨')
+            st.error(f"An error occured with the HTTP status code {status_code} while trying to publish the policy to the policy database.", icon=':material/dangerous:')
         else:
-            st.error(f"An error occured with the HTTP status code {status_code} while trying to publish the policies to the policy database.", icon='🚨')
+            st.error(f"An error occured with the HTTP status code {status_code} while trying to publish the policies to the policy database.", icon=':material/dangerous:')
         
     ok = st.button("OK", key='ok_publish', use_container_width=True, type='primary')
     
-    if ok:
+    if ok and not single:
         st.switch_page("sections/testing/test_policies.py")
+    elif ok:
+        st.rerun()

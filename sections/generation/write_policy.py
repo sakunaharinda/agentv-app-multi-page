@@ -94,7 +94,7 @@ def write_xacml(ac_engine: AccessControlEngine):
     )
     
     feedback_container = st.container(border=False, height=55)
-    feedback_container.warning("Policies manually created with XACML will not be appeared in the **Policy Visualization**, but can be tested in the **Policy Testing** stage.", icon="⚠️")
+    feedback_container.warning("Policies manually created with XACML will not be appeared in the **Policy Visualization**, but can be tested in the **Policy Testing** stage.", icon=":material/warning:")
     
     submit = st.button(
             "Publish Policy to Database",
@@ -119,7 +119,7 @@ def write_xacml(ac_engine: AccessControlEngine):
             write_feedback(status)
         except Exception as e:
             print(e)
-            feedback_container.error(body=str(e), icon='🚨')
+            feedback_container.error(body=str(e), icon=':material/dangerous:')
     
 
 ac_engine = AccessControlEngine()

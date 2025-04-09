@@ -8,6 +8,21 @@ from sections.generation.generation_utils import review_individual
 
 @st.fragment
 def generate_sent(hierarchy, models):
+    
+    st.markdown("""
+        <style>
+            /* Target the container with the specific key */
+            [data-testid="stVerticalBlock"] .st-key-individual_container {
+                position: fixed !important;
+                bottom: 10px !important;
+            }
+            
+            /* Add padding at the bottom of the page to prevent content from being hidden */
+            section.main {
+                padding-bottom: 100px !important;
+            }
+        </style>
+        """, unsafe_allow_html=True)
 
     st.session_state['sentence_page'] = True
     st.session_state['document_page'] = False
@@ -42,9 +57,9 @@ def generate_sent(hierarchy, models):
                     st.dataframe(policy, use_container_width=True, key=f'df_{written_p.id}')
                     review_individual(written_p.id, written_p.is_incorrect)
             else:
-                st.error(body=written_p.error, icon="🚨")
+                st.error(body=written_p.error, icon=":material/dangerous:")
 
-    footer_container = st.container()
+    footer_container = st.container(key='individual_container')
     
     with footer_container:
         cur_nlacp = st.text_input(label="Enter an access control requirement", help="Write a high-level access control requirement in natural language (i.e., English)", label_visibility='visible', placeholder="E.g., The LHCP can read medical records.")
@@ -58,7 +73,7 @@ def generate_sent(hierarchy, models):
         if cur_nlacp == "":
             nlacp_container.error(
                 "Please enter an access control requirement in natural language (i.e., English) before starting the generation.",
-                icon="🚨",
+                icon=":material/dangerous:",
             )
             st.session_state.is_generating = False
             st.rerun()

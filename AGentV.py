@@ -5,6 +5,7 @@ from init_ui import init
 import torch
 from hierarchy_visualizer import visualize_hierarchy_dialog
 from introduction import intro
+import streamlit_float
 
 torch.classes.__path__ = []
 print("rerun")

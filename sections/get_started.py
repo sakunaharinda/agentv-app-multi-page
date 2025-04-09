@@ -1,5 +1,5 @@
 import streamlit as st
-from utils import store_value, change_page_icon
+from utils import store_value_gen_h, change_page_icon
 from feedback import *
 from streamlit_float import *
 from introduction import intro
@@ -26,8 +26,8 @@ st.markdown(
         unsafe_allow_html=True,
     )
 
-if st.session_state.first_time:
-    intro()
+# if st.session_state.first_time:
+#     intro()
 
 
 full_container = st.container()
@@ -43,16 +43,24 @@ with full_container:
     upload_container =  st.container(border=False, height=160)
     pbar = st.container(height=50, border=False)
     
-    hierarchy_file = upload_container.file_uploader("Upload the organization hierarchy", key='_hierarchy_upload', help='Upload the organization hierarchy specified in YAML format', type=['yaml', 'yml'], on_change=store_value, args=("hierarchy_upload",pbar,))
+    hierarchy_file = upload_container.file_uploader("Upload the provided organization hierarchy in YAML format.", key='_hierarchy_upload', help='The provided organization hierarchy shows how the subjects (i.e., roles), actions, and resources are arranged in the organization. The **subjects/roles** are the different job titles or responsibilities people have (like HCP, LHCP, and DLHCP). Each role can perform certain **actions** (like read, edit, or write) on specific **resources** (like medical records), which helps define who can do what in access control policies.', type=['yaml', 'yml'], on_change=store_value_gen_h, args=("hierarchy_upload",pbar,))
         
             
 
     _,col1, col2,col3,_ = st.columns([0.05, 1,1,1, 0.05])
-    gen_doc = col1.button(f"Generate from a **Document**", key='gen_doc', type='secondary', icon=":material/article:", use_container_width=True, disabled= not st.session_state.enable_generation, on_click=show_all_pages)
+    gen_doc = col1.button(f"Generate from a **Document**", 
+                          key='gen_doc', 
+                          type='secondary', 
+                          icon=":material/article:", 
+                          use_container_width=True, 
+                          disabled= not st.session_state.enable_generation, 
+                          on_click=show_all_pages,
+                          help="This allows you to upload the provided high-level requirement specification document written in natural language (i.e., English) and automatically generate machine-executable access control policies. High-level requirement specification document describes who under what circumstances can access what resource in the organization (e.g., HCP can read medical records)."
+                          )
     
-    gen_sent = col2.button(f"Generate from a **Sentence**", key='gen_sent', type='secondary', icon=":material/create:", use_container_width=True, disabled= not st.session_state.enable_generation, on_click=show_all_pages)
+    gen_sent = col2.button(f"Generate from a **Sentence**", help= "This allows you to write your own access control requirements in natural language (i.e., English) and generate machine-executable access control policies.",key='gen_sent', type='secondary', icon=":material/create:", use_container_width=True, disabled= not st.session_state.enable_generation, on_click=show_all_pages)
     
-    write_xacml = col3.button(f"Write in **XACML**", key='write_xacml', type='secondary', icon=":material/code:", use_container_width=True, disabled= not st.session_state.enable_generation, on_click=show_all_pages)
+    write_xacml = col3.button(f"Write in **XACML**", help="This allows you to write access control policies directly in XACML (eXtensible Access Control Markup Language).", key='write_xacml', type='secondary', icon=":material/code:", use_container_width=True, disabled= not st.session_state.enable_generation, on_click=show_all_pages)
         
 
 if gen_doc:

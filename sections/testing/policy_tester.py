@@ -53,11 +53,11 @@ class PolicyTester():
             
             if status_code == 200:
                 if response.decision == 'permit':
-                    ct.success("The request is **Allowed!**", icon="✅")
+                    ct.success("The request is **Allowed!**", icon=":material/check_circle:")
                 elif response.decision == 'deny':
-                    ct.error("The request is **Denied!**", icon="🚫")
+                    ct.error("The request is **Denied!**", icon=":material/error:")
                 else:
-                    ct.warning("The request is **Not Applicable!**", icon="⚠️")
+                    ct.warning("The request is **Not Applicable!**", icon=":material/warning:")
             else:
                 ct.error(f"Returned the status code {status_code}")
                 
@@ -95,11 +95,11 @@ class PolicyTester():
             
             if status_code == 200:
                 if response.decision == 'permit':
-                    ct.success("The request is **Allowed!**", icon="✅")
+                    ct.success("The request is **Allowed!**", icon=":material/check_circle:")
                 elif response.decision == 'deny':
-                    ct.error("The request is **Denied!**", icon="🚫")
+                    ct.error("The request is **Denied!**", icon=":material/error:")
                 else:
-                    ct.warning("The request is **Not Applicable!**", icon="⚠️")
+                    ct.warning("The request is **Not Applicable!**", icon=":material/warning:")
             else:
                 ct.error(f"Returned the status code {status_code}")
                 

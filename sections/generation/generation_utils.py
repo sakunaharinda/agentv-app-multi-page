@@ -65,12 +65,12 @@ def review_individual(id, incorrect = False):
     
     review_container = st.container()
     if incorrect:
-        review_container.error("The generated policy is found incorrect. Do you want to review it?", icon="🚨")
+        review_container.error("The generated policy is found incorrect. Do you want to review it?", icon=":material/dangerous:")
         if review_container.button("Review", key=f'review_btn_{id}', use_container_width=True, type='secondary'):
             on_click_review()
         
     else:
-        review_container.info("Do you want to review and publish the generated policy to the policy database?", icon="📑")
+        review_container.info("Do you want to review and publish the generated policy to the policy database?", icon=":material/rate_review:")
         if review_container.button("Review", key=f'review_btn_{id}', use_container_width=True, type='secondary'):
             on_click_publish()
         
@@ -82,11 +82,11 @@ def write_feedback(status_code):
     
     if status_code == 200:
         
-        st.success("The policy is published to the policy database successfully!", icon='✅')
+        st.success("The policy is published to the policy database successfully!", icon=':material/check_circle:')
         
     else:
         
-        st.error(f"An error occured with the HTTP status code {status_code} while trying to publish the policy.", icon='🚨')
+        st.error(f"An error occured with the HTTP status code {status_code} while trying to publish the policy.", icon=':material/dangerous:')
         
     ok = st.button("OK", key='ok_publish_xacml', use_container_width=True, type='primary')
     

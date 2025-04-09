@@ -352,9 +352,12 @@ def set_hierarchy(hierarchy_file, pbar):
          # To show all the tabs
         
     
-def store_value(key, pbar):
-    st.session_state[key] = st.session_state["_"+key]
+def store_value_gen_h(key, pbar):
+    store_value(key)
     set_hierarchy(st.session_state[key], pbar)
+    
+def store_value(key):
+    st.session_state[key] = st.session_state["_"+key]
     
 def load_value(key):
     if key not in st.session_state:

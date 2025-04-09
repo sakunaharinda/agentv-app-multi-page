@@ -36,6 +36,7 @@ def init():
     set_state('written_nlacps', [])
     set_state('vs_generated', False)
     set_state('hierarchy_upload', None)
+    set_state('policy_doc', None)
     set_state('do_align', True)
     set_state('generate_wo_context', False)
     set_state('reviewed', False)
@@ -43,7 +44,7 @@ def init():
     st.session_state.num_correct_policies = len(st.session_state.corrected_policies)
     st.session_state.num_incorrect_policies = len(st.session_state.inc_policies)
     
-    set_state('start_title', 'Getting Started')
+    set_state('start_title', 'Home')
     set_state('generate_doc_title', 'Generate from a Document')
     set_state('generate_single_title', 'Generate from a Sentence')
     set_state('cor_policies_title', f'Correct Policies')

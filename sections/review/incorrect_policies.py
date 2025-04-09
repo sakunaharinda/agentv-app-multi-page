@@ -110,9 +110,9 @@ def show_incorrect_policies(models, hierarchy):
         if (len(st.session_state.inc_policies)>0):
             cur_inc_policy = st.session_state.inc_policies[st.session_state.inc_count]
             if cur_inc_policy["solved"] == True:
-                st.success("The policy is corrected and submitted sucessfully!", icon="✅")
+                st.success("The policy is corrected and submitted sucessfully!", icon=":material/check_circle:")
             else:
-                st.error(cur_inc_policy["warning"], icon="🚨")
+                st.error(cur_inc_policy["warning"])
                 
             
             df = load_policy(get_inc_policy())

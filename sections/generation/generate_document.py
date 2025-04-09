@@ -1,27 +1,28 @@
 import streamlit as st
-from utils import on_click_generate
+from utils import on_click_generate, store_value
 from ml_layer import agentv_batch
 from sections.generation.generation_utils import generating_wo_hierarchy, show_summary, review_incorrects
 
 @st.fragment
 def generate_doc(hierarchy, models):
+    
+    st.markdown("""
+        <style>
+            /* Target the container with the specific key */
+            [data-testid="stVerticalBlock"] .st-key-doc_container {
+                position: fixed !important;
+                bottom: 10px !important;
+            }
+            
+            /* Add padding at the bottom of the page to prevent content from being hidden */
+            section.main {
+                padding-bottom: 100px !important;
+            }
+        </style>
+        """, unsafe_allow_html=True)
 
     st.session_state['document_page'] = True
     st.session_state['sentence_page'] = False
-    # st.markdown(
-    #         f"""
-    #         <style>
-    #             .st-key-fab button {{
-    #                 position: fixed;
-    #                 top: 50%;
-    #                 box-shadow: rgba(0, 0, 0, 0.16) 0px 4px 16px;
-    #                 z-index: 999;
-    #                 border-radius: 2rem;
-    #             }}
-    #         </style>
-    #         """,
-    #         unsafe_allow_html=True,
-    #     )
 
     st.title("Policy Generation from a Document")
 
@@ -31,21 +32,21 @@ def generate_doc(hierarchy, models):
     # with st.container(border=True, height=210) as status:
     status_container = st.container(border=False, height=305)
     
-    footer_container = st.container()
+    footer_container = st.container(key='doc_container')
     
     with footer_container:
     
         with st.container(border=False, height=162):
-            policy_doc = st.file_uploader("Upload a high-level requirement specification document", key='policy_doc', help='Upload a high-level requirement specification document written in natural language (i.e., English), that specifies who can access what information in the organization.', type=['md'])
+            policy_doc = st.file_uploader("Upload the provided high-level requirement specification document", key='_policy_doc', help='Upload a high-level requirement specification document provided to you. It specifies who can access what information under what circumstances in the organization.', type=['md'], on_change=store_value, args=('policy_doc',))
 
-        generate_button = st.button(label='Generate', type='primary', key='generate_doc_btn', use_container_width=True, disabled=st.session_state.is_generating, on_click=on_click_generate, args=('gen_doc_icon',), help=f"Click to start generating access control policies")
+        generate_button = st.button(label='Generate', type='primary', key='generate_doc_btn', use_container_width=True, disabled=st.session_state.is_generating, on_click=on_click_generate, args=('gen_doc_icon',), help=f"Click to start generating access control policies from the uploaded high-level requirement specification document")
 
     if st.session_state.is_generating:
 
-        if policy_doc is None:
+        if st.session_state.policy_doc is None:
             status_container.error(
                 "Please upload a high-level requirement specification document before starting the generation.",
-                icon="🚨",
+                icon=":material/dangerous:",
             )
             st.session_state.is_generating = False
             # st.rerun()
@@ -56,7 +57,7 @@ def generate_doc(hierarchy, models):
                 
             # else:
                 
-            content = policy_doc.getvalue().decode('utf-8')
+            content = st.session_state.policy_doc.getvalue().decode('utf-8')
         
             agentv_batch(status_container, content, models.id_tokenizer, models.id_model, models.gen_tokenizer, models.gen_model, models.ver_model, models.ver_tokenizer, models.loc_tokenizer, models.loc_model, models.vectorestores, hierarchy, do_align=st.session_state.do_align)
             st.session_state.is_generating = False
