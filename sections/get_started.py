@@ -3,6 +3,9 @@ from utils import store_value_gen_h, change_page_icon
 from feedback import *
 from streamlit_float import *
 from introduction import intro
+from models.pages import PAGE
+
+st.session_state.current_page = PAGE.START
 
 float_init()
 

@@ -5,9 +5,27 @@ from ac_engine_service import AccessControlEngine
 from models.ac_engine_dto import XACMLPolicyRecord
 from utils import change_page_icon
 from sections.generation.generation_utils import write_feedback
+from models.pages import PAGE
 
 @st.fragment
 def write_xacml(ac_engine: AccessControlEngine):
+    
+    st.session_state.current_page = PAGE.WRITE_XACML
+    
+    st.markdown("""
+        <style>
+            /* Target the container with the specific key */
+            [data-testid="stVerticalBlock"] .st-key-xacml_container {
+                position: fixed !important;
+                bottom: 10px !important;
+            }
+            
+            /* Add padding at the bottom of the page to prevent content from being hidden */
+            section.main {
+                padding-bottom: 100px !important;
+            }
+        </style>
+        """, unsafe_allow_html=True)
     
     st.title("Write in XACML")
     
@@ -46,7 +64,6 @@ def write_xacml(ac_engine: AccessControlEngine):
         }
         '''
     
-    # nlacp = st.text_input(label="Enter the policy description.", help="Enter the intended access requirement in English. This will act as the policy description of the XACML policy.", placeholder="E.g., Allow LHCP to read medical records.", key="xacml_nlacp")
     
     code_editor_response = code_editor(
         code=f"""<Policy xmlns="urn:oasis:names:tc:xacml:3.0:core:schema:wd-17" PolicyId="{st.session_state.xacml_uuid}" RuleCombiningAlgId="urn:oasis:names:tc:xacml:1.0:rule-combining-algorithm:first-applicable" Version="1.0">
@@ -58,27 +75,9 @@ def write_xacml(ac_engine: AccessControlEngine):
     </Rule>
 </Policy>""",
         lang="xml",
-        height="405px",
+        height="465px",
         focus=False,
         allow_reset=True,
-        # info = {
-        #     "name": "language info",
-        #     "css": css_string,
-        #     "style": {
-        #                 "order": "1",
-        #                 "display": "flex",
-        #                 "flexDirection": "row",
-        #                 "alignItems": "center",
-        #                 "width": "100%",
-        #                 "height": "2.5rem",
-        #                 "padding": "0rem 0.75rem",
-        #                 "borderRadius": "8px 8px 0px 0px",
-        #                 "zIndex": "9993"
-        #             },
-        #     "info": [{
-        #     "name": "python"
-        #    }]
-        #     },
         options={"showLineNumbers": True},
         buttons=[
             {
@@ -93,16 +92,18 @@ def write_xacml(ac_engine: AccessControlEngine):
         ],
     )
     
-    feedback_container = st.container(border=False, height=55)
-    feedback_container.warning("Policies manually created with XACML will not be appeared in the **Policy Visualization**, but can be tested in the **Policy Testing** stage.", icon=":material/warning:")
-    
-    submit = st.button(
-            "Publish Policy to Database",
-            type="primary",
-            use_container_width=True,
-            key="publish_cur",
-            disabled=code_editor_response["text"] == "",
-        )
+    xacml_container = st.container(key='xacml_container')
+    with xacml_container:
+        feedback_container = st.container(border=False, height=55)
+        feedback_container.warning("Policies manually created with XACML will not be appeared in the **Policy Visualization**, but can be tested in the **Policy Testing** stage.", icon=":material/warning:")
+        
+        submit = st.button(
+                "Publish Policy to Database",
+                type="primary",
+                use_container_width=True,
+                key="publish_cur",
+                disabled=code_editor_response["text"] == "",
+            )
     
     if submit:
         change_page_icon("write_xacml_icon")

@@ -4,19 +4,42 @@ from loading import load_policy
 from sections.testing.policy_tester import PolicyTester
 from ac_engine_service import AccessControlEngine
 from utils import change_page_icon
+from models.pages import PAGE
 
 @st.fragment
 def test_policies(policy_tester: PolicyTester):
     
-    st.title("Test Policies")
+    st.markdown("""
+        <style>
+            /* Target the container with the specific key */
+            [data-testid="stVerticalBlock"] .st-key-test_container {
+                position: fixed !important;
+                bottom: 10px !important;
+            }
+            
+            [data-testid="stVerticalBlock"] .st-key-test_table_container {
+                position: fixed !important;
+                top: 170px !important;
+            }
+            
+            /* Add padding at the bottom of the page to prevent content from being hidden */
+            section.main {
+                padding-bottom: 100px !important;
+            }
+        </style>
+        """, unsafe_allow_html=True)
     
-    pdp_policy = st.text_input(
+    st.session_state.current_page = PAGE.TEST_POLICY
+    
+    st.title("Test Policies")
+    pdp_pol_container = st.container(border=False, height=343, key='test_table_container')
+    pdp_policy = pdp_pol_container.text_input(
         label="Policy submitted to the Policy Database",
         value=get_pdp_nlacp(),
         disabled=True,
         help="Natural Language Access Control Policies corresponding to access control policies submitted to the policy database.",
     )
-    _, pclc, nclc, _ = st.columns([5, 2, 2, 5])
+    _, pclc, nclc, _ = pdp_pol_container.columns([5, 2, 2, 5])
     prev_button_pdp = pclc.button(
         label="Previous",
         key="pdp_prev",
@@ -35,12 +58,11 @@ def test_policies(policy_tester: PolicyTester):
 
     cdf = load_policy(get_pdp_policy())
 
-    pdp_pol_container = st.container(border=False, height=343)
     if len(st.session_state.pdp_policies)>0:
         pdp_df = pdp_pol_container.dataframe(cdf, use_container_width=True, key="pdp_record")
 
 
-    with st.container(border=False, height=100):
+    with st.container(border=False, height=100, key='test_container'):
         out_col1, out_col2 = st.columns([1, 1])
         # json_btn = viz_col1.button('Export as JSON', use_container_width=True, key='json_btn')
 

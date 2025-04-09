@@ -5,7 +5,7 @@ from init_ui import init
 import torch
 from hierarchy_visualizer import visualize_hierarchy_dialog
 from introduction import intro
-import streamlit_float
+from what_to_do import show_page_help
 
 torch.classes.__path__ = []
 print("rerun")
@@ -44,14 +44,29 @@ st.markdown(
                 margin-bottom: 1px; /* Adjust the value as needed */
             }}
             
+            .st-key-fab button {{
+                position: fixed;
+                top: 50%;
+                right: -3.0%;
+                box-shadow: rgba(0, 0, 0, 0.16) 0px 4px 16px;
+                z-index: 999;
+                border-radius: 2rem;
+                transform: rotate(90deg);
+            }}
+            [data-testid="stHeading"] {{
+                position: fixed !important;
+                top: 60px !important;
+            }}
+            
         </style>
         """,
         unsafe_allow_html=True,
     )
     
-    
 init()
 
+
+st.button(label="What should I do?", icon=":material/help:", type='primary',key='fab', on_click=show_page_help)
 
 starting_page = st.Page("sections/get_started.py", title=st.session_state.start_title, icon=st.session_state.start_icon, default=True)
 
@@ -83,9 +98,9 @@ if st.session_state.started:
     if h_btn:
         visualize_hierarchy_dialog()
         
-    help_btn = st.sidebar.button("Help", use_container_width=True, key='help', type='secondary', icon=":material/help:")
-    if help_btn:
-        intro()
+    # help_btn = st.sidebar.button("Help", use_container_width=True, key='help', type='secondary', icon=":material/help:")
+    # if help_btn:
+    #     intro()
     
 else:
     

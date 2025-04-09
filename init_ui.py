@@ -2,6 +2,7 @@ import streamlit as st
 from ac_engine_service import AccessControlEngine
 from loading import ModelStore
 from uuid import uuid4
+from models.pages import PAGE
 
 def set_state(state, value):
     if state not in st.session_state:
@@ -55,6 +56,7 @@ def init():
     set_state('policy_export_title', "Save Policies")
     set_state('started', False)
 
+    set_state('current_page', PAGE.START)
     
     if 'expand' not in st.session_state:
         st.session_state.expand = True

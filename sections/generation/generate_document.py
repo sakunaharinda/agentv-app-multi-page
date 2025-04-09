@@ -1,10 +1,13 @@
 import streamlit as st
 from utils import on_click_generate, store_value
 from ml_layer import agentv_batch
-from sections.generation.generation_utils import generating_wo_hierarchy, show_summary, review_incorrects
+from sections.generation.generation_utils import show_summary, review_incorrects
+from models.pages import PAGE
 
 @st.fragment
 def generate_doc(hierarchy, models):
+    
+    st.session_state.current_page = PAGE.GEN_DOC
     
     st.markdown("""
         <style>
@@ -25,6 +28,8 @@ def generate_doc(hierarchy, models):
     st.session_state['sentence_page'] = False
 
     st.title("Policy Generation from a Document")
+    
+    # gen_doc_help()
 
     # visualize_hierarchy_expander(key='policy_doc_hierarchy')
 

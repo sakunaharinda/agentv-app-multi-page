@@ -6,8 +6,11 @@ from ac_engine_service import AccessControlEngine
 from zipfile import ZipFile, ZIP_DEFLATED
 import pathlib
 from utils import change_page_icon
+from models.pages import PAGE
 
 def save_policies(ac_engine: AccessControlEngine, save_path = 'downloads'):
+    
+    st.session_state.current_page = PAGE.SAVE_PAGE
     
     float_init()
     

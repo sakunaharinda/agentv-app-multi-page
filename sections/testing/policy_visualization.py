@@ -4,9 +4,12 @@ import streamlit as st
 import numpy as np
 from models.ac_engine_dto import JSONPolicyRecord
 from utils import change_page_icon
+from models.pages import PAGE
 
 @st.cache_data(show_spinner = False)
 def create_access_matrix(correct_policies: List[JSONPolicyRecord]):
+    
+    st.session_state.current_page = PAGE.VIZ_POLICY
     
     data = []
     

@@ -5,9 +5,12 @@ from loading import load_policy
 from ml_layer import agentv_single
 from uuid import uuid4
 from sections.generation.generation_utils import review_individual
+from models.pages import PAGE
 
 @st.fragment
 def generate_sent(hierarchy, models):
+    
+    st.session_state.current_page = PAGE.GEN_SENT
     
     st.markdown("""
         <style>
@@ -15,6 +18,7 @@ def generate_sent(hierarchy, models):
             [data-testid="stVerticalBlock"] .st-key-individual_container {
                 position: fixed !important;
                 bottom: 10px !important;
+                padding-top: 5px !important;
             }
             
             /* Add padding at the bottom of the page to prevent content from being hidden */
@@ -46,7 +50,7 @@ def generate_sent(hierarchy, models):
 
     # visualize_hierarchy_expander(key='policy_sent_hierarchy')
 
-    nlacp_container = st.container(height=400, border=False)
+    nlacp_container = st.container(height=410, border=False)
 
     for written_p in st.session_state.written_nlacps:
         with nlacp_container.chat_message("user", avatar=":material/create:"):

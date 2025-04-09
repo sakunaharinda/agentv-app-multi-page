@@ -4,19 +4,44 @@ from loading import load_policy
 from ac_engine_service import AccessControlEngine
 from sections.review.review_utils import publish_all, publish_cur, policy_db_feedback
 from utils import change_page_icon
+from models.pages import PAGE
 
 @st.fragment
 def show_correct_policies(ac_engine: AccessControlEngine):
     
+    st.session_state.current_page = PAGE.CORRECT_POL
+    
+    st.markdown("""
+        <style>
+            /* Target the container with the specific key */
+            [data-testid="stVerticalBlock"] .st-key-correct_container {
+                position: fixed !important;
+                bottom: 10px !important;
+            }
+            
+            [data-testid="stVerticalBlock"] .st-key-table_container {
+                position: fixed !important;
+                top: 170px !important;
+            }
+            
+            /* Add padding at the bottom of the page to prevent content from being hidden */
+            section.main {
+                padding-bottom: 100px !important;
+            }
+        </style>
+        """, unsafe_allow_html=True)
+    
     st.title("Correct Policies")
     
-    corr_policy = st.text_input(
+    cor_pol_container = st.container(border=False, height=500, key="table_container")
+    
+    corr_policy = cor_pol_container.text_input(
         label="Correctly generated policy",
         value=get_cor_nlacp(),
         disabled=True,
         help="Natural Language Access Control Policies corresponding to correct access control policies.",
     )
-    _, pclc, nclc, _ = st.columns([5, 2, 2, 5])
+    _, pclc, nclc, _ = cor_pol_container.columns([5, 2, 2, 5])
     prev_button_correct = pclc.button(
         label="Previous",
         key="cor_prev",
@@ -35,12 +60,12 @@ def show_correct_policies(ac_engine: AccessControlEngine):
 
     cdf = load_policy(get_cor_policy())
 
-    cor_pol_container = st.container(border=False, height=343)
+    
     if len(st.session_state.corrected_policies)>0:
         corr_df = cor_pol_container.dataframe(cdf, use_container_width=True, key="correct_policies")
 
 
-    with st.container(border=False, height=100):
+    with st.container(border=False, height=100, key="correct_container"):
         out_col1, out_col2 = st.columns([1, 1])
         # json_btn = viz_col1.button('Export as JSON', use_container_width=True, key='json_btn')
 
