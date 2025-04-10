@@ -104,7 +104,7 @@ def show_incorrect_policies(models, hierarchy):
         </style>
         """, unsafe_allow_html=True)
     
-    st.title("Incorrect Policies")
+    st.title("Incorrect Access Control Policies")
     with st.container(border=False, height=500, key='inc_table_container'):
         inc_policy = st.text_input(
             label="Incorrectly generated policy",

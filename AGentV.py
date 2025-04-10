@@ -90,28 +90,29 @@ policy_export_page = st.Page("sections/export/policy_export.py", title=st.sessio
 # if st.session_state.hierarchy_upload:
 #     st.session_state.enable_generation = True
     
-if st.session_state.started:
-    pages = {
-        "": [starting_page],
-        "Policy Generation": [generate_doc, generate_single, write_xacml],
-        "Policy Review": [incorrect_pol_page, correct_pol_page],
-        "Policy Testing": [policy_viz_page, policy_test_page],
-        "Policy Exporting": [policy_export_page]
-    }
-    
-    h_btn = st.sidebar.button("Organization Hierarchy", use_container_width=True, key='org_hierarchy', type='primary', disabled=(not st.session_state.hierarchies), icon=":material/family_history:")
-    if h_btn:
-        visualize_hierarchy_dialog()
+# if st.session_state.started:
+pages = {
+    "": [starting_page],
+    "Policy Generation": [generate_doc, generate_single, write_xacml],
+    "Policy Review": [incorrect_pol_page, correct_pol_page],
+    "Policy Testing": [policy_viz_page, policy_test_page],
+    "Policy Exporting": [policy_export_page]
+}
+
+h_btn = st.sidebar.button("Organization Hierarchy", use_container_width=True, key='org_hierarchy', type='primary', disabled=(not st.session_state.hierarchies), icon=":material/family_history:")
+if h_btn or st.session_state.show_hierarchy:
+    st.session_state.show_hierarchy = False
+    visualize_hierarchy_dialog()
         
     # help_btn = st.sidebar.button("Help", use_container_width=True, key='help', type='secondary', icon=":material/help:")
     # if help_btn:
     #     intro()
     
-else:
+# else:
     
-    pages = {
-        "": [starting_page]
-    }
+#     pages = {
+#         "": [starting_page]
+#     }
 
 pg = st.navigation(pages)
 

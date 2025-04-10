@@ -411,7 +411,7 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
                 policy = filter_policy(policy)
                 results.generated_nlacps.append(nlacp)
                 results.generated_policies.append(policy)
-                st.write("Verifying the translation ...")
+                st.write("Verifying and Refining the translation ...")
                 ver_result = verify(
                     nlacp, policy, _ver_model, _ver_tokenizer
                 )
@@ -419,7 +419,7 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
                 results.init_verification.append(ver_result)
                 # print(ver_result)
                 if ver_result != 11:
-                    st.write("Refining the translation ...")
+                    # st.write("Refining the translation ...")
                     policy, ver_result = verify_refine(
                         nlacp,
                         policy,
@@ -541,13 +541,13 @@ def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_toke
                 results.generated_policies.append(policy)
                 results.converted_policies.append(convert_to_sent(policy)[0])
                 
-        st.write("Verifying the translation ...")
+        st.write("Verifying and Refining the translation ...")
         
         ver_loader = data_loaders.get_loader(results, Task.POLICY_VER, max_len=1024, batch_size=8)
         
         verify_policies(ver_loader, _ver_model, results)
         
-        st.write("Refining the translation ...")
+        # st.write("Refining the translation ...")
         
         for i in range(len(results.generated_nlacps)):
             

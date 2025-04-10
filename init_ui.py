@@ -11,15 +11,15 @@ def set_state(state, value):
         
 def init():
     
-    set_state('start_icon', '')
-    set_state('correct_pol_icon', '')
-    set_state('incorrect_pol_icon', '')
-    set_state('gen_doc_icon', '')
-    set_state('gen_sent_icon', '')
-    set_state('write_xacml_icon', '')
-    set_state('viz_icon', '')
-    set_state('test_icon', '')
-    set_state('save_icon', '')
+    set_state('start_icon', ':material/radio_button_unchecked:')
+    set_state('correct_pol_icon', ':material/radio_button_unchecked:')
+    set_state('incorrect_pol_icon', ':material/radio_button_unchecked:')
+    set_state('gen_doc_icon', ':material/radio_button_unchecked:')
+    set_state('gen_sent_icon', ':material/radio_button_unchecked:')
+    set_state('write_xacml_icon', ':material/radio_button_unchecked:')
+    set_state('viz_icon', ':material/radio_button_unchecked:')
+    set_state('test_icon', ':material/radio_button_unchecked:')
+    set_state('save_icon', ':material/radio_button_unchecked:')
     
     
     set_state('enable_generation', False)
@@ -48,20 +48,22 @@ def init():
     set_state('start_title', 'Home')
     set_state('generate_doc_title', 'Generate from a Document')
     set_state('generate_single_title', 'Generate from a Sentence')
-    set_state('cor_policies_title', f'Correct Policies')
-    set_state('inc_policies_title', f'Incorrect Policies')
+    set_state('cor_policies_title', f'Access Control Policies')
+    set_state('inc_policies_title', f'Incorrect Access Control Policies')
     set_state('policy_viz_title', 'Visualize Policies')
     set_state('write_xacml_title', 'Write in XACML')
     set_state('policy_test_title', "Test Policies")
     set_state('policy_export_title', "Save Policies")
     set_state('started', False)
+    set_state('new_doc', True)
+    set_state('show_hierarchy', False)
 
     set_state('current_page', PAGE.START)
     
-    if 'expand' not in st.session_state:
-        st.session_state.expand = True
-    else:
-        st.session_state.expand = False
+    # if 'show_hierarchy' not in st.session_state:
+    #     st.session_state.show_hierarchy = True
+    # else:
+    #     st.session_state.show_hierarchy = False
         
     if 'first_time' not in st.session_state:
         st.session_state.first_time = True

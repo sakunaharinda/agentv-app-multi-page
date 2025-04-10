@@ -348,6 +348,7 @@ def set_hierarchy(hierarchy_file, pbar):
         
         st.session_state.models.vectorestores = build_vectorstores(pbar)
         st.session_state.enable_generation = True
+        st.session_state.show_hierarchy = True
         
          # To show all the tabs
         
@@ -358,6 +359,7 @@ def store_value_gen_h(key, pbar):
     
 def store_value_pol_doc(key):
     st.session_state.reviewed = False
+    st.session_state.new_doc = True
     st.session_state[key] = st.session_state["_"+key]
     
 def store_value(key):
@@ -370,6 +372,7 @@ def load_value(key):
     
 def on_click_generate(page_icon):
     st.session_state.is_generating = True
+    st.session_state.new_doc = False
     change_page_icon(page_icon)
     
 def change_page_icon(state, icon = ":material/task_alt:"):

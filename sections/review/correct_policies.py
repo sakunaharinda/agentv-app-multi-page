@@ -31,7 +31,7 @@ def show_correct_policies(ac_engine: AccessControlEngine):
         </style>
         """, unsafe_allow_html=True)
     
-    st.title("Correct Policies")
+    st.title("Access Control Policies")
     
     cor_pol_container = st.container(border=False, height=500, key="table_container")
     
@@ -62,7 +62,7 @@ def show_correct_policies(ac_engine: AccessControlEngine):
 
     
     if len(st.session_state.corrected_policies)>0:
-        corr_df = cor_pol_container.dataframe(cdf, use_container_width=True, key="correct_policies")
+        corr_df = cor_pol_container.dataframe(cdf, use_container_width=True, key="correct_policies", height=345)
 
 
     with st.container(border=False, height=100, key="correct_container"):

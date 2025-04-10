@@ -1,15 +1,65 @@
 import streamlit as st
 from feedback import warning
 
+import plotly.graph_objects as go
+
+def show_bar_chart(container):
+    
+    value1=st.session_state.results_document['final_verification'].count(11)
+    value2=len(st.session_state.results_document['generated_nlacps']) - st.session_state.results_document['final_verification'].count(11)
+    color1="#177233"
+    color2="#F84948"
+    
+    # Calculate proportions
+    total = value1 + value2
+    prop1 = (value1 / total) * 100
+    prop2 = (value2 / total) * 100
+    
+    # Create the horizontal bar plot
+    fig = go.Figure()
+    
+    # Add both segments to a single bar
+    fig.add_trace(go.Bar(
+        y=[''],
+        x=[prop1],
+        name=f'Correct Policies: {value1} ({prop1:.1f}%)',
+        orientation='h',
+        marker=dict(color=color1),
+        text=f'{prop1:.1f}%',
+        textposition='inside',
+        insidetextanchor='middle'
+    ))
+    
+    fig.add_trace(go.Bar(
+        y=[''],
+        x=[prop2],
+        name=f'Incorrect Policies: {value2} ({prop2:.1f}%)',
+        orientation='h',
+        marker=dict(color=color2),
+        text=f'{prop2:.1f}%',
+        textposition='inside',
+        insidetextanchor='middle'
+    ))
+    
+    # Update layout for a stacked bar chart
+    fig.update_layout(
+        barmode='stack',
+        height=140,
+        margin=dict(l=50, r=50, t=50, b=50),
+        legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1),
+        xaxis=dict(title='Percentage (%)', range=[0, 100])
+    )
+        
+    container.plotly_chart(fig, use_container_width=True)
+
 def show_summary(status_container):
-    
-    if 'results_document' in st.session_state:
         
-        assert st.session_state.results_document['final_verification'].count(11) == len(st.session_state.results_document['final_correct_policies']), 'There is a mismatch between correct policies and correctly verified policies'
+    assert st.session_state.results_document['final_verification'].count(11) == len(st.session_state.results_document['final_correct_policies']), 'There is a mismatch between correct policies and correctly verified policies'
+
+    summary = f"Sentences in uploaded document: {len(st.session_state.results_document['sentences'])}\nAccess control requirements identified: {len(st.session_state.results_document['generated_nlacps'])}\nCorrectly generated policies: {st.session_state.results_document['final_verification'].count(11)}\nIncorrectly generated policies: {len(st.session_state.results_document['generated_nlacps']) - st.session_state.results_document['final_verification'].count(11)}"
     
-        summary = f"No. of sentences: {len(st.session_state.results_document['sentences'])}\nNo. of access requirement: {len(st.session_state.results_document['generated_nlacps'])}\nCorrectly generated policies: {st.session_state.results_document['final_verification'].count(11)}\nIncorrectly generated policies: {len(st.session_state.results_document['generated_nlacps']) - st.session_state.results_document['final_verification'].count(11)}"
+    status_container.text_area("Summary", summary, help=f"A summary of the completed access control policy generation process, outlining the total number of sentences found in the input document, the number of access control requirement found among the sentences, the number of correctly translated access control requirements into structured access control policies (See **Correct Policies** page), and the number of failed translations (See **Incorrect Policies** page)",disabled=False, height=150)
         
-        status_container.text_area("Summary", summary, help=f"A summary of the completed access control policy generation process, outlining the total number of sentences found in the input document, the number of access control requirement found among the sentences, the number of correctly translated access control requirements into structured access control policies (See **Correct Policies** page), and the number of failed translations (See **Incorrect Policies** page)",disabled=True, height=150)
         
 @st.dialog("Generation without Organization Hierarchy")
 def generating_wo_hierarchy():

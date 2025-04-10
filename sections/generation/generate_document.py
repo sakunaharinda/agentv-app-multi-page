@@ -1,7 +1,7 @@
 import streamlit as st
 from utils import on_click_generate, store_value_pol_doc
 from ml_layer import agentv_batch
-from sections.generation.generation_utils import show_summary, review_incorrects
+from sections.generation.generation_utils import show_summary, review_incorrects, show_bar_chart
 from models.pages import PAGE
 
 @st.fragment
@@ -35,7 +35,8 @@ def generate_doc(hierarchy, models):
 
 
     # with st.container(border=True, height=210) as status:
-    status_container = st.container(border=False, height=305)
+    status_container = st.container(border=False, height=200)
+    barchart = st.container(border=False, height=150)
     
     footer_container = st.container(key='doc_container')
     
@@ -74,7 +75,11 @@ def generate_doc(hierarchy, models):
             else:
                 st.rerun()
     
-    show_summary(status_container)
+    if 'results_document' in st.session_state and not st.session_state.new_doc:
+        show_summary(status_container)
+        show_bar_chart(barchart)
+        
+    
     # footer_container.float("bottom: 10px;")
 
 hierarchy = st.session_state.hierarchies

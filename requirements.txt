@@ -19,3 +19,4 @@ faiss-gpu
 streamlit_code_editor
 streamlit-float
 streamlit-flow-component
+plotly

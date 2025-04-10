@@ -59,7 +59,7 @@ def test_policies(policy_tester: PolicyTester):
     cdf = load_policy(get_pdp_policy())
 
     if len(st.session_state.pdp_policies)>0:
-        pdp_df = pdp_pol_container.dataframe(cdf, use_container_width=True, key="pdp_record")
+        pdp_df = pdp_pol_container.dataframe(cdf, use_container_width=True, key="pdp_record", height=345)
 
 
     with st.container(border=False, height=100, key='test_container'):
