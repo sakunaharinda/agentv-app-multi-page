@@ -57,6 +57,11 @@ st.markdown(
                 position: fixed !important;
                 top: 60px !important;
             }}
+            /* Target the container with the specific key */
+            .st-key-org_hierarchy {{
+                position: fixed !important;
+                bottom: 10px !important;
+            }}
             
         </style>
         """,

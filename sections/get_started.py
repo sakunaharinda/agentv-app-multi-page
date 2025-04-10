@@ -58,12 +58,19 @@ with full_container:
                           use_container_width=True, 
                           disabled= not st.session_state.enable_generation, 
                           on_click=show_all_pages,
-                          help="This allows you to upload the provided high-level requirement specification document written in natural language (i.e., English) and automatically generate machine-executable access control policies. High-level requirement specification document describes who under what circumstances can access what resource in the organization (e.g., HCP can read medical records)."
+                          help = "Upload a high-level requirement document (e.g., Hospital.md) to auto-generate machine-executable access control policies."
+                        #   help="This allows you to upload the provided high-level requirement specification document written in natural language (i.e., English) and automatically generate machine-executable access control policies. High-level requirement specification document describes who under what circumstances can access what resource in the organization (e.g., HCP can read medical records)."
                           )
     
-    gen_sent = col2.button(f"Generate from a **Sentence**", help= "This allows you to write your own access control requirements in natural language (i.e., English) and generate machine-executable access control policies.",key='gen_sent', type='secondary', icon=":material/create:", use_container_width=True, disabled= not st.session_state.enable_generation, on_click=show_all_pages)
+    gen_sent = col2.button(f"Generate from a **Sentence**", 
+                        #    help= "This allows you to write your own access control requirements in natural language (i.e., English) and generate machine-executable access control policies.",
+                            help = "Enter your access control requirement in plain English and let AGentV convert it into a machine-executable policy.",
+                           key='gen_sent', type='secondary', icon=":material/create:", use_container_width=True, disabled= not st.session_state.enable_generation, on_click=show_all_pages
+                           )
     
-    write_xacml = col3.button(f"Write in **XACML**", help="This allows you to write access control policies directly in XACML (eXtensible Access Control Markup Language).", key='write_xacml', type='secondary', icon=":material/code:", use_container_width=True, disabled= not st.session_state.enable_generation, on_click=show_all_pages)
+    write_xacml = col3.button(f"Write in **XACML**", 
+                              help="Manually author your access control policy directly in XACML for full control and customization.", 
+                              key='write_xacml', type='secondary', icon=":material/code:", use_container_width=True, disabled= not st.session_state.enable_generation, on_click=show_all_pages)
         
 
 if gen_doc:

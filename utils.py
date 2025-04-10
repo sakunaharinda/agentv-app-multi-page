@@ -356,6 +356,10 @@ def store_value_gen_h(key, pbar):
     store_value(key)
     set_hierarchy(st.session_state[key], pbar)
     
+def store_value_pol_doc(key):
+    st.session_state.reviewed = False
+    st.session_state[key] = st.session_state["_"+key]
+    
 def store_value(key):
     st.session_state[key] = st.session_state["_"+key]
     

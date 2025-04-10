@@ -44,7 +44,7 @@ def on_click_publish():
 def review_incorrects(incorrects):
     
     st.write(f"You have {incorrects} incorrectly generated polic{'y' if incorrects==1 else 'ies'} to review. Do you want review {'it' if incorrects==1 else 'them'} now?")
-    warning("Applying the incorrectly generated policies to the policy database without reviewing may result in access control failure that could lead to data breaches.")
+    st.warning("### :material/warning: Caution\nPublishing incorrectly generated policies to the authroization system without reviewing and correcting them may result in misconfigured access control. This could lead to unauthorized access or data breaches.\n\n**Always ensure that policies are thoroughly reviewed and accurate before publishing them to the Policy Database.**")
     
     gencol1, gencol2 = st.columns([1,1])
     
