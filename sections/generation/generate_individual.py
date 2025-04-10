@@ -33,23 +33,6 @@ def generate_sent(hierarchy, models):
     
     st.title("Policy Generation from a Sentence")
 
-    # st.markdown(
-    #         f"""
-    #         <style>
-    #             .st-key-fab button {{
-    #                 position: fixed;
-    #                 bottom: 0%;
-    #                 box-shadow: rgba(0, 0, 0, 0.16) 0px 4px 16px;
-    #                 z-index: 999;
-    #                 border-radius: 2rem;
-    #             }}
-    #         </style>
-    #         """,
-    #         unsafe_allow_html=True,
-    #     )
-
-    # visualize_hierarchy_expander(key='policy_sent_hierarchy')
-
     nlacp_container = st.container(height=410, border=False)
 
     for written_p in st.session_state.written_nlacps:
