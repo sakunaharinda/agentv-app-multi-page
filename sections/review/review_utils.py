@@ -1,9 +1,16 @@
 import streamlit as st
 from ac_engine_service import AccessControlEngine
+from utils import change_page_icon
 
-def publish_cur(ac_engine: AccessControlEngine):
-    cur_policy = st.session_state.corrected_policies[st.session_state.cor_count]
-    return ac_engine.create_policy(cur_policy)
+def publish_single(policy, ac_engine: AccessControlEngine):
+    
+    change_page_icon('correct_pol_icon')
+    status = ac_engine.create_policy(policy)
+    if status == 200:
+        st.session_state.pdp_policies.append(policy)
+        st.session_state.pdp_policies = list(set(st.session_state.pdp_policies))
+
+    policy_db_feedback(status, single=True)
     
 def publish_all(ac_engine: AccessControlEngine):
     
@@ -31,3 +38,11 @@ def policy_db_feedback(status_code, single = False):
         st.switch_page("sections/testing/test_policies.py")
     elif ok:
         st.rerun()
+        
+        
+def publish_policy(policy, ac_engine):
+    
+    _,_,col = st.columns([1,1,1])
+    
+    col.button("Publish to Policy Database", key=f"publish_{policy.policyId}", use_container_width=True, on_click=publish_single, args=(policy, ac_engine,), type='primary')
+        

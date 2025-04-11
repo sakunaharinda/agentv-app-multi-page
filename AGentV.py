@@ -64,7 +64,7 @@ st.markdown(
                 padding: 10px !important;
                 
             }}
-            
+            # TODO This doesn't work when the sidebar is collapsed
             [data-testid="stSidebar"] ~ [data-testid="stHeading"] {{
                 width: calc(100% - var(--sidebar-collapsed-width, 3.8rem)) !important;
             }}
