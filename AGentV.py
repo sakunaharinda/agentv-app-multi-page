@@ -56,6 +56,17 @@ st.markdown(
             [data-testid="stHeading"] {{
                 position: fixed !important;
                 top: 60px !important;
+                left: auto !important; /* Don't use left: 0 */
+                width: calc(100% - var(--sidebar-width, 21rem)) !important; /* Subtract sidebar width */
+                margin-left: 0 !important;
+                background-color: white !important;
+                z-index: 999 !important;
+                padding: 10px !important;
+                
+            }}
+            
+            [data-testid="stSidebar"] ~ [data-testid="stHeading"] {{
+                width: calc(100% - var(--sidebar-collapsed-width, 3.8rem)) !important;
             }}
             /* Target the container with the specific key */
             .st-key-org_hierarchy {{

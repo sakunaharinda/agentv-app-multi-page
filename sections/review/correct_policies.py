@@ -11,19 +11,26 @@ def show_correct_policies(ac_engine: AccessControlEngine):
     
     st.session_state.current_page = PAGE.CORRECT_POL
     
+    # [data-testid="stVerticalBlock"] .st-key-table_container {
+    #             position: fixed !important;
+    #             top: 170px !important;
+    #             overflow-y: auto !important;
+    #         }
+    
     st.markdown("""
         <style>
             /* Target the container with the specific key */
             [data-testid="stVerticalBlock"] .st-key-correct_container {
                 position: fixed !important;
-                bottom: 10px !important;
+                bottom: -0.8% !important;
+                background-color: white !important;
+                padding-top: 10px !important;
+                padding-bottom: 15px !important;
+                z-index: 9999 !important;
             }
             
-            [data-testid="stVerticalBlock"] .st-key-table_container {
-                position: fixed !important;
-                top: 170px !important;
-            }
             
+        
             /* Add padding at the bottom of the page to prevent content from being hidden */
             section.main {
                 padding-bottom: 100px !important;
@@ -35,36 +42,44 @@ def show_correct_policies(ac_engine: AccessControlEngine):
     
     cor_pol_container = st.container(border=False, height=500, key="table_container")
     
-    corr_policy = cor_pol_container.text_input(
-        label="Correctly generated policy",
-        value=get_cor_nlacp(),
-        disabled=True,
-        help="Natural Language Access Control Policies corresponding to correct access control policies.",
-    )
-    _, pclc, nclc, _ = cor_pol_container.columns([5, 2, 2, 5])
-    prev_button_correct = pclc.button(
-        label="Previous",
-        key="cor_prev",
-        on_click=cor_policy_nav_prev,
-        disabled=st.session_state.cor_count <= 0,
-        use_container_width=True,
-    )
-    next_button_correct = nclc.button(
-        label="Next",
-        key="cor_next",
-        on_click=cor_policy_nav_next,
-        disabled=st.session_state.cor_count
-        == len(st.session_state.corrected_policies) - 1,
-        use_container_width=True,
-    )
+    # corr_policy = cor_pol_container.text_input(
+    #     label="Correctly generated policy",
+    #     value=get_cor_nlacp(),
+    #     disabled=True,
+    #     help="Natural Language Access Control Policies corresponding to correct access control policies.",
+    # )
+    # _, pclc, nclc, _ = cor_pol_container.columns([5, 2, 2, 5])
+    # prev_button_correct = pclc.button(
+    #     label="Previous",
+    #     key="cor_prev",
+    #     on_click=cor_policy_nav_prev,
+    #     disabled=st.session_state.cor_count <= 0,
+    #     use_container_width=True,
+    # )
+    # next_button_correct = nclc.button(
+    #     label="Next",
+    #     key="cor_next",
+    #     on_click=cor_policy_nav_next,
+    #     disabled=st.session_state.cor_count
+    #     == len(st.session_state.corrected_policies) - 1,
+    #     use_container_width=True,
+    # )
 
-    cdf = load_policy(get_cor_policy())
+    # cdf = load_policy(get_cor_policy())
 
     
-    if len(st.session_state.corrected_policies)>0:
-        corr_df = cor_pol_container.dataframe(cdf, use_container_width=True, key="correct_policies", height=345)
+    # if len(st.session_state.corrected_policies)>0:
+    #     corr_df = cor_pol_container.dataframe(cdf, use_container_width=True, key="correct_policies", height=345)
 
-
+    for correct_pol_object in st.session_state.corrected_policies:
+        
+        with cor_pol_container.chat_message('user', avatar=":material/create:"):
+            st.markdown(correct_pol_object.policyDescription)
+            with st.expander("Generated Policy", expanded=False):
+                corr_df = st.dataframe(correct_pol_object.policy, use_container_width=True, key="correct_policies")
+    
+    
+    
     with st.container(border=False, height=100, key="correct_container"):
         out_col1, out_col2 = st.columns([1, 1])
         # json_btn = viz_col1.button('Export as JSON', use_container_width=True, key='json_btn')
