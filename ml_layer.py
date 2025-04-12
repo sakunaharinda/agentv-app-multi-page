@@ -2,7 +2,7 @@ import os
 
 import streamlit as st
 import torch
-from utils import *
+from utils import ID2AUGS, CAT2ERROR, DataLoaders, Task, remove_duplicates, get_generation_msgs, get_generation_msgs_ents, convert_to_sent, prepare_inputs_bart, get_error_instrution, save
 import ast
 import re
 from itertools import product
@@ -14,7 +14,6 @@ import requests
 from models.record_dto import Results
 from models.ac_engine_dto import JSONPolicyRecord
 from uuid import uuid4
-from ac_engine_service import AccessControlEngine
 
 _ = load_dotenv('../.env')
 
@@ -441,9 +440,7 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
                         'policy': policy
                     })
                     
-                    st.session_state.corrected_policies.append(
-                        json_policy
-                    )
+                    save(json_policy)
                     results.final_correct_policies.append(json_policy)
                     handlers.cor_policy_nav_last()
                 else:
@@ -568,7 +565,7 @@ def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_toke
                     'policy': policy
                 })
                 
-                st.session_state.corrected_policies.append(
+                save(
                     json_policy
                 )
                 
@@ -596,7 +593,7 @@ def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_toke
                         'policy': policy
                     })
                     
-                    st.session_state.corrected_policies.append(
+                    save(
                         json_policy
                     )
                     

@@ -6,7 +6,7 @@ from ml_layer import align_policy
 from models.ac_engine_dto import JSONPolicyRecord
 from uuid import uuid4
 from feedback import warning
-from utils import change_page_icon
+from utils import change_page_icon, save
 from models.pages import PAGE
 
 @st.cache_data(show_spinner=False)
@@ -61,7 +61,7 @@ def confirm_submission(edited_df, models, hierarchy):
             'policy': policy
         })
         
-        st.session_state.corrected_policies.append(
+        save(
             json_policy
         )
         

@@ -6,6 +6,7 @@ import streamlit as st
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
 from models.record_dto import Results
+from models.ac_engine_dto import JSONPolicyRecord
 from loading import get_entity_hierarchy
 from vectorstore import build_vectorstores
 
@@ -378,6 +379,10 @@ def on_click_generate(page_icon):
 def change_page_icon(state, icon = ":material/task_alt:"):
     
     st.session_state[state] = icon
+    
+def save(policy: JSONPolicyRecord):
+    st.session_state.corrected_policies.append(policy)
+    st.session_state.corrected_policies_pdp.append(policy.to_json_record_pdp())
     
 
     

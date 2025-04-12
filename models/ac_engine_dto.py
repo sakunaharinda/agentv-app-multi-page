@@ -52,6 +52,15 @@ class JSONPolicyRecord:
     def to_dict(self):
         return asdict(self)
     
+    def to_json_record_pdp(self):
+        
+        return JSONPolicyRecordPDP(
+            policyId=self.policyId,
+            policyDescription=self.policyDescription,
+            policy=self.policy,
+            published=False
+        )
+    
     def __eq__(self, __value: object) -> bool:
         return (
             self.policyDescription == __value.policyDescription and
@@ -71,23 +80,58 @@ class JSONPolicyRecord:
         
         # Hash the combination of immutable attributes
         return hash((self.policyId, self.policyDescription, policy_tuple))
+
+
+@dataclass
+class JSONPolicyRecordPDP:
     
-    def get_null_policy():
+    policyId: str
+    policyDescription: str
+    policy: List[ACR] = field(default_factory= list)
+    published: bool = False
+    
+    @staticmethod
+    def from_dict(data: dict):
+        
+        policy = [ACR(**acr) for acr in data.get('policy', [])]
+        return JSONPolicyRecordPDP(
+            policyId=data.get('policyId', ''),
+            policyDescription=data.get('policyDescription', ''),
+            policy=policy,
+            published=data.get('published', False)
+        )
+        
+    def to_json_record(self):
         
         return JSONPolicyRecord(
-            policyId="000",
-            policyDescription="No description",
-            acrs= [
-                ACR(
-                    decision="deny",
-                    subject="none",
-                    action="none",
-                    resource="none",
-                    purpose="none",
-                    condition="none"
-                )
-            ]
+            policyId=self.policyId,
+            policyDescription=self.policyDescription,
+            policy=self.policy
         )
+        
+    def to_dict(self):
+        return asdict(self)
+    
+    def __eq__(self, __value: object) -> bool:
+        return (
+            self.policyDescription == __value.policyDescription and
+            self.policy == __value.policy and
+            self.published == __value.published
+        )
+        
+    def __hash__(self) -> int:
+        # Convert the list of ACR objects to a tuple for hashing
+        policy_tuple = tuple(frozenset((
+            acr.decision,
+            acr.subject,
+            acr.action,
+            acr.resource,
+            acr.purpose,
+            acr.condition
+        ) for acr in self.policy))
+        
+        # Hash the combination of immutable attributes
+        return hash((self.policyId, self.policyDescription, policy_tuple, self.published))
     
 
 @dataclass

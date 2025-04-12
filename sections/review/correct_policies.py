@@ -2,7 +2,7 @@ import streamlit as st
 from handlers import pdp_policy_nav_next 
 from ac_engine_service import AccessControlEngine
 from sections.review.review_utils import publish_all, publish_policy, policy_db_feedback
-from utils import change_page_icon
+from sections.review.review_utils import get_updated_description
 from models.pages import PAGE
 
 @st.fragment
@@ -42,11 +42,12 @@ def show_correct_policies(ac_engine: AccessControlEngine):
     cor_pol_container = st.container(border=False, height=500, key="table_container")
     
     
-    for correct_pol_object in st.session_state.corrected_policies:
+    for correct_pol_object in st.session_state.corrected_policies_pdp:
         
         with cor_pol_container.chat_message('user', avatar=":material/create:"):
-            publish_policy(correct_pol_object, ac_engine)
-            st.markdown(correct_pol_object.policyDescription)
+            nlacp_col, btn_col = st.columns([7,1])
+            publish_policy(correct_pol_object, ac_engine, btn_col)
+            nlacp_col.markdown(get_updated_description(correct_pol_object))
             with st.expander("Generated Policy", expanded=False):
                 corr_df = st.dataframe(correct_pol_object.policy, use_container_width=True, key="correct_policies")
     
@@ -54,26 +55,16 @@ def show_correct_policies(ac_engine: AccessControlEngine):
     
     with st.container(border=False, height=100, key="correct_container"):
 
-        publish_all_btn = st.button(
-            "Publish All Policies to Database",
+        st.button(
+            "Publish All",
             type="primary",
             use_container_width=True,
             key="publish_all",
-            disabled=len(st.session_state.corrected_policies) < 1,
+            disabled=len(st.session_state.corrected_policies) < 1 or st.session_state.all_published,
+            help="Publish all the policies above to the policy database",
+            on_click=publish_all,
+            args=(ac_engine,)
         )
-        
-                
-        if publish_all_btn:
-            change_page_icon('correct_pol_icon')
-            status = publish_all(ac_engine)
-            
-            if status == 200:
-                
-                st.session_state.pdp_policies.extend(st.session_state.corrected_policies)
-                st.session_state.pdp_policies = list(set(st.session_state.pdp_policies))
-                pdp_policy_nav_next()
-            
-            policy_db_feedback(status)
             
         
 ac_engine = AccessControlEngine()

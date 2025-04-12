@@ -1,6 +1,6 @@
 import streamlit as st
 import uuid
-from models.ac_engine_dto import JSONPolicyRecord, PolicyEffectRequest
+from models.ac_engine_dto import JSONPolicyRecordPDP, PolicyEffectRequest
 from ac_engine_service import AccessControlEngine
 
 
@@ -23,7 +23,7 @@ class PolicyTester():
 
 
     @st.dialog("Create a request")
-    def test_policy(self, policy: JSONPolicyRecord):
+    def test_policy(self, policy: JSONPolicyRecordPDP):
         random_rule = policy.to_dict()['policy'][0]
         
         st.write(policy.policyDescription)
