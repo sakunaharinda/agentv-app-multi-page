@@ -1,7 +1,7 @@
 import streamlit as st
-from handlers import pdp_policy_nav_next 
+from loading import load_policy 
 from ac_engine_service import AccessControlEngine
-from sections.review.review_utils import publish_all, publish_policy, policy_db_feedback
+from sections.review.review_utils import publish_all, publish_policy
 from sections.review.review_utils import get_updated_description
 from models.pages import PAGE
 
@@ -49,22 +49,23 @@ def show_correct_policies(ac_engine: AccessControlEngine):
             publish_policy(correct_pol_object, ac_engine, btn_col)
             nlacp_col.markdown(get_updated_description(correct_pol_object))
             with st.expander("Generated Policy", expanded=False):
-                corr_df = st.dataframe(correct_pol_object.policy, use_container_width=True, key="correct_policies")
+                corr_df = st.dataframe(load_policy(correct_pol_object.policy), use_container_width=True, key=f"correct_policy_{correct_pol_object.policyId}")
     
     
     
     with st.container(border=False, height=100, key="correct_container"):
 
-        st.button(
+        publish_all_btn = st.button(
             "Publish All",
             type="primary",
             use_container_width=True,
             key="publish_all",
             disabled=len(st.session_state.corrected_policies) < 1 or st.session_state.all_published,
-            help="Publish all the policies above to the policy database",
-            on_click=publish_all,
-            args=(ac_engine,)
+            help="Publish all the policies above to the policy database"
         )
+        
+        if publish_all_btn:
+            publish_all(ac_engine)
             
         
 ac_engine = AccessControlEngine()
