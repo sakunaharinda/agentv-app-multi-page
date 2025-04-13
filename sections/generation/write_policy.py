@@ -17,7 +17,11 @@ def write_xacml(ac_engine: AccessControlEngine):
             /* Target the container with the specific key */
             [data-testid="stVerticalBlock"] .st-key-xacml_container {
                 position: fixed !important;
-                bottom: 10px !important;
+                bottom: -0.8% !important;
+                background-color: white !important;
+                padding-top: 10px !important;
+                padding-bottom: 15px !important;
+                z-index: 9999 !important;
             }
             
             /* Add padding at the bottom of the page to prevent content from being hidden */
@@ -75,7 +79,6 @@ def write_xacml(ac_engine: AccessControlEngine):
     </Rule>
 </Policy>""",
         lang="xml",
-        height="465px",
         focus=False,
         allow_reset=True,
         options={"showLineNumbers": True},
