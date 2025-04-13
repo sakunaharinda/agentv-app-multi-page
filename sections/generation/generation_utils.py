@@ -116,12 +116,12 @@ def review_individual(id, incorrect = False):
     review_container = st.container()
     if incorrect:
         review_container.error("The generated policy is found incorrect. Do you want to review it?", icon=":material/dangerous:")
-        if review_container.button("Review", key=f'review_btn_{id}', use_container_width=True, type='secondary'):
+        if review_container.button("Review", key=f'review_btn_{id}', use_container_width=True, type='primary', icon=":material/rate_review:"):
             on_click_review()
         
     else:
         review_container.info("Do you want to review and publish the generated policy to the policy database?", icon=":material/rate_review:")
-        if review_container.button("Review", key=f'review_btn_{id}', use_container_width=True, type='secondary'):
+        if review_container.button("Review", key=f'review_btn_{id}', use_container_width=True, type='primary', icon=":material/rate_review:"):
             on_click_publish()
         
     return review_container

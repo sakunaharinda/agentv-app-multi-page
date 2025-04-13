@@ -10,12 +10,6 @@ def show_correct_policies(ac_engine: AccessControlEngine):
     
     st.session_state.current_page = PAGE.CORRECT_POL
     
-    # [data-testid="stVerticalBlock"] .st-key-table_container {
-    #             position: fixed !important;
-    #             top: 170px !important;
-    #             overflow-y: auto !important;
-    #         }
-    
     st.markdown("""
         <style>
             /* Target the container with the specific key */
@@ -45,7 +39,7 @@ def show_correct_policies(ac_engine: AccessControlEngine):
     for correct_pol_object in st.session_state.corrected_policies_pdp:
         
         with cor_pol_container.chat_message('user', avatar=":material/create:"):
-            nlacp_col, btn_col = st.columns([7,1])
+            nlacp_col, btn_col = st.columns([7,1.5])
             publish_policy(correct_pol_object, ac_engine, btn_col)
             nlacp_col.markdown(get_updated_description(correct_pol_object))
             with st.expander("Generated Policy", expanded=False):
@@ -61,7 +55,8 @@ def show_correct_policies(ac_engine: AccessControlEngine):
             use_container_width=True,
             key="publish_all",
             disabled=len(st.session_state.corrected_policies) < 1,
-            help="Publish all the policies above to the policy database"
+            help="Publish all the policies above to the policy database",
+            icon=":material/database_upload:"
         )
         
         if publish_all_btn:

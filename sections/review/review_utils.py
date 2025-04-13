@@ -76,7 +76,7 @@ def publish_policy(policy: JSONPolicyRecordPDP, ac_engine, col):
     
     # _,_,col = st.columns([1,1,1])
     
-    col.button("Publish", key=f"publish_{policy.policyId}", use_container_width=True, on_click=publish_single, args=(policy, ac_engine,), type='primary', help = "Publish the policy to the policy database", disabled=policy.published)
+    col.button("Publish", key=f"publish_{policy.policyId}", use_container_width=True, on_click=publish_single, args=(policy, ac_engine,), type='primary', help = "Publish the policy to the policy database", disabled=policy.published, icon=":material/database_upload:")
     
     
 def get_updated_description_inc(inc_policy):
@@ -160,7 +160,7 @@ def review_policy(inc_policy, hierarchy, models):
         },
     )
     
-    st.button("Submit", key=f'submit_inc_btn_{pol_id}', use_container_width=True, type='primary', on_click=submit_corrected_policy, args=(inc_policy, edited_df, hierarchy, models,))
+    st.button("Submit", key=f'submit_inc_btn_{pol_id}', use_container_width=True, type='primary', on_click=submit_corrected_policy, args=(inc_policy, edited_df, hierarchy, models,), icon=":material/send:")
         
     
 def submit_corrected_policy(inc_policy, edited_df, hierarchy, models):
