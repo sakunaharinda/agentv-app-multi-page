@@ -3,7 +3,7 @@ from enum import Enum
 import random
 import ast
 import streamlit as st
-import numpy as np
+from typing import List
 from torch.utils.data import Dataset, DataLoader
 from models.record_dto import Results
 from models.ac_engine_dto import JSONPolicyRecord
@@ -379,10 +379,29 @@ def on_click_generate(page_icon):
 def change_page_icon(state, icon = ":material/task_alt:"):
     
     st.session_state[state] = icon
+
+@st.cache_resource(show_spinner=False)
+def save_wo_duplicate(policy, record_list):
     
-def save(policy: JSONPolicyRecord):
-    st.session_state.corrected_policies.append(policy)
-    st.session_state.corrected_policies_pdp.append(policy.to_json_record_pdp())
+    record_dict = {obj.policyId: obj for obj in record_list}
+    record_dict[policy.policyId] = policy
+    
+    return [policy] + [v for k,v in record_dict.items() if k != policy.policyId]
+    
+def save(policy: JSONPolicyRecord, enforce_unique = False, index=None):
+    
+    if enforce_unique:
+        st.session_state.corrected_policies = save_wo_duplicate(policy, st.session_state.corrected_policies)
+        st.session_state.corrected_policies_pdp = save_wo_duplicate(policy.to_json_record_pdp(), st.session_state.corrected_policies_pdp)
+        
+    else:
+        
+        if index != None:
+            st.session_state.corrected_policies.insert(index, policy)
+            st.session_state.corrected_policies_pdp.insert(index, policy.to_json_record_pdp())
+        else:
+            st.session_state.corrected_policies.append(policy)
+            st.session_state.corrected_policies_pdp.append(policy.to_json_record_pdp())
     
 
     

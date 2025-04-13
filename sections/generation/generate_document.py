@@ -29,13 +29,7 @@ def generate_doc(hierarchy, models):
 
     st.title("Policy Generation from a Document")
     
-    # gen_doc_help()
-
-    # visualize_hierarchy_expander(key='policy_doc_hierarchy')
-
-
-    # with st.container(border=True, height=210) as status:
-    status_container = st.container(border=False, height=200)
+    status_container = st.container(border=False, height=175)
     barchart = st.container(border=False, height=150)
     
     footer_container = st.container(key='doc_container')

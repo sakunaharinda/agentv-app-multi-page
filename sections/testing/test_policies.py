@@ -31,7 +31,7 @@ def test_policies(policy_tester: PolicyTester):
     
     st.title("Test Policies")
     
-    pdp_pol_container = st.container(border=False, height=500, key='test_table_container')
+    pdp_pol_container = st.container(border=False, key='test_table_container')
     
     for pdp_pol_object in st.session_state.pdp_policies:
         

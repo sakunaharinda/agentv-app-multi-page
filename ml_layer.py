@@ -440,7 +440,7 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
                         'policy': policy
                     })
                     
-                    save(json_policy)
+                    save(json_policy, index=0)
                     results.final_correct_policies.append(json_policy)
                     handlers.cor_policy_nav_last()
                 else:
@@ -460,6 +460,7 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
 
                     st.session_state.inc_policies.append(
                         {
+                            "id": str(uuid4()),
                             "nlacp": nlacp,
                             "policy": policy,
                             "warning": warning,
@@ -613,6 +614,7 @@ def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_toke
                         warning = get_locate_warning_msg(error_type, error_loc)
                         st.session_state.inc_policies.append(
                             {
+                                "id": str(uuid4()),
                                 "nlacp": nlacp,
                                 "policy": policy,
                                 "warning": warning,
@@ -625,6 +627,7 @@ def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_toke
 
                         st.session_state.inc_policies.append(
                             {
+                                "id": str(uuid4()),
                                 "nlacp": nlacp,
                                 "policy": policy,
                                 "warning": warning,

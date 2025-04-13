@@ -6,6 +6,7 @@ from ml_layer import agentv_single
 from uuid import uuid4
 from sections.generation.generation_utils import review_individual
 from models.pages import PAGE
+import streamlit_float
 
 @st.fragment
 def generate_sent(hierarchy, models):
@@ -36,7 +37,7 @@ def generate_sent(hierarchy, models):
     
     st.title("Policy Generation from a Sentence")
 
-    nlacp_container = st.container(height=410, border=False)
+    nlacp_container = st.container(border=False)
 
     for written_p in st.session_state.written_nlacps:
         with nlacp_container.chat_message("user", avatar=":material/create:"):
@@ -66,7 +67,7 @@ def generate_sent(hierarchy, models):
                 icon=":material/dangerous:",
             )
             st.session_state.is_generating = False
-            st.rerun()
+
         else:
             
             with nlacp_container.chat_message("user", avatar=":material/create:"):

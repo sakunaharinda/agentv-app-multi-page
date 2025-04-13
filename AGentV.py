@@ -27,7 +27,7 @@ st.markdown(
                 font-weight: bold;
             }}
             [data-testid="stSidebarNav"] ul {{
-                padding-top: 10px;
+                padding-top: 20px;
                 display: flex;
                 flex-direction: column;
                 justify-content: center;

@@ -39,7 +39,7 @@ def show_correct_policies(ac_engine: AccessControlEngine):
     
     st.title("Access Control Policies")
     
-    cor_pol_container = st.container(border=False, height=500, key="table_container")
+    cor_pol_container = st.container(border=False)
     
     
     for correct_pol_object in st.session_state.corrected_policies_pdp:
@@ -60,7 +60,7 @@ def show_correct_policies(ac_engine: AccessControlEngine):
             type="primary",
             use_container_width=True,
             key="publish_all",
-            disabled=len(st.session_state.corrected_policies) < 1 or st.session_state.all_published,
+            disabled=len(st.session_state.corrected_policies) < 1,
             help="Publish all the policies above to the policy database"
         )
         
