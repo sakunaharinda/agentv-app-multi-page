@@ -5,6 +5,7 @@ import numpy as np
 from models.ac_engine_dto import JSONPolicyRecord
 from utils import change_page_icon
 from models.pages import PAGE
+from menus import standard_menu
 
 @st.cache_data(show_spinner = False)
 def create_access_matrix(correct_policies: List[JSONPolicyRecord]):
@@ -62,7 +63,8 @@ def create_access_matrix(correct_policies: List[JSONPolicyRecord]):
         
         return access_matrix
         
-    
+
+standard_menu()
 _, viz_col, _ = st.columns([1,1,1])
         
 

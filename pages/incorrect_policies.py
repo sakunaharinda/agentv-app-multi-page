@@ -1,6 +1,7 @@
 import streamlit as st
 from models.pages import PAGE
-from sections.review.review_utils import get_updated_description_inc, review_policy
+from pages.review_utils import get_updated_description_inc, review_policy
+from menus import standard_menu
 
 @st.fragment
 def show_incorrect_policies(models, hierarchy):
@@ -42,5 +43,7 @@ def show_incorrect_policies(models, hierarchy):
         
 hierarchy = st.session_state.hierarchies
 models = st.session_state.models
+
+standard_menu()
 
 show_incorrect_policies(models, hierarchy)

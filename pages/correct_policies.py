@@ -1,9 +1,10 @@
 import streamlit as st
 from loading import load_policy 
 from ac_engine_service import AccessControlEngine
-from sections.review.review_utils import publish_all, publish_policy
-from sections.review.review_utils import get_updated_description
+from pages.review_utils import publish_all, publish_policy
+from pages.review_utils import get_updated_description
 from models.pages import PAGE
+from menus import standard_menu
 
 @st.fragment
 def show_correct_policies(ac_engine: AccessControlEngine):
@@ -62,6 +63,6 @@ def show_correct_policies(ac_engine: AccessControlEngine):
         if publish_all_btn:
             publish_all(ac_engine)
             
-        
+standard_menu()
 ac_engine = AccessControlEngine()
 show_correct_policies(ac_engine)

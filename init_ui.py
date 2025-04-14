@@ -11,6 +11,8 @@ def set_state(state, value):
         
 def init():
     
+    st.set_page_config(layout="wide")
+    
     set_state('start_icon', ':material/radio_button_unchecked:')
     set_state('correct_pol_icon', ':material/radio_button_unchecked:')
     set_state('incorrect_pol_icon', ':material/radio_button_unchecked:')
@@ -58,7 +60,7 @@ def init():
     set_state('policy_export_title', "Save Policies")
     set_state('started', False)
     set_state('new_doc', True)
-    set_state('show_hierarchy', False)
+    # set_state('show_hierarchy', True)
 
     set_state('current_page', PAGE.START)
     
@@ -66,6 +68,11 @@ def init():
     #     st.session_state.show_hierarchy = True
     # else:
     #     st.session_state.show_hierarchy = False
+    
+    if 'show_hierarchy' not in st.session_state:
+        st.session_state.show_hierarchy = True
+    else:
+        st.session_state.show_hierarchy = False
         
     if 'first_time' not in st.session_state:
         st.session_state.first_time = True

@@ -1,10 +1,11 @@
 import streamlit as st
 from utils import on_click_generate, store_value_pol_doc
 from ml_layer import agentv_batch
-from sections.generation.generation_utils import show_summary, review_incorrects, show_bar_chart
+from pages.generation_utils import show_summary, review_incorrects, show_bar_chart
 from models.pages import PAGE
+from menus import standard_menu
 
-@st.fragment
+# @st.fragment
 def generate_doc(hierarchy, models):
     
     st.session_state.current_page = PAGE.GEN_DOC
@@ -14,7 +15,11 @@ def generate_doc(hierarchy, models):
             /* Target the container with the specific key */
             [data-testid="stVerticalBlock"] .st-key-doc_container {
                 position: fixed !important;
-                bottom: 10px !important;
+                bottom: -0.8% !important;
+                background-color: white !important;
+                padding-top: 10px !important;
+                padding-bottom: 15px !important;
+                z-index: 9999 !important;
             }
             
             /* Add padding at the bottom of the page to prevent content from being hidden */
@@ -75,8 +80,11 @@ def generate_doc(hierarchy, models):
         
     
     # footer_container.float("bottom: 10px;")
+    
+
 
 hierarchy = st.session_state.hierarchies
 models = st.session_state.models
 
+standard_menu()
 generate_doc(hierarchy, models)

@@ -4,11 +4,12 @@ from models.record_dto import WrittenPolicy
 from loading import load_policy
 from ml_layer import agentv_single
 from uuid import uuid4
-from sections.generation.generation_utils import review_individual
+from pages.generation_utils import review_individual
 from models.pages import PAGE
 import streamlit_float
+from menus import standard_menu
 
-@st.fragment
+# @st.fragment
 def generate_sent(hierarchy, models):
     
     st.session_state.current_page = PAGE.GEN_SENT
@@ -101,7 +102,7 @@ def generate_sent(hierarchy, models):
             
 hierarchy = st.session_state.hierarchies
 models = st.session_state.models
-
+standard_menu()
 generate_sent(hierarchy, models)
 
             

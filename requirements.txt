@@ -4,7 +4,7 @@ sentence-transformers
 numpy
 pandas
 python-dotenv
-streamlit==1.43.0
+streamlit==1.44.0
 streamlit_authenticator
 torch==2.6.0
 transformers

@@ -80,7 +80,7 @@ def remove_itself(hierarchy: dict):
             
     return new_hierarchy
     
-@st.cache_data(show_spinner=False)
+@st.cache_resource(show_spinner=False)
 def get_entity_hierarchy(hierarchy_file):
     
     main_hierarchy = load_hierarchy_yaml(hierarchy_file)

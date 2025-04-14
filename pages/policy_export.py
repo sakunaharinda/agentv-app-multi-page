@@ -7,6 +7,7 @@ from zipfile import ZipFile, ZIP_DEFLATED
 import pathlib
 from utils import change_page_icon
 from models.pages import PAGE
+from menus import standard_menu
 
 def save_policies(ac_engine: AccessControlEngine, save_path = 'downloads'):
     
@@ -98,7 +99,8 @@ def save_policies(ac_engine: AccessControlEngine, save_path = 'downloads'):
     
     btn_container.float("top: 50%;")
     
-
+standard_menu()
 ac_engine = AccessControlEngine()
+
 save_policies(ac_engine)
     

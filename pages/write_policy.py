@@ -4,8 +4,9 @@ import xml.etree.ElementTree as ET
 from ac_engine_service import AccessControlEngine
 from models.ac_engine_dto import XACMLPolicyRecord
 from utils import change_page_icon
-from sections.generation.generation_utils import write_feedback
+from pages.generation_utils import write_feedback
 from models.pages import PAGE
+from menus import standard_menu
 
 @st.fragment
 def write_xacml(ac_engine: AccessControlEngine):
@@ -127,6 +128,7 @@ def write_xacml(ac_engine: AccessControlEngine):
             print(e)
             feedback_container.error(body=str(e), icon=':material/dangerous:')
     
+standard_menu()
 
 ac_engine = AccessControlEngine()
 write_xacml(ac_engine)

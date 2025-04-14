@@ -81,14 +81,14 @@ def generating_wo_hierarchy():
         
     elif upload_hierarchy:
         st.session_state.is_generating = False
-        st.switch_page('sections/get_started.py')
+        st.switch_page('pages/get_started.py')
     
 
 def on_click_review():
-    st.switch_page('sections/review/incorrect_policies.py')
+    st.switch_page('pages/incorrect_policies.py')
     
 def on_click_publish():
-    st.switch_page('sections/review/correct_policies.py')
+    st.switch_page('pages/correct_policies.py')
 
 @st.dialog("Review Incorrectly Generated Policies")
 def review_incorrects(incorrects):
@@ -103,7 +103,7 @@ def review_incorrects(incorrects):
     review = gencol1.button("Yes", key="review_now", help="Review the incorrectly generated policies.", type='primary', use_container_width=True)
     
     if review:
-        st.switch_page('sections/review/incorrect_policies.py')
+        st.switch_page('pages/incorrect_policies.py')
         
     elif wait:
         st.rerun()

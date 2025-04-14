@@ -1,9 +1,10 @@
 import streamlit as st
 from loading import load_policy
-from sections.testing.policy_tester import PolicyTester
-from sections.testing.testing_utils import test_policy, test_system
+from pages.policy_tester import PolicyTester
+from pages.testing_utils import test_policy, test_system
 from ac_engine_service import AccessControlEngine
 from models.pages import PAGE
+from menus import standard_menu
 
 @st.fragment
 def test_policies(policy_tester: PolicyTester):
@@ -58,6 +59,9 @@ def test_policies(policy_tester: PolicyTester):
         )
 
 hierarchy = st.session_state.hierarchies
+
+standard_menu()
+
 ac_engine = AccessControlEngine()
 policy_tester = PolicyTester(hierarchy, ac_engine)
 test_policies(policy_tester)

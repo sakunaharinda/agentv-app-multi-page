@@ -338,7 +338,6 @@ class DataLoaders():
             
         return loader
     
-
 def set_hierarchy(hierarchy_file, pbar):
     
     # try:
@@ -357,6 +356,7 @@ def set_hierarchy(hierarchy_file, pbar):
 def store_value_gen_h(key, pbar):
     store_value(key)
     set_hierarchy(st.session_state[key], pbar)
+    
     
 def store_value_pol_doc(key):
     st.session_state.reviewed = False

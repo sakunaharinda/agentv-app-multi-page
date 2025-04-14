@@ -1,4 +1,4 @@
-from sections.testing.policy_tester import PolicyTester
+from pages.policy_tester import PolicyTester
 from models.ac_engine_dto import JSONPolicyRecordPDP
 from utils import change_page_icon
 
