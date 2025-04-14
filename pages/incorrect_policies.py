@@ -37,7 +37,8 @@ def show_incorrect_policies(models, hierarchy):
         with inc_policy_container.chat_message('user', avatar=":material/create:"):
             st.markdown(get_updated_description_inc(incorrect_pol_object))
             with st.expander("Errorneous Policy", expanded=False):
-                st.error(incorrect_pol_object["warning"])
+                warning = incorrect_pol_object["warning"]
+                st.error(warning[0])
                 review_policy(incorrect_pol_object, hierarchy, models)
 
         

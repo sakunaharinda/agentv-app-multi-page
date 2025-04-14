@@ -20,3 +20,4 @@ streamlit_code_editor
 streamlit-float
 streamlit-flow-component
 plotly
+streamlit-aggrid

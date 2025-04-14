@@ -2,14 +2,23 @@ import streamlit as st
 from hierarchy_visualizer import visualize_hierarchy_dialog
 from what_to_do import show_page_help
 
+# [data-testid="stSidebar"] [data-testid="stSidebarHeader"]::before {{
+#             content: "AGentV";
+#             top: 15px;
+#             font-size: 30px;
+#             font-weight: bold;
+#             justify-content: center !important;
+#             display: flex;
+#         }}
 
 def standard_menu():
     
     st.markdown(f"""<style>
-        [data-testid="stSidebarHeader"] {{
-                content: "AGentV";
-                
-            }}
+        
+        /* Hide original header text */
+        [data-testid="stSidebarHeader"] > div {{
+            display: none;
+        }}
         .st-key-fab button {{
                 position: fixed;
                 top: 50%;
@@ -45,7 +54,7 @@ def standard_menu():
     </style>""", unsafe_allow_html=True)
     
     # st.sidebar.header("AGentV")
-    st.sidebar.markdown("# AGentV")
+    # st.sidebar.markdown("# AGentV")
     st.sidebar.page_link("pages/get_started.py", label=st.session_state.start_title, icon=st.session_state.start_icon, disabled=st.session_state.is_generating)
     st.sidebar.write("**Policy Generation**")
     st.sidebar.page_link("pages/generate_document.py", label=st.session_state.generate_doc_title, icon=st.session_state.gen_doc_icon, disabled=st.session_state.is_generating or not st.session_state.hierarchy_upload)
