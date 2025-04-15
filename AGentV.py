@@ -1,11 +1,10 @@
 import streamlit as st
 from init_ui import init
 import torch
-# from menus import standard_menu
-# from pages.get_started import start
+from dotenv import load_dotenv
 
 torch.classes.__path__ = []
-
+_ = load_dotenv()
 init()
 
 st.markdown(

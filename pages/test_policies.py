@@ -36,7 +36,7 @@ def test_policies(policy_tester: PolicyTester):
     
     for pdp_pol_object in st.session_state.pdp_policies:
         
-        with pdp_pol_container.chat_message('user', avatar=":material/create:"):
+        with pdp_pol_container.chat_message('user', avatar=":material/gavel:"):
             nlacp_col, btn_col = st.columns([7,1])
             test_policy(pdp_pol_object, policy_tester, btn_col)
             nlacp_col.markdown(pdp_pol_object.policyDescription)

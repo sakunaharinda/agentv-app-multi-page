@@ -10,8 +10,8 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 import yaml
 from models.record_dto import Hierarchy
 from typing import Literal
-
-_ = load_dotenv()
+import chromadb
+import chromadb.utils.embedding_functions as embedding_functions
 
 @st.cache_data
 def load_json_output(data):    
@@ -100,8 +100,14 @@ def load_models():
     ver_model, ver_tokenizer = load_ver_model()
     loc_model, loc_tokenizer = load_loc_model()
     vectorestores = None #load_vectorstores("data/vectorstores")
-    embedding_model = HuggingFaceEmbeddings(model_name="mixedbread-ai/mxbai-embed-large-v1",
+    if st.session_state.use_chroma:
+        embedding_model = None
+        chroma_client = chromadb.HttpClient(host=os.environ['CHROMA_HOST'], port=os.environ['CHROMA_PORT'])
+        vectorestores = load_vectorstores(chroma_client) 
+    else:
+        embedding_model = HuggingFaceEmbeddings(model_name="mixedbread-ai/mxbai-embed-large-v1",
                                     model_kwargs={'device':"cuda", "trust_remote_code": True})
+        vectorestores = None 
     
     return id_model, id_tokenizer, gen_model, gen_tokenizer, ver_model, ver_tokenizer, loc_model, loc_tokenizer, vectorestores, embedding_model
     
@@ -161,45 +167,14 @@ def load_loc_model():
     model.eval()
     return model, tokenizer  
 
-@st.cache_resource
-def load_vectorstores(store_location = "../data/vectorstores"):
-    embeddings = HuggingFaceEmbeddings(
-        model_name="mixedbread-ai/mxbai-embed-large-v1", model_kwargs={"device": "cuda:0"}
-    )
-
-    vector_store_subjects = FAISS.load_local(
-        f"{store_location}/subjects_index",
-        embeddings,
-        allow_dangerous_deserialization=True,
-    )
-    vector_store_resources = FAISS.load_local(
-        f"{store_location}/resources_index",
-        embeddings,
-        allow_dangerous_deserialization=True,
-    )
-    # vector_store_purposes = FAISS.load_local(
-    #     f"{store_location}/purposes_index",
-    #     embeddings,
-    #     allow_dangerous_deserialization=True,
-    # )
-    vector_store_conditions = FAISS.load_local(
-        f"{store_location}/conditions_index",
-        embeddings,
-        allow_dangerous_deserialization=True,
-    )
-    
-    vector_store_actions = FAISS.load_local(
-        f"{store_location}/actions_index",
-        embeddings,
-        allow_dangerous_deserialization=True,
-    )
+def load_vectorstores(client):
 
     stores = {
-        "subject": vector_store_subjects,
-        "action": vector_store_actions,
-        "resource": vector_store_resources,
+        "subject": client.get_or_create_collection(name="subject", embedding_function=embedding_functions.HuggingFaceEmbeddingFunction(model_name="mixedbread-ai/mxbai-embed-large-v1", api_key=os.environ['HF_TOKEN']), metadata={"hnsw:space": "cosine"}),
+        "action": client.get_or_create_collection(name="action", embedding_function=embedding_functions.HuggingFaceEmbeddingFunction(model_name="mixedbread-ai/mxbai-embed-large-v1", api_key=os.environ['HF_TOKEN']), metadata={"hnsw:space": "cosine"}),
+        "resource": client.get_or_create_collection(name="resource", embedding_function=embedding_functions.HuggingFaceEmbeddingFunction(model_name="mixedbread-ai/mxbai-embed-large-v1", api_key=os.environ['HF_TOKEN']), metadata={"hnsw:space": "cosine"}),
         # "purpose": vector_store_purposes,
-        "condition": vector_store_conditions,
+        "condition": client.get_or_create_collection(name="condition", embedding_function=embedding_functions.HuggingFaceEmbeddingFunction(model_name="mixedbread-ai/mxbai-embed-large-v1", api_key=os.environ['HF_TOKEN']), metadata={"hnsw:space": "cosine"}),
     }
 
     return stores
@@ -207,7 +182,7 @@ def load_vectorstores(store_location = "../data/vectorstores"):
 class ModelStore:
     
     def __init__(self, fake=False):
-        
+            
         if fake:
             self.id_model, self.id_tokenizer, self.gen_model, self.gen_tokenizer, self.ver_model, self.ver_tokenizer, self.loc_model, self.loc_tokenizer, self.vectorestores, self.embedding_model = 10*[None]
         

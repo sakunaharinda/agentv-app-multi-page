@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 from enum import Enum
 import random
@@ -8,7 +9,7 @@ from torch.utils.data import Dataset, DataLoader
 from models.record_dto import Results
 from models.ac_engine_dto import JSONPolicyRecord
 from loading import get_entity_hierarchy
-from vectorstore import build_vectorstores
+from vectorstore import build_vectorstores, build_vectorstores_chroma
 
 class Task(Enum):
     NLACP_ID = 'nlacp_identification',
@@ -346,7 +347,11 @@ def set_hierarchy(hierarchy_file, pbar):
         st.session_state['main_hierarchy'] = main_hierarchy
         st.session_state['hierarchies'] = hierarchies.to_dict()
         
-        st.session_state.models.vectorestores = build_vectorstores(pbar)
+        if st.session_state.use_chroma:
+            print("Using chroma to build")
+            build_vectorstores_chroma(pbar)
+        else:    
+            st.session_state.models.vectorestores = build_vectorstores(pbar)
         st.session_state.enable_generation = True
         st.session_state.show_hierarchy = True
         

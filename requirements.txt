@@ -21,3 +21,4 @@ streamlit-float
 streamlit-flow-component
 plotly
 streamlit-aggrid
+chromadb

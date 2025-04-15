@@ -3,6 +3,7 @@ from ac_engine_service import AccessControlEngine
 from loading import ModelStore
 from uuid import uuid4
 from models.pages import PAGE
+import os
 
 def set_state(state, value):
     if state not in st.session_state:
@@ -60,6 +61,7 @@ def init():
     set_state('policy_export_title', "Save Policies")
     set_state('started', False)
     set_state('new_doc', True)
+    set_state('use_chroma', os.getenv('USE_CHROMA'))
     # set_state('show_hierarchy', True)
 
     set_state('current_page', PAGE.START)

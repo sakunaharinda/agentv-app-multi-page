@@ -48,6 +48,11 @@ def standard_menu():
                 padding: 10px !important;
                 
             }}
+            
+        .st-key-org_hierarchy {{
+                position: fixed !important;
+                bottom: 10px !important;
+            }}
         /* Target the container with the specific key */
             
         

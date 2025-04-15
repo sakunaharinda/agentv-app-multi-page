@@ -39,7 +39,7 @@ def show_correct_policies(ac_engine: AccessControlEngine):
     
     for correct_pol_object in st.session_state.corrected_policies_pdp:
         
-        with cor_pol_container.chat_message('user', avatar=":material/create:"):
+        with cor_pol_container.chat_message('user', avatar=":material/gavel:"):
             nlacp_col, btn_col = st.columns([7,1.5])
             publish_policy(correct_pol_object, ac_engine, btn_col)
             nlacp_col.markdown(get_updated_description(correct_pol_object))

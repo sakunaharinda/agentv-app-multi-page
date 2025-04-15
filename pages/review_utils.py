@@ -167,7 +167,7 @@ def submit_corrected_policy(inc_policy, edited_df, hierarchy, models):
     
     edited_df = edited_df.drop('rule', axis='columns')
     corrected_policy = [v for _, v in edited_df.to_dict("index").items()]
-    policy = align_policy(corrected_policy, models.vectorestores, hierarchy)
+    policy = align_policy(corrected_policy, models.vectorestores, hierarchy, chroma=st.session_state.use_chroma)
     json_policy = JSONPolicyRecord.from_dict({
         'policyId': inc_policy['id'],
         'policyDescription': inc_policy['nlacp'],

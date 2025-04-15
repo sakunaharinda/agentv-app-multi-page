@@ -14,8 +14,7 @@ import requests
 from models.record_dto import Results
 from models.ac_engine_dto import JSONPolicyRecord
 from uuid import uuid4
-
-_ = load_dotenv('../.env')
+from vectorstore import get_candidates_chroma, get_available_entities_chroma
 
 ITERATIONS = 2
 
@@ -189,13 +188,17 @@ def get_candidates(_store, sentence,k=5):
     return l
 
 @st.cache_data(show_spinner=False)
-def get_available_entities(query: str, _vectorstores: dict, n=3):
+def get_available_entities(query: str, _vectorstores: dict, n=3, chroma=False):
     
-    entities = {'subject': [], 'action': [], 'resource': [], 'purpose': [], 'condition': []}
-    for key in entities:
-        entities[key] = get_candidates(_vectorstores.get(key, None), query, k=n)
+    if chroma:
+        print("Using Chroma!")
+        return get_available_entities_chroma(query, _vectorstores, n)
+    else:
+        entities = {'subject': [], 'action': [], 'resource': [], 'purpose': [], 'condition': []}
+        for key in entities:
+            entities[key] = get_candidates(_vectorstores.get(key, None), query, k=n)
 
-    return entities
+        return entities
 
 @st.cache_data(show_spinner=False)
 def verify_refine(
@@ -346,27 +349,54 @@ def filter_policy(policy):
     return uniques
 
 @st.cache_data(show_spinner=False)
-def align_policy(policy, _vectorstore: dict, hierarchy: dict):
+def align_policy(policy, _vectorstore: dict, hierarchy: dict, chroma = False):
+    unique_pols = []
+    new_pol = []
+    
+    if chroma:
+        print("Using chroma!")
+        return align_policy_chroma(policy, _vectorstore, hierarchy)
+    else:
+        for rule in policy:
+            for k,v in rule.items():
+                if k=='decision' or k == 'purpose':
+                    continue
+                store = _vectorstore.get(k, None)
+                if v!='none' and store is not None:
+                    from_db = store.similarity_search(v,k=1)[0].page_content
+                else:
+                    from_db = v
+                rule[k] = from_db.strip()
+            new_pol.append(rule)
+            
+        unique_pols = filter_policy(new_pol)
+                
+        return expand_policy(unique_pols, hierarchy['subject_hierarchy'], hierarchy['action_hierarchy'], hierarchy['resource_hierarchy']), False
+
+@st.cache_data(show_spinner=False)
+def align_policy_chroma(policy, _vectorstore: dict, hierarchy: dict):
     unique_pols = []
     
     new_pol = []
+    outside_hierarchy = False
     for rule in policy:
         for k,v in rule.items():
             if k=='decision' or k == 'purpose':
                 continue
             store = _vectorstore.get(k, None)
             if v!='none' and store is not None:
-                from_db = store.similarity_search(v,k=1)[0].page_content
-            else:
-                from_db = v
-            rule[k] = from_db.strip()
+                from_db, score = get_candidates_chroma(store, v, 1)
+                if score[0] > 0.75:
+                    rule[k] = from_db[0].strip()
+                else:
+                    outside_hierarchy = True
         new_pol.append(rule)
         
     for r in new_pol:
         if r not in unique_pols:
             unique_pols.append(r)
             
-    return expand_policy(unique_pols, hierarchy['subject_hierarchy'], hierarchy['action_hierarchy'], hierarchy['resource_hierarchy'])
+    return expand_policy(unique_pols, hierarchy['subject_hierarchy'], hierarchy['action_hierarchy'], hierarchy['resource_hierarchy']), outside_hierarchy
 
 # @st.cache_data(show_spinner=False)
 def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_tokenizer, _gen_model, _ver_model, _ver_tokenizer, _loc_tokenizer, _loc_model, _vectorstores, hierarchy, do_align=True):
@@ -394,8 +424,7 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
             results.nlacps.append(nlacp)
             
             if do_align:
-                ents = get_available_entities(nlacp, _vectorstores, n=3)
-                
+                ents = get_available_entities(nlacp, _vectorstores, n=3, chroma=st.session_state.use_chroma)
                 st.write("Translating ...")
                 policy, success = generate_policy(
                     nlacp, _gen_tokenizer, _gen_model, ents
@@ -432,7 +461,10 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
                 if ver_result == 11:
                     
                     if do_align:
-                        policy = align_policy(policy, _vectorstores, hierarchy)
+                        policy, outside_hierarchy = align_policy(policy, _vectorstores, hierarchy, chroma=st.session_state.use_chroma)
+                        
+                        if outside_hierarchy:
+                            print("Outside")
                     
                     json_policy = JSONPolicyRecord.from_dict({
                         'policyId': str(uuid4()),
@@ -494,8 +526,6 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
 # @st.cache_data(show_spinner=False)
 def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_tokenizer, _gen_model, _ver_model, _ver_tokenizer, _loc_tokenizer, _loc_model, _vectorstores, hierarchy, do_align = True):
     
-    print(_vectorstores)
-    
     with _status_container.status("Generating policies ...", expanded=True) as _status:
         results = Results()
         
@@ -514,7 +544,7 @@ def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_toke
             
             if do_align:
             
-                ents = get_available_entities(nlacp, _vectorstores, n=3)
+                ents = get_available_entities(nlacp, _vectorstores, n=3, chroma=st.session_state.use_chroma)
             else:
                 ents = {}
             
@@ -558,7 +588,10 @@ def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_toke
             if ver == 11:
                 
                 if do_align:
-                    policy = align_policy(policy, _vectorstores, hierarchy)
+                    policy, outside_hierarchy = align_policy(policy, _vectorstores, hierarchy, chroma=st.session_state.use_chroma)
+                    
+                    if outside_hierarchy:
+                        print(nlacp)
                 
                 json_policy = JSONPolicyRecord.from_dict({
                     'policyId': str(uuid4()),
@@ -586,7 +619,10 @@ def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_toke
                 if ver == 11:
                     
                     if do_align:
-                        policy = align_policy(policy, _vectorstores, hierarchy)
+                        policy, outside_hierarchy = align_policy(policy, _vectorstores, hierarchy, chroma=st.session_state.use_chroma)
+                        
+                        if outside_hierarchy:
+                            print(nlacp)
                     
                     json_policy = JSONPolicyRecord.from_dict({
                         'policyId': str(uuid4()),

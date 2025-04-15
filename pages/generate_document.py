@@ -63,7 +63,6 @@ def generate_doc(hierarchy, models):
             # else:
                 
             content = st.session_state.policy_doc.getvalue().decode('utf-8')
-        
             agentv_batch(status_container, content, models.id_tokenizer, models.id_model, models.gen_tokenizer, models.gen_model, models.ver_model, models.ver_tokenizer, models.loc_tokenizer, models.loc_model, models.vectorestores, hierarchy, do_align=st.session_state.do_align)
             st.session_state.is_generating = False
             # st.session_state.generate_wo_context = False
