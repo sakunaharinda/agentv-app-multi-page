@@ -1,24 +1,44 @@
 #!/bin/bash
 
-CONTAINER_NAME="vectorstore_server"
+CONTAINER_VECTOR="vectorstore_server"
+CONTAINER_PRE="agentv-app-preprocessing-server"
 DEFAULT_AGENTV_PORT=8506
 
 # Use first argument as port, or default to 8506
 AGENTV_PORT=${1:-$DEFAULT_AGENTV_PORT}
 
 # Check if the container is running
-if [ "$(docker ps -q -f name=^/${CONTAINER_NAME}$)" ]; then
-    echo "Container '$CONTAINER_NAME' is already running."
+if [ "$(docker ps -q -f name=^/${CONTAINER_VECTOR}$)" ]; then
+    echo "Container '$CONTAINER_VECTOR' is already running."
 else
-    echo "Container '$CONTAINER_NAME' is not running. Attempting to start..."
+    echo "Container '$CONTAINER_VECTOR' is not running. Attempting to start..."
     
     # Check if the container exists (but stopped)
-    if [ "$(docker ps -aq -f name=^/${CONTAINER_NAME}$)" ]; then
-        docker start "$CONTAINER_NAME"
-        echo "Container '$CONTAINER_NAME' started."
+    if [ "$(docker ps -aq -f name=^/${CONTAINER_VECTOR}$)" ]; then
+        docker start "$CONTAINER_VECTOR"
+        echo "Container '$CONTAINER_VECTOR' started."
     else
-        echo "Container '$CONTAINER_NAME' does not exist. Creating and starting..."
-        docker run -d --name "$CONTAINER_NAME" -v ./data/vectorstores/:/data -p 8001:8000 chromadb/chroma
+        echo "Container '$CONTAINER_VECTOR' does not exist. Creating and starting..."
+        docker run -d --name "$CONTAINER_VECTOR" -v ./data/vectorstores/:/data -p 8001:8000 chromadb/chroma
+    fi
+fi
+
+if [ "$(docker ps -q -f name=^/${CONTAINER_PRE}$)" ]; then
+    echo "Container '$CONTAINER_PRE' is already running."
+else
+    echo "Container '$CONTAINER_PRE' is not running. Attempting to start..."
+    
+    # Check if the container exists (but stopped)
+    if [ "$(docker ps -aq -f name=^/${CONTAINER_PRE}$)" ]; then
+        docker start "$CONTAINER_PRE"
+        echo "Container '$CONTAINER_PRE' started."
+    else
+        echo "Container '$CONTAINER_PRE' does not exist. Creating and starting..."
+        git clone https://github.com/sakunaharinda/agentv-app-preprocessing-server.git
+        cd agentv-app-preprocessing-server
+        docker build -t "$CONTAINER_PRE" .
+        docker run -d --name "$CONTAINER_PRE" -p 8000:8000 "$CONTAINER_PRE"
+        # docker run -d --name "$CONTAINER_PRE" -v ./data/vectorstores/:/data -p 8001:8000 chromadb/chroma
     fi
 fi
 
