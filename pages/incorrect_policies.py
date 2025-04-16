@@ -25,6 +25,9 @@ def show_incorrect_policies(models, hierarchy):
             section.main {
                 padding-bottom: 100px !important;
             }
+            .ag-center-cols-viewport {
+                min-height: unset !important;
+            }
         </style>
         """, unsafe_allow_html=True)
     
@@ -37,10 +40,10 @@ def show_incorrect_policies(models, hierarchy):
         with inc_policy_container.chat_message('user', avatar=":material/dangerous:"):
             st.markdown(get_updated_description_inc(incorrect_pol_object))
             with st.expander("Errorneous Policy", expanded=True):
-                warning = incorrect_pol_object["warning"]
-                st.error(warning[0])
+                warning, info = incorrect_pol_object["warning"]
+                st.error(warning)
                 # review_policy(incorrect_pol_object, hierarchy, models)
-                review_policy_aggrid(incorrect_pol_object, hierarchy, models)
+                review_policy_aggrid(incorrect_pol_object, info, hierarchy, models)
 
         
 hierarchy = st.session_state.hierarchies

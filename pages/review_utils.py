@@ -5,7 +5,7 @@ from models.ac_engine_dto import JSONPolicyRecord, JSONPolicyRecordPDP
 from loading import load_policy
 from ml_layer import align_policy
 import ast
-from st_aggrid import AgGrid, GridOptionsBuilder
+from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
 
 def publish_single(pdp_policy: JSONPolicyRecordPDP, ac_engine: AccessControlEngine):
     
@@ -113,7 +113,33 @@ def get_options(h: dict):
         
     return sorted(list(set(values)))
 
-def review_policy_aggrid(inc_policy, hierarchy, models):
+
+def highlight_errors(highlights, gb: GridOptionsBuilder):
+    for highlight in highlights:
+        row_index, column_field = highlight
+        cell_style_jscode = JsCode(f"""
+        function(params) {{
+            if (params.node.rowIndex === {row_index}) {{
+                return {{
+                    'backgroundColor': '#FAE7E9',
+                    'color': 'black'
+                }}
+            }}
+            return null;
+        }}
+        """)
+        gb.configure_column(column_field, cellStyle=cell_style_jscode)
+
+def review_policy_aggrid(inc_policy, err_info, hierarchy, models):
+    # TODO: Cannot add new rows as of now
+    
+    highlights = []
+    
+    error_ids, error_type = err_info
+    
+    for row in error_ids:
+        highlights.append((row, error_type))
+    
     pol_id = inc_policy['id']
     df = load_policy(inc_policy['policy'])
     df.insert(0, 'rule', [i+1 for i in range(len(df))])
@@ -121,23 +147,19 @@ def review_policy_aggrid(inc_policy, hierarchy, models):
     subjects, actions, resources = update_options(df, get_options(hierarchy['subject_hierarchy']), get_options(hierarchy['action_hierarchy']), get_options(hierarchy['resource_hierarchy']))
     
     gb = GridOptionsBuilder.from_dataframe(df)
-    # gb.configure_default_column(
-    #     groupable=True,
-    #     value=True,
-    #     enableRowGroup=True,
-    #     aggFunc='sum'
-    # )
+    highlight_errors(highlights, gb)
     gb.configure_column('rule', header_name="Rule ID", editable=True)
-    gb.configure_column('decision', header_name="Decision", editable=True, cellEditor='agSelectCellEditor',
+    gb.configure_column('Decision', editable=True, cellEditor='agSelectCellEditor',
         cellEditorParams={'values': ['allow', 'deny']})
-    gb.configure_column('subject', header_name="Subject", editable=True, cellEditor='agSelectCellEditor',
+    gb.configure_column('Subject', editable=True, cellEditor='agSelectCellEditor',
         cellEditorParams={'values': subjects})
-    gb.configure_column('action', header_name="Action", editable=True, cellEditor='agSelectCellEditor',
+    gb.configure_column('Action', editable=True, cellEditor='agSelectCellEditor',
         cellEditorParams={'values': actions})
-    gb.configure_column('resource', header_name="Resource", editable=True, cellEditor='agSelectCellEditor',
+    gb.configure_column('Resource', editable=True, cellEditor='agSelectCellEditor',
         cellEditorParams={'values': resources})
-    gb.configure_column('condition', header_name="Condition", editable=True)
-    gb.configure_column('purpose', header_name="Purpose", editable=True)
+    gb.configure_column('Condition', editable=True)
+    gb.configure_column('Purpose', editable=True)
+    gb.configure_grid_options(domLayout='autoHeight')
     grid_options = gb.build()
     grid_return = AgGrid(df, gridOptions=grid_options,
         width='100%',

@@ -19,7 +19,16 @@ def load_json_output(data):
 
 @st.cache_data
 def load_policy(data):
-    return pd.DataFrame(data)
+    df = pd.DataFrame(data)
+    df.rename({
+        'decision': 'Decision',
+        'subject': 'Subject',
+        'action': 'Action',
+        'resource': 'Resource',
+        'condition': 'Condition',
+        'purpose': 'Purpose'
+    }, inplace=True)
+    return df
 
 @st.cache_data
 def load_hierarchy_yaml(file):
