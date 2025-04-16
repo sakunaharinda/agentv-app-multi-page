@@ -19,10 +19,10 @@ def generate_sent(hierarchy, models):
             /* Target the container with the specific key */
             [data-testid="stVerticalBlock"] .st-key-individual_container {
                 position: fixed !important;
-                bottom: -0.8% !important;
+                bottom: 0.0% !important;
                 background-color: white !important;
                 padding-top: 10px !important;
-                padding-bottom: 15px !important;
+                padding-bottom: 20px !important;
                 z-index: 9999 !important;
             }
             

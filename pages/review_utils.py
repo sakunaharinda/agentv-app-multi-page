@@ -5,6 +5,7 @@ from models.ac_engine_dto import JSONPolicyRecord, JSONPolicyRecordPDP
 from loading import load_policy
 from ml_layer import align_policy
 import ast
+from st_aggrid import AgGrid, GridOptionsBuilder
 
 def publish_single(pdp_policy: JSONPolicyRecordPDP, ac_engine: AccessControlEngine):
     
@@ -112,6 +113,40 @@ def get_options(h: dict):
         
     return sorted(list(set(values)))
 
+def review_policy_aggrid(inc_policy, hierarchy, models):
+    pol_id = inc_policy['id']
+    df = load_policy(inc_policy['policy'])
+    df.insert(0, 'rule', [i+1 for i in range(len(df))])
+    
+    subjects, actions, resources = update_options(df, get_options(hierarchy['subject_hierarchy']), get_options(hierarchy['action_hierarchy']), get_options(hierarchy['resource_hierarchy']))
+    
+    gb = GridOptionsBuilder.from_dataframe(df)
+    # gb.configure_default_column(
+    #     groupable=True,
+    #     value=True,
+    #     enableRowGroup=True,
+    #     aggFunc='sum'
+    # )
+    gb.configure_column('rule', header_name="Rule ID", editable=True)
+    gb.configure_column('decision', header_name="Decision", editable=True, cellEditor='agSelectCellEditor',
+        cellEditorParams={'values': ['allow', 'deny']})
+    gb.configure_column('subject', header_name="Subject", editable=True, cellEditor='agSelectCellEditor',
+        cellEditorParams={'values': subjects})
+    gb.configure_column('action', header_name="Action", editable=True, cellEditor='agSelectCellEditor',
+        cellEditorParams={'values': actions})
+    gb.configure_column('resource', header_name="Resource", editable=True, cellEditor='agSelectCellEditor',
+        cellEditorParams={'values': resources})
+    gb.configure_column('condition', header_name="Condition", editable=True)
+    gb.configure_column('purpose', header_name="Purpose", editable=True)
+    grid_options = gb.build()
+    grid_return = AgGrid(df, gridOptions=grid_options,
+        width='100%',
+        allow_unsafe_jscode=True, fit_columns_on_grid_load=True, editable=True,
+        # pinned_top_row_data=[pinned_row]
+        key=f'incorrect_policy_{pol_id}'
+        )
+    st.button("Submit", key=f'submit_inc_btn_{pol_id}', use_container_width=True, type='primary', on_click=submit_corrected_policy, args=(inc_policy, grid_return['data'], hierarchy, models,), icon=":material/send:")
+
 def review_policy(inc_policy, hierarchy, models):
     
     pol_id = inc_policy['id']
@@ -167,7 +202,7 @@ def submit_corrected_policy(inc_policy, edited_df, hierarchy, models):
     
     edited_df = edited_df.drop('rule', axis='columns')
     corrected_policy = [v for _, v in edited_df.to_dict("index").items()]
-    policy = align_policy(corrected_policy, models.vectorestores, hierarchy, chroma=st.session_state.use_chroma)
+    policy, outside_hierarchy = align_policy(corrected_policy, models.vectorestores, hierarchy, chroma=st.session_state.use_chroma)
     json_policy = JSONPolicyRecord.from_dict({
         'policyId': inc_policy['id'],
         'policyDescription': inc_policy['nlacp'],

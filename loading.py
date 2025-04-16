@@ -170,11 +170,11 @@ def load_loc_model():
 def load_vectorstores(client):
 
     stores = {
-        "subject": client.get_or_create_collection(name="subject", embedding_function=embedding_functions.HuggingFaceEmbeddingFunction(model_name="mixedbread-ai/mxbai-embed-large-v1", api_key=os.environ['HF_TOKEN']), metadata={"hnsw:space": "cosine"}),
-        "action": client.get_or_create_collection(name="action", embedding_function=embedding_functions.HuggingFaceEmbeddingFunction(model_name="mixedbread-ai/mxbai-embed-large-v1", api_key=os.environ['HF_TOKEN']), metadata={"hnsw:space": "cosine"}),
-        "resource": client.get_or_create_collection(name="resource", embedding_function=embedding_functions.HuggingFaceEmbeddingFunction(model_name="mixedbread-ai/mxbai-embed-large-v1", api_key=os.environ['HF_TOKEN']), metadata={"hnsw:space": "cosine"}),
+        "subject": client.get_or_create_collection(name="subject", embedding_function=embedding_functions.SentenceTransformerEmbeddingFunction(model_name="mixedbread-ai/mxbai-embed-large-v1", device='cuda'), metadata={"hnsw:space": "cosine"}),
+        "action": client.get_or_create_collection(name="action", embedding_function=embedding_functions.SentenceTransformerEmbeddingFunction(model_name="mixedbread-ai/mxbai-embed-large-v1", device='cuda'), metadata={"hnsw:space": "cosine"}),
+        "resource": client.get_or_create_collection(name="resource", embedding_function=embedding_functions.SentenceTransformerEmbeddingFunction(model_name="mixedbread-ai/mxbai-embed-large-v1", device='cuda'), metadata={"hnsw:space": "cosine"}),
         # "purpose": vector_store_purposes,
-        "condition": client.get_or_create_collection(name="condition", embedding_function=embedding_functions.HuggingFaceEmbeddingFunction(model_name="mixedbread-ai/mxbai-embed-large-v1", api_key=os.environ['HF_TOKEN']), metadata={"hnsw:space": "cosine"}),
+        "condition": client.get_or_create_collection(name="condition", embedding_function=embedding_functions.SentenceTransformerEmbeddingFunction(model_name="mixedbread-ai/mxbai-embed-large-v1", device='cuda'), metadata={"hnsw:space": "cosine"}),
     }
 
     return stores

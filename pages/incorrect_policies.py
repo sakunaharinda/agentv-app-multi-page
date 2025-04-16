@@ -1,6 +1,6 @@
 import streamlit as st
 from models.pages import PAGE
-from pages.review_utils import get_updated_description_inc, review_policy
+from pages.review_utils import get_updated_description_inc, review_policy, review_policy_aggrid
 from menus import standard_menu
 
 @st.fragment
@@ -36,10 +36,11 @@ def show_incorrect_policies(models, hierarchy):
         
         with inc_policy_container.chat_message('user', avatar=":material/dangerous:"):
             st.markdown(get_updated_description_inc(incorrect_pol_object))
-            with st.expander("Errorneous Policy", expanded=False):
+            with st.expander("Errorneous Policy", expanded=True):
                 warning = incorrect_pol_object["warning"]
                 st.error(warning[0])
-                review_policy(incorrect_pol_object, hierarchy, models)
+                # review_policy(incorrect_pol_object, hierarchy, models)
+                review_policy_aggrid(incorrect_pol_object, hierarchy, models)
 
         
 hierarchy = st.session_state.hierarchies

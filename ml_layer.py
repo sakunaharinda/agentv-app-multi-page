@@ -191,7 +191,6 @@ def get_candidates(_store, sentence,k=5):
 def get_available_entities(query: str, _vectorstores: dict, n=3, chroma=False):
     
     if chroma:
-        print("Using Chroma!")
         return get_available_entities_chroma(query, _vectorstores, n)
     else:
         entities = {'subject': [], 'action': [], 'resource': [], 'purpose': [], 'condition': []}
@@ -354,7 +353,6 @@ def align_policy(policy, _vectorstore: dict, hierarchy: dict, chroma = False):
     new_pol = []
     
     if chroma:
-        print("Using chroma!")
         return align_policy_chroma(policy, _vectorstore, hierarchy)
     else:
         for rule in policy:
@@ -525,7 +523,8 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
     
 # @st.cache_data(show_spinner=False)
 def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_tokenizer, _gen_model, _ver_model, _ver_tokenizer, _loc_tokenizer, _loc_model, _vectorstores, hierarchy, do_align = True):
-    
+    if st.session_state.use_chroma:
+        print("Using Chroma")
     with _status_container.status("Generating policies ...", expanded=True) as _status:
         results = Results()
         

@@ -51,7 +51,7 @@ def standard_menu():
             
         .st-key-org_hierarchy {{
                 position: fixed !important;
-                bottom: 10px !important;
+                bottom: 20px !important;
             }}
         /* Target the container with the specific key */
             
