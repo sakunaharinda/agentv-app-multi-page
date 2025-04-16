@@ -28,7 +28,7 @@ def get_rule_id_str(error_rules):
 
 def get_locate_warning_msg(error_type, error_rules: List):
     
-    msg = f"#### :material/dangerous: Error in Access Control Policy\nRule {get_rule_id_str(error_rules)} contain{'s a/an' if len(error_rules)==1 else ''} {error_type}{'s' if len(error_rules)>1 else ''} which may restrict or permit unintended access.\nTo correct this:\n1. **Locate Rule 2**: In the table below, go to the row {get_rule_id_str(error_rules)} corresponding to the rule {get_rule_id_str(error_rules)}.\n2. **Edit the {error_type.split(' ')[-1]}**: Double-click the cell under the '{error_type.split(' ')[-1]}' column in this row. A dropdown menu will appear; select the appropriate {error_type.split(' ')[-1]} from the list.\n3. **Submit the Policy**: Click the **'Submit'** button to save the corrected policy."
+    msg = f"#### :material/dangerous: Error in Access Control Policy\nRule {get_rule_id_str(error_rules)} contain{'s a/an' if len(error_rules)==1 else ''} {error_type}{'s' if len(error_rules)>1 else ''} which may restrict or permit unintended access.\nTo correct this:\n1. **Locate Error**: In the table below, go to the row {get_rule_id_str(error_rules)} corresponding to the rule {get_rule_id_str(error_rules)}.\n2. **Edit the {error_type.split(' ')[-1]}**: Double-click the cell highlighted in red under the '{error_type.split(' ')[-1]}' column in this row. A dropdown menu will appear; select the appropriate {error_type.split(' ')[-1]} from the list.\n3. **Submit the Policy**: Click the **'Submit'** button to save the corrected policy."
     
     
     return msg, [error_rules, error_type.split(' ')[-1]]

@@ -20,7 +20,7 @@ def load_json_output(data):
 @st.cache_data
 def load_policy(data):
     df = pd.DataFrame(data)
-    df.rename({
+    df.rename(columns={
         'decision': 'Decision',
         'subject': 'Subject',
         'action': 'Action',

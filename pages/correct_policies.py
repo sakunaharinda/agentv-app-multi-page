@@ -44,7 +44,7 @@ def show_correct_policies(ac_engine: AccessControlEngine):
             publish_policy(correct_pol_object, ac_engine, btn_col)
             nlacp_col.markdown(get_updated_description(correct_pol_object))
             with st.expander("Generated Policy", expanded=False):
-                corr_df = st.dataframe(load_policy(correct_pol_object.policy), use_container_width=True, key=f"correct_policy_{correct_pol_object.policyId}")
+                corr_df = st.dataframe(load_policy(correct_pol_object.policy), use_container_width=True, key=f"correct_policy_{correct_pol_object.policyId}", hide_index=True)
     
     
     

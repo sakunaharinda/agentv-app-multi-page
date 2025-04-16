@@ -41,7 +41,7 @@ def test_policies(policy_tester: PolicyTester):
             test_policy(pdp_pol_object, policy_tester, btn_col)
             nlacp_col.markdown(pdp_pol_object.policyDescription)
             with st.expander("Generated Policy", expanded=False):
-                st.dataframe(load_policy(pdp_pol_object.policy), use_container_width=True, key=f"pdp_policy_{pdp_pol_object.policyId}")
+                st.dataframe(load_policy(pdp_pol_object.policy), use_container_width=True, key=f"pdp_policy_{pdp_pol_object.policyId}", hide_index=True)
 
 
     with st.container(border=False, height=100, key='test_container'):

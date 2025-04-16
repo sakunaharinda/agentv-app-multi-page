@@ -46,7 +46,7 @@ def generate_sent(hierarchy, models):
             if written_p.error == None:
                 policy = load_policy(written_p.policy)
                 with st.expander("Generated Policy", expanded=False):
-                    st.dataframe(policy, use_container_width=True, key=f'df_{written_p.id}')
+                    st.dataframe(policy, use_container_width=True, key=f'df_{written_p.id}', hide_index=True)
                     review_individual(written_p.id, written_p.is_incorrect)
             else:
                 st.error(body=written_p.error, icon=":material/dangerous:")

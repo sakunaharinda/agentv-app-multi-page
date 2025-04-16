@@ -28,9 +28,9 @@ class PolicyTester():
         
         st.write(policy.policyDescription)
         
-        subject = st.selectbox(label="Subject", options=self.subjects, index=self.subjects.index(random_rule['subject']))
-        action = st.selectbox(label="Action", options=self.actions, index=self.actions.index(random_rule['action']))
-        resource = st.selectbox(label="Resource", options=self.resources, index=self.resources.index(random_rule['resource']))
+        subject = st.selectbox(label="Subject", options=self.subjects, index=self.subjects.index(random_rule['subject']) if random_rule['subject'] in self.subjects else 0)
+        action = st.selectbox(label="Action", options=self.actions, index=self.actions.index(random_rule['action']) if random_rule['action'] in self.actions else 0)
+        resource = st.selectbox(label="Resource", options=self.resources, index=self.resources.index(random_rule['resource']) if random_rule['resource'] in self.resources else 0)
         
         ct = st.container(height=100, border=False)
         col1, col2 = st.columns([1,1])

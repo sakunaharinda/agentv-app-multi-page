@@ -494,7 +494,8 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
                             "nlacp": nlacp,
                             "policy": policy,
                             "warning": warning,
-                            "solved": False
+                            "solved": False,
+                            "show": True
                         }
                     )
                     # handlers.inc_policy_nav_last()
@@ -653,7 +654,8 @@ def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_toke
                                 "nlacp": nlacp,
                                 "policy": policy,
                                 "warning": warning,
-                                "solved": False
+                                "solved": False,
+                                "show": True
                             }
                         )
 
@@ -666,7 +668,8 @@ def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_toke
                                 "nlacp": nlacp,
                                 "policy": policy,
                                 "warning": warning,
-                                "solved": False
+                                "solved": False,
+                                "show": True
                             }
                         )
                     

@@ -6,6 +6,7 @@ from loading import load_policy
 from ml_layer import align_policy
 import ast
 from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
+import pandas as pd
 
 def publish_single(pdp_policy: JSONPolicyRecordPDP, ac_engine: AccessControlEngine):
     
@@ -91,9 +92,9 @@ def get_updated_description_inc(inc_policy):
 def update_options(df, subjects, actions, resources):
     
     for i in range(len(df)):
-        subject = df.iloc[i]['subject']
-        action = df.iloc[i]['action']
-        resource = df.iloc[i]['resource']
+        subject = df.iloc[i]['Subject']
+        action = df.iloc[i]['Action']
+        resource = df.iloc[i]['Resource']
         
         if subject not in subjects:
             subjects.append(subject)
@@ -138,7 +139,7 @@ def review_policy_aggrid(inc_policy, err_info, hierarchy, models):
     error_ids, error_type = err_info
     
     for row in error_ids:
-        highlights.append((row, error_type))
+        highlights.append((row, error_type.capitalize()))
     
     pol_id = inc_policy['id']
     df = load_policy(inc_policy['policy'])
@@ -147,7 +148,8 @@ def review_policy_aggrid(inc_policy, err_info, hierarchy, models):
     subjects, actions, resources = update_options(df, get_options(hierarchy['subject_hierarchy']), get_options(hierarchy['action_hierarchy']), get_options(hierarchy['resource_hierarchy']))
     
     gb = GridOptionsBuilder.from_dataframe(df)
-    highlight_errors(highlights, gb)
+    if not inc_policy['solved']:
+        highlight_errors(highlights, gb)
     gb.configure_column('rule', header_name="Rule ID", editable=True)
     gb.configure_column('Decision', editable=True, cellEditor='agSelectCellEditor',
         cellEditorParams={'values': ['allow', 'deny']})
@@ -183,8 +185,8 @@ def review_policy(inc_policy, hierarchy, models):
         num_rows="dynamic",
         key="corrected_policy",
         column_config={
-            "decision": st.column_config.SelectboxColumn(
-                "decision",
+            "Decision": st.column_config.SelectboxColumn(
+                "Decision",
                 help="The access control rule decision",
                 width="small",
                 options=[
@@ -193,22 +195,22 @@ def review_policy(inc_policy, hierarchy, models):
                 ],
                 required=True,
             ),
-            "subject": st.column_config.SelectboxColumn(
-                "subject",
+            "Subject": st.column_config.SelectboxColumn(
+                "Subject",
                 help="The subject of the access control rule",
                 width="small",
                 options=subjects,
                 required=True
             ),
-            "action": st.column_config.SelectboxColumn(
-                "action",
+            "Action": st.column_config.SelectboxColumn(
+                "Action",
                 help="The action of the access control rule",
                 width="small",
                 options=actions,
                 required=True
             ),
-            "resource": st.column_config.SelectboxColumn(
-                "resource",
+            "Resource": st.column_config.SelectboxColumn(
+                "Resource",
                 help="The resource of the access control rule",
                 width="small",
                 options=resources,
@@ -220,9 +222,10 @@ def review_policy(inc_policy, hierarchy, models):
     st.button("Submit", key=f'submit_inc_btn_{pol_id}', use_container_width=True, type='primary', on_click=submit_corrected_policy, args=(inc_policy, edited_df, hierarchy, models,), icon=":material/send:")
         
     
-def submit_corrected_policy(inc_policy, edited_df, hierarchy, models):
+def submit_corrected_policy(inc_policy, edited_df: pd.DataFrame, hierarchy, models):
     
     edited_df = edited_df.drop('rule', axis='columns')
+    edited_df.columns = edited_df.columns.str.lower()
     corrected_policy = [v for _, v in edited_df.to_dict("index").items()]
     policy, outside_hierarchy = align_policy(corrected_policy, models.vectorestores, hierarchy, chroma=st.session_state.use_chroma)
     json_policy = JSONPolicyRecord.from_dict({
@@ -240,3 +243,4 @@ def submit_corrected_policy(inc_policy, edited_df, hierarchy, models):
     inc_policy['policy'] = ast.literal_eval(edited_df.to_json(orient='records'))
     inc_policy['solved'] = True
     change_page_icon('incorrect_pol_icon')
+    inc_policy['show'] = False
