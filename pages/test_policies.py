@@ -21,6 +21,11 @@ def test_policies(policy_tester: PolicyTester):
                 z-index: 9999 !important;
             }
             
+            //[data-testid="stVerticalBlock"] .st-key-pdp_container {
+            //    max-height: 80vh;
+            //    overflow: scroll;
+            //}
+            
             /* Add padding at the bottom of the page to prevent content from being hidden */
             section.main {
                 padding-bottom: 100px !important;
@@ -32,15 +37,15 @@ def test_policies(policy_tester: PolicyTester):
     
     st.title("Test Policies")
     
-    pdp_pol_container = st.container(border=False, key='test_table_container')
-    
-    for pdp_pol_object in st.session_state.pdp_policies:
+    pdp_pol_container = st.container(border=False, key='pdp_container')
+    pdp_policies = st.session_state.pdp_policies
+    for pdp_pol_object in pdp_policies:
         
         with pdp_pol_container.chat_message('user', avatar=":material/gavel:"):
             nlacp_col, btn_col = st.columns([7,1])
             test_policy(pdp_pol_object, policy_tester, btn_col)
             nlacp_col.markdown(pdp_pol_object.policyDescription)
-            with st.expander("Generated Policy", expanded=False):
+            with st.expander(f"Generated Policy [{pdp_pol_object.policyId}]", expanded=False):
                 st.dataframe(load_policy(pdp_pol_object.policy), use_container_width=True, key=f"pdp_policy_{pdp_pol_object.policyId}", hide_index=True)
 
 

@@ -50,6 +50,7 @@ def start():
         hierarchy_file = upload_container.file_uploader("Upload the provided organization hierarchy in YAML format.", key='_hierarchy_upload', help='The provided organization hierarchy shows how the subjects (i.e., roles), actions, and resources are arranged in the organization. The **subjects/roles** are the different job titles or responsibilities people have (like HCP, LHCP, and DLHCP). Each role can perform certain **actions** (like read, edit, or write) on specific **resources** (like medical records), which helps define who can do what in access control policies.', type=['yaml', 'yml'], on_change=store_value_gen_h, args=("hierarchy_upload",pbar,), label_visibility='collapsed')
         
         if st.session_state._hierarchy_upload and st.session_state.show_hierarchy:
+            change_page_icon('start_icon')
             st.session_state.show_hierarchy = False
             visualize_hierarchy_dialog()
             

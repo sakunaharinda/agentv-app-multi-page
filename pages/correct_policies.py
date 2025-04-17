@@ -1,13 +1,13 @@
 import streamlit as st
 from loading import load_policy 
 from ac_engine_service import AccessControlEngine
-from pages.review_utils import publish_all, publish_policy
-from pages.review_utils import get_updated_description
+from pages.review_utils import publish_all, publish_policy, get_updated_description, update_selected_count
 from models.pages import PAGE
 from menus import standard_menu
 
-@st.fragment
+# @st.fragment
 def show_correct_policies(ac_engine: AccessControlEngine):
+    select_count = 0
     
     st.session_state.current_page = PAGE.CORRECT_POL
     
@@ -36,32 +36,37 @@ def show_correct_policies(ac_engine: AccessControlEngine):
     
     cor_pol_container = st.container(border=False)
     
-    
     for correct_pol_object in st.session_state.corrected_policies_pdp:
         
         with cor_pol_container.chat_message('user', avatar=":material/gavel:"):
             nlacp_col, btn_col = st.columns([7,1.5])
             publish_policy(correct_pol_object, ac_engine, btn_col)
             nlacp_col.markdown(get_updated_description(correct_pol_object))
-            with st.expander("Generated Policy", expanded=False):
+            cbox, expander = st.columns([1,70])
+            ready_publish = cbox.checkbox(label="Ready to publish", label_visibility='collapsed', key=f'publish_cbox_{correct_pol_object.policyId}', disabled=correct_pol_object.published)
+            if ready_publish and not correct_pol_object.published:
+                correct_pol_object.ready_to_publish = True
+                select_count+=1
+            else:
+                correct_pol_object.ready_to_publish = False
+            with expander.expander(f"Generated Policy [{correct_pol_object.policyId}]", expanded=False):
                 corr_df = st.dataframe(load_policy(correct_pol_object.policy), use_container_width=True, key=f"correct_policy_{correct_pol_object.policyId}", hide_index=True)
-    
     
     
     with st.container(border=False, height=100, key="correct_container"):
 
         publish_all_btn = st.button(
-            "Publish All",
+            f"Publish {'All' if select_count ==0 or select_count == len(st.session_state.corrected_policies_pdp) else select_count}",
             type="primary",
             use_container_width=True,
             key="publish_all",
             disabled=len(st.session_state.corrected_policies) < 1,
             help="Publish all the policies above to the policy database",
-            icon=":material/database_upload:"
+            icon=":material/database_upload:",
         )
         
         if publish_all_btn:
-            publish_all(ac_engine)
+            publish_all(ac_engine, select_count)
             
 standard_menu()
 ac_engine = AccessControlEngine()

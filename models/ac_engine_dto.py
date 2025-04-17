@@ -58,7 +58,8 @@ class JSONPolicyRecord:
             policyId=self.policyId,
             policyDescription=self.policyDescription,
             policy=self.policy,
-            published=False
+            published=False,
+            ready_to_publish=False
         )
     
     def __eq__(self, __value: object) -> bool:
@@ -89,6 +90,7 @@ class JSONPolicyRecordPDP:
     policyDescription: str
     policy: List[ACR] = field(default_factory= list)
     published: bool = False
+    ready_to_publish: bool = False
     
     @staticmethod
     def from_dict(data: dict):
@@ -98,7 +100,8 @@ class JSONPolicyRecordPDP:
             policyId=data.get('policyId', ''),
             policyDescription=data.get('policyDescription', ''),
             policy=policy,
-            published=data.get('published', False)
+            published=data.get('published', False),
+            ready_to_publish=data.get('ready_to_publish', False),
         )
         
     def to_json_record(self):
@@ -116,7 +119,8 @@ class JSONPolicyRecordPDP:
         return (
             self.policyDescription == __value.policyDescription and
             self.policy == __value.policy and
-            self.published == __value.published
+            self.published == __value.published and 
+            self.ready_to_publish == __value.ready_to_publish
         )
         
     def __hash__(self) -> int:
@@ -131,7 +135,7 @@ class JSONPolicyRecordPDP:
         ) for acr in self.policy))
         
         # Hash the combination of immutable attributes
-        return hash((self.policyId, self.policyDescription, policy_tuple, self.published))
+        return hash((self.policyId, self.policyDescription, policy_tuple, self.published, self.ready_to_publish))
     
 
 @dataclass

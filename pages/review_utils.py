@@ -15,9 +15,10 @@ def publish_single(pdp_policy: JSONPolicyRecordPDP, ac_engine: AccessControlEngi
     status = ac_engine.create_policy(pdp_policy.to_json_record())
 
     if status == 200:
-        st.session_state.pdp_policies.append(pdp_policy)
-        st.session_state.pdp_policies = list(set(st.session_state.pdp_policies))
-        set_published(pdp_policy)
+        if pdp_policy not in st.session_state.pdp_policies:
+            st.session_state.pdp_policies.append(pdp_policy)
+            # st.session_state.pdp_policies = list(set(st.session_state.pdp_policies))
+            set_published(pdp_policy)
     
 def get_updated_description(policy: JSONPolicyRecordPDP):
     
@@ -34,20 +35,36 @@ def set_published(policy: JSONPolicyRecordPDP):
     return policy
     
     
-def publish_all(ac_engine: AccessControlEngine):
+def publish_all(ac_engine: AccessControlEngine, count: int):
     
     change_page_icon('correct_pol_icon')
     
-    policies = st.session_state.corrected_policies
-    status = ac_engine.create_multiple_policies(policies)
-    
-    if status == 200:
-        st.session_state.corrected_policies_pdp = list(map(set_published, st.session_state.corrected_policies_pdp))
+    if count == 0 or count == len(st.session_state.corrected_policies_pdp):
+        policies = st.session_state.corrected_policies
+        status = ac_engine.create_multiple_policies(policies)
         
-        st.session_state.pdp_policies.extend(st.session_state.corrected_policies_pdp)
-        st.session_state.pdp_policies = list(set(st.session_state.pdp_policies))
+        if status == 200:
+            for policy in st.session_state.corrected_policies_pdp:
+                if policy.published == False:
+                    policy.published = True
+                    st.session_state.pdp_policies.append(policy)
+            # st.session_state.corrected_policies_pdp = list(map(set_published, st.session_state.corrected_policies_pdp))
+            
+            # st.session_state.pdp_policies.extend(st.session_state.corrected_policies_pdp)
+            # st.session_state.pdp_policies = list(set(st.session_state.pdp_policies))
+            
+            st.switch_page("pages/test_policies.py")
+    else:
         
-        st.switch_page("pages/test_policies.py")
+        policies = [k.to_json_record() for k in st.session_state.corrected_policies_pdp if k.ready_to_publish==True]
+        status = ac_engine.create_multiple_policies(policies)
+        
+        if status == 200:
+            for policy in st.session_state.corrected_policies_pdp:
+                if not policy.published and policy.ready_to_publish:
+                    policy.published = True
+                    st.session_state.pdp_policies.append(policy)
+                    
         
         
 
@@ -246,3 +263,10 @@ def submit_corrected_policy(inc_policy, edited_df: pd.DataFrame, hierarchy, mode
     inc_policy['solved'] = True
     change_page_icon('incorrect_pol_icon')
     inc_policy['show'] = False
+    
+def update_selected_count():
+    if dir == 'inc':
+        st.session_state.select_count+=1
+    # else:
+    #     st.session_state.select_count = max(0, st.session_state.select_count-1)
+    
