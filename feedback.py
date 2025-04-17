@@ -39,3 +39,10 @@ def get_locate_warning_missing_rule_msg():
     
 
     return msg, [None, None]
+
+
+def get_unrelated_warning():
+    
+    msg = f"#### :material/dangerous: Error: Unrelated Access Control Rule\nIt appears that one or more access control rules are not aligining with the organization hierarchy you uploaded.\nTo correct this:\n1. **Go to 'Generate from a Sentence'**: Go back to the 'Generate from Sentence' page.\n2. **Re-write the access control policy**: Re-write the access control requirement ensuring that it aligns with the subjects, actions, and resources of the organization\n3. **Re-generate**: Re-generate the access control policy by clicking the **Generate** button"
+    
+    return msg, [None, None]

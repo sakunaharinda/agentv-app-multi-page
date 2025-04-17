@@ -70,10 +70,10 @@ _, viz_col, _ = st.columns([1,1,1])
 
 st.title("Policy Visualization")
 change_page_icon('viz_icon')
-if len(st.session_state.corrected_policies)>0:
+if len(st.session_state.pdp_policies)>0:
     with st.container(height=400, border=False):
 
-        st.dataframe(create_access_matrix(st.session_state.corrected_policies), use_container_width=True, key="access_matrix")
+        st.dataframe(create_access_matrix(st.session_state.pdp_policies), use_container_width=True, key="access_matrix")
         
     _,leg_col1,leg_col2,_ = st.columns([4,2,2,4])
 

@@ -93,7 +93,8 @@ def generate_sent(hierarchy, models):
                         id = uuid,
                         sentence=cur_nlacp,
                         policy=st.session_state.results_individual['final_policies'][0],
-                        is_incorrect= st.session_state.results_individual['final_verification'][0]!=11
+                        is_incorrect= st.session_state.results_individual['final_verification'][0]!=11,
+                        # is_unrelated=st.session_state.results_individual['final_verification'][0]==-1
                     )
                 )
 

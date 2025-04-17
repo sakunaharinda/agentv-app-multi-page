@@ -138,9 +138,6 @@ def review_policy_aggrid(inc_policy, err_info, hierarchy, models):
     
     error_ids, error_type = err_info
     
-    for row in error_ids:
-        highlights.append((row, error_type.capitalize()))
-    
     pol_id = inc_policy['id']
     df = load_policy(inc_policy['policy'])
     df.insert(0, 'rule', [i+1 for i in range(len(df))])
@@ -148,8 +145,13 @@ def review_policy_aggrid(inc_policy, err_info, hierarchy, models):
     subjects, actions, resources = update_options(df, get_options(hierarchy['subject_hierarchy']), get_options(hierarchy['action_hierarchy']), get_options(hierarchy['resource_hierarchy']))
     
     gb = GridOptionsBuilder.from_dataframe(df)
-    if not inc_policy['solved']:
-        highlight_errors(highlights, gb)
+    
+    if error_ids != None:
+        for row in error_ids:
+            highlights.append((row, error_type.capitalize()))
+        if not inc_policy['solved']:
+            highlight_errors(highlights, gb)
+        
     gb.configure_column('rule', header_name="Rule ID", editable=True)
     gb.configure_column('Decision', editable=True, cellEditor='agSelectCellEditor',
         cellEditorParams={'values': ['allow', 'deny']})

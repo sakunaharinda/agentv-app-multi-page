@@ -37,6 +37,7 @@ class WrittenPolicy:
     policy: List[dict] = field(default_factory = list)
     error: str = None
     is_incorrect: bool = False
+    is_unrelated: bool = False
     
     def to_dict(self):
         return {
@@ -44,7 +45,8 @@ class WrittenPolicy:
             'sentence': self.sentence,
             'policy': self.policy,
             'error': self.error,
-            'is_incorrect': self.is_incorrect
+            'is_incorrect': self.is_incorrect,
+            'is_unrelated': self.is_unrelated
         }
         
 

@@ -34,6 +34,7 @@ def init():
     set_state('inc_policies', [])
     set_state('corrected_policies', [])
     set_state('corrected_policies_pdp', [])
+    set_state('interrupted_errors', [])
     set_state('all_published', False)
     set_state('pdp_count', -1)
     set_state('pdp_policies', [])

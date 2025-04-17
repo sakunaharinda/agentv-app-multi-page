@@ -462,17 +462,41 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
                         policy, outside_hierarchy = align_policy(policy, _vectorstores, hierarchy, chroma=st.session_state.use_chroma)
                         
                         if outside_hierarchy:
-                            print("Outside")
+                            # warning = get_unrelated_warning()
+                            # st.session_state.inc_policies.append(
+                            #     {
+                            #         "id": str(uuid4()),
+                            #         "nlacp": nlacp,
+                            #         "policy": policy,
+                            #         "warning": warning,
+                            #         "solved": False,
+                            #         "show": True
+                            #     }
+                            # )
+                            # ver_result = -1
+                            results.interrupted_errors.append("Sorry! AGentV has found that the entered access control requirement contains entities (i.e., subjects, actions, and resources) that do not align with the organization. Please refer to the **:material/family_history: Organization Hierarchy**, rephrase the access control requirement, and **:material/play_circle: Generate** again.")
+                            
+                        else:
+                            json_policy = JSONPolicyRecord.from_dict({
+                                'policyId': str(uuid4()),
+                                'policyDescription': nlacp,
+                                'policy': policy
+                            })
+                            
+                            save(json_policy, index=0)
+                            results.final_correct_policies.append(json_policy)
+                            
+                    else:
                     
-                    json_policy = JSONPolicyRecord.from_dict({
-                        'policyId': str(uuid4()),
-                        'policyDescription': nlacp,
-                        'policy': policy
-                    })
-                    
-                    save(json_policy, index=0)
-                    results.final_correct_policies.append(json_policy)
-                    handlers.cor_policy_nav_last()
+                        json_policy = JSONPolicyRecord.from_dict({
+                            'policyId': str(uuid4()),
+                            'policyDescription': nlacp,
+                            'policy': policy
+                        })
+                        
+                        save(json_policy, index=0)
+                        results.final_correct_policies.append(json_policy)
+                        handlers.cor_policy_nav_last()
                 else:
                     if ver_result != 10:
                         error_type = CAT2ERROR[ver_result]
@@ -508,7 +532,7 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
                     label="Generation complete!", state="complete", expanded=False
                 )
             else:
-                results.interrupted_errors.append("Sorry! AGentV has failed to process the access control policy generated from the entered sentence. Please rephrase the sentence and re-submit again.")
+                results.interrupted_errors.append("Sorry! AGentV has failed to process the access control policy generated from the entered sentence. Please rephrase the sentence and **:material/play_circle: Generate** again.")
                 
                 _status.update(
                     label="AGentV has failed to parse the access control policy",
