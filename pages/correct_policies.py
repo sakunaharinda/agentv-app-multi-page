@@ -4,6 +4,26 @@ from ac_engine_service import AccessControlEngine
 from pages.review_utils import publish_all, publish_delete_policy, get_updated_description
 from models.pages import PAGE
 from menus import standard_menu
+from models.ac_engine_dto import JSONPolicyRecordPDP
+
+def show_record(correct_pol_object: JSONPolicyRecordPDP, select_count):
+    with st.chat_message('user', avatar=":material/gavel:"):
+        nlacp_col, btn_col, cancel_col = st.columns([7,1.5, 1.7])
+        publish_delete_policy(correct_pol_object, ac_engine, btn_col, cancel_col)
+        nlacp_col.markdown(f"**Policy Id: {correct_pol_object.policyId}**")
+        st.markdown(get_updated_description(correct_pol_object))
+        cbox, expander = st.columns([1,70])
+        ready_publish = cbox.checkbox(label="Ready to publish", label_visibility='collapsed', key=f'publish_cbox_{correct_pol_object.policyId}', disabled=correct_pol_object.published, value=correct_pol_object.published)
+        if ready_publish and not correct_pol_object.published:
+            correct_pol_object.ready_to_publish = True
+            select_count+=1
+        else:
+            correct_pol_object.ready_to_publish = False
+        with expander.expander("Generated Policy", expanded=False):
+            corr_df = st.dataframe(load_policy(correct_pol_object.policy), use_container_width=True, key=f"correct_policy_{correct_pol_object.policyId}", hide_index=True)
+            
+    return select_count
+    
 
 @st.fragment
 def show_correct_policies(ac_engine: AccessControlEngine):
@@ -23,6 +43,21 @@ def show_correct_policies(ac_engine: AccessControlEngine):
                 z-index: 9999 !important;
             }
             
+            [data-testid="stVerticalBlock"] .st-key-filter_container {
+                position: fixed !important;
+                top: 140px !important;
+                padding-top: 20px !important;
+                background-color: white !important;
+                padding-bottom: 10px !important;
+                z-index: 9999 !important;
+            }
+            
+            [data-testid="stVerticalBlock"] .st-key-pad_container {
+                position: fixed !important;
+                top: 180px !important;
+                //background-color: white !important;
+                //z-index: 9999 !important;
+            }
             
         
             /* Add padding at the bottom of the page to prevent content from being hidden */
@@ -34,10 +69,27 @@ def show_correct_policies(ac_engine: AccessControlEngine):
     
     st.title("Access Control Policies")
     
+    filter_container = st.container(border=False, key='filter_container')
+    policies_to_pdp = st.session_state.corrected_policies_pdp
+    
+    with filter_container.expander("Filter"):
+        option = st.multiselect(
+            "By Policy Id", [policy.policyId for policy in st.session_state.corrected_policies_pdp], default=[], placeholder="Select a Policy Id"
+        )
+        
+        if option != []:
+            
+            policies_to_pdp = [policy for policy in st.session_state.corrected_policies_pdp if policy.policyId in option]
+            
+        else:
+            policies_to_pdp = st.session_state.corrected_policies_pdp
+
+    st.container(border=False, key='pad_container', height=50)
+    
     cor_pol_container = st.container(border=False)
     
-    for correct_pol_object in st.session_state.corrected_policies_pdp:
-        
+    for correct_pol_object in policies_to_pdp:
+
         with cor_pol_container.chat_message('user', avatar=":material/gavel:"):
             nlacp_col, btn_col, cancel_col = st.columns([7,1.5, 1.7])
             publish_delete_policy(correct_pol_object, ac_engine, btn_col, cancel_col)
