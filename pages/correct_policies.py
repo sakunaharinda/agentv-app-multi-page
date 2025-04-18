@@ -1,7 +1,7 @@
 import streamlit as st
 from loading import load_policy 
 from ac_engine_service import AccessControlEngine
-from pages.review_utils import publish_all, publish_policy, get_updated_description
+from pages.review_utils import publish_all, publish_delete_policy, get_updated_description
 from models.pages import PAGE
 from menus import standard_menu
 
@@ -39,11 +39,11 @@ def show_correct_policies(ac_engine: AccessControlEngine):
     for correct_pol_object in st.session_state.corrected_policies_pdp:
         
         with cor_pol_container.chat_message('user', avatar=":material/gavel:"):
-            nlacp_col, btn_col = st.columns([7,1.5])
-            publish_policy(correct_pol_object, ac_engine, btn_col)
+            nlacp_col, btn_col, cancel_col = st.columns([7,1.5, 1.7])
+            publish_delete_policy(correct_pol_object, ac_engine, btn_col, cancel_col)
             nlacp_col.markdown(get_updated_description(correct_pol_object))
             cbox, expander = st.columns([1,70])
-            ready_publish = cbox.checkbox(label="Ready to publish", label_visibility='collapsed', key=f'publish_cbox_{correct_pol_object.policyId}', disabled=correct_pol_object.published)
+            ready_publish = cbox.checkbox(label="Ready to publish", label_visibility='collapsed', key=f'publish_cbox_{correct_pol_object.policyId}', disabled=correct_pol_object.published, value=correct_pol_object.published)
             if ready_publish and not correct_pol_object.published:
                 correct_pol_object.ready_to_publish = True
                 select_count+=1

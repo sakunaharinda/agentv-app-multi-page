@@ -7,6 +7,15 @@ from ml_layer import align_policy
 import ast
 from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
 import pandas as pd
+from streamlit_extras.stylable_container import stylable_container
+
+
+def delete_single(pdp_policy: JSONPolicyRecordPDP, ac_engine: AccessControlEngine):
+    
+    status = ac_engine.delete_policy_by_id(pdp_policy.policyId)
+    if status == 200:
+        st.session_state.pdp_policies.remove(pdp_policy)
+        pdp_policy.published = False
 
 def publish_single(pdp_policy: JSONPolicyRecordPDP, ac_engine: AccessControlEngine):
     
@@ -18,7 +27,7 @@ def publish_single(pdp_policy: JSONPolicyRecordPDP, ac_engine: AccessControlEngi
         if pdp_policy not in st.session_state.pdp_policies:
             st.session_state.pdp_policies.append(pdp_policy)
             # st.session_state.pdp_policies = list(set(st.session_state.pdp_policies))
-            set_published(pdp_policy)
+            pdp_policy.published = True
     
 def get_updated_description(policy: JSONPolicyRecordPDP):
     
@@ -28,11 +37,6 @@ def get_updated_description(policy: JSONPolicyRecordPDP):
     else:
         return policy.policyDescription + " :orange-badge[:material/publish: Ready to Publish]"
     
-def set_published(policy: JSONPolicyRecordPDP):
-        
-    policy.published = True
-        
-    return policy
     
     
 def publish_all(ac_engine: AccessControlEngine, count: int):
@@ -90,11 +94,13 @@ def policy_db_feedback(status_code, single = False):
         st.rerun()
         
         
-def publish_policy(policy: JSONPolicyRecordPDP, ac_engine, col):
+def publish_delete_policy(policy: JSONPolicyRecordPDP, ac_engine, col, col_delete):
     
     # _,_,col = st.columns([1,1,1])
     
     col.button("Publish", key=f"publish_{policy.policyId}", use_container_width=True, on_click=publish_single, args=(policy, ac_engine,), type='primary', help = "Publish the policy to the policy database", disabled=policy.published, icon=":material/database_upload:")
+    
+    col_delete.button("Unpublish", use_container_width=True, key = f"remove_{policy.policyId}", type='primary', help = "Remove the published policy from the policy database", disabled=not policy.published, icon=":material/delete:", on_click=delete_single, args=(policy, ac_engine,))
     
     
 def get_updated_description_inc(inc_policy):
