@@ -7,7 +7,6 @@ from ml_layer import align_policy
 import ast
 from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
 import pandas as pd
-from streamlit_extras.stylable_container import stylable_container
 
 
 def delete_single(pdp_policy: JSONPolicyRecordPDP, ac_engine: AccessControlEngine):

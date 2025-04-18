@@ -41,7 +41,8 @@ def show_correct_policies(ac_engine: AccessControlEngine):
         with cor_pol_container.chat_message('user', avatar=":material/gavel:"):
             nlacp_col, btn_col, cancel_col = st.columns([7,1.5, 1.7])
             publish_delete_policy(correct_pol_object, ac_engine, btn_col, cancel_col)
-            nlacp_col.markdown(get_updated_description(correct_pol_object))
+            nlacp_col.markdown(f"**Policy Id: {correct_pol_object.policyId}**")
+            st.markdown(get_updated_description(correct_pol_object))
             cbox, expander = st.columns([1,70])
             ready_publish = cbox.checkbox(label="Ready to publish", label_visibility='collapsed', key=f'publish_cbox_{correct_pol_object.policyId}', disabled=correct_pol_object.published, value=correct_pol_object.published)
             if ready_publish and not correct_pol_object.published:
@@ -49,7 +50,7 @@ def show_correct_policies(ac_engine: AccessControlEngine):
                 select_count+=1
             else:
                 correct_pol_object.ready_to_publish = False
-            with expander.expander(f"Generated Policy [{correct_pol_object.policyId}]", expanded=False):
+            with expander.expander("Generated Policy", expanded=False):
                 corr_df = st.dataframe(load_policy(correct_pol_object.policy), use_container_width=True, key=f"correct_policy_{correct_pol_object.policyId}", hide_index=True)
     
     # print('rerun')

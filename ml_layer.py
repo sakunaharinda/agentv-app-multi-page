@@ -462,18 +462,6 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
                         policy, outside_hierarchy = align_policy(policy, _vectorstores, hierarchy, chroma=st.session_state.use_chroma)
                         
                         if outside_hierarchy:
-                            # warning = get_unrelated_warning()
-                            # st.session_state.inc_policies.append(
-                            #     {
-                            #         "id": str(uuid4()),
-                            #         "nlacp": nlacp,
-                            #         "policy": policy,
-                            #         "warning": warning,
-                            #         "solved": False,
-                            #         "show": True
-                            #     }
-                            # )
-                            # ver_result = -1
                             results.interrupted_errors.append("Sorry! AGentV has found that the entered access control requirement contains entities (i.e., subjects, actions, and resources) that do not align with the organization. Please refer to the **:material/family_history: Organization Hierarchy**, rephrase the access control requirement, and **:material/play_circle: Generate** again.")
                             
                         else:
