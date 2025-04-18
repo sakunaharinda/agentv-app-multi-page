@@ -1,11 +1,11 @@
 import streamlit as st
 from loading import load_policy 
 from ac_engine_service import AccessControlEngine
-from pages.review_utils import publish_all, publish_policy, get_updated_description, update_selected_count
+from pages.review_utils import publish_all, publish_policy, get_updated_description
 from models.pages import PAGE
 from menus import standard_menu
 
-# @st.fragment
+@st.fragment
 def show_correct_policies(ac_engine: AccessControlEngine):
     select_count = 0
     
@@ -52,21 +52,28 @@ def show_correct_policies(ac_engine: AccessControlEngine):
             with expander.expander(f"Generated Policy [{correct_pol_object.policyId}]", expanded=False):
                 corr_df = st.dataframe(load_policy(correct_pol_object.policy), use_container_width=True, key=f"correct_policy_{correct_pol_object.policyId}", hide_index=True)
     
+    # print('rerun')
+    if select_count == 0 or select_count == len(st.session_state.corrected_policies_pdp):
+        MODE = 'All'
+    else:
+        MODE = f"({select_count})"
     
     with st.container(border=False, height=100, key="correct_container"):
 
         publish_all_btn = st.button(
-            f"Publish {'All' if select_count ==0 or select_count == len(st.session_state.corrected_policies_pdp) else select_count}",
+            f"Publish {MODE}",
             type="primary",
             use_container_width=True,
             key="publish_all",
             disabled=len(st.session_state.corrected_policies) < 1,
             help="Publish all the policies above to the policy database",
             icon=":material/database_upload:",
+            on_click=publish_all,
+            args=(ac_engine, select_count,)
         )
         
-        if publish_all_btn:
-            publish_all(ac_engine, select_count)
+        if publish_all_btn and MODE == 'All':
+            st.switch_page("pages/test_policies.py")
             
 standard_menu()
 ac_engine = AccessControlEngine()

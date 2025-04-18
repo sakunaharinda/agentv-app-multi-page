@@ -53,7 +53,6 @@ def publish_all(ac_engine: AccessControlEngine, count: int):
             # st.session_state.pdp_policies.extend(st.session_state.corrected_policies_pdp)
             # st.session_state.pdp_policies = list(set(st.session_state.pdp_policies))
             
-            st.switch_page("pages/test_policies.py")
     else:
         
         policies = [k.to_json_record() for k in st.session_state.corrected_policies_pdp if k.ready_to_publish==True]
@@ -264,9 +263,8 @@ def submit_corrected_policy(inc_policy, edited_df: pd.DataFrame, hierarchy, mode
     change_page_icon('incorrect_pol_icon')
     inc_policy['show'] = False
     
-def update_selected_count():
-    if dir == 'inc':
-        st.session_state.select_count+=1
+def make_ready(object):
+    object.ready_to_publish = True
     # else:
     #     st.session_state.select_count = max(0, st.session_state.select_count-1)
     
