@@ -5,9 +5,9 @@ from langchain_community.vectorstores import FAISS
 import numpy as np
 from langchain_core.documents import Document
 import streamlit as st
-import chromadb
-import chromadb.utils.embedding_functions as embedding_functions
-
+from models.ac_engine_dto import JSONPolicyRecordPDP
+from typing import List
+import bm25s
 
 def create_ent_list(h_dict: dict, combine_key_val = False, save_path = None):
     
@@ -113,3 +113,10 @@ def get_available_entities_chroma(query: str, _vectorstores: dict, n=3, return_s
         entities[key] = get_candidates_chroma(_vectorstores.get(key, None), query, k=n, return_scores=return_scores)
 
     return entities
+
+@st.cache_data(show_spinner=False)
+def create_bm25_retriever(policies: List[JSONPolicyRecordPDP] = st.session_state.corrected_policies_pdp):
+    retriever = bm25s.BM25(corpus=policies)
+    retriever.index(bm25s.tokenize([d.policyDescription for d in policies]))
+    return retriever
+    

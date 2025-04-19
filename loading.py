@@ -184,6 +184,8 @@ def load_vectorstores(client):
         "resource": client.get_or_create_collection(name="resource", embedding_function=embedding_functions.SentenceTransformerEmbeddingFunction(model_name="mixedbread-ai/mxbai-embed-large-v1", device='cuda'), metadata={"hnsw:space": "cosine"}),
         # "purpose": vector_store_purposes,
         "condition": client.get_or_create_collection(name="condition", embedding_function=embedding_functions.SentenceTransformerEmbeddingFunction(model_name="mixedbread-ai/mxbai-embed-large-v1", device='cuda'), metadata={"hnsw:space": "cosine"}),
+        # "nlacps": client.get_or_create_collection(name="nlacps", embedding_function=embedding_functions.SentenceTransformerEmbeddingFunction(model_name="mixedbread-ai/mxbai-embed-large-v1", device='cuda'), metadata={"hnsw:space": "cosine"})
+        "bm25": None
     }
 
     return stores

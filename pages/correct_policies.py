@@ -1,7 +1,7 @@
 import streamlit as st
-from loading import load_policy 
+from loading import load_policy
 from ac_engine_service import AccessControlEngine
-from pages.review_utils import publish_all, publish_delete_policy, get_updated_description
+from pages.review_utils import publish_all, publish_delete_policy, get_updated_description, filter
 from models.pages import PAGE
 from menus import standard_menu
 from models.ac_engine_dto import JSONPolicyRecordPDP
@@ -70,19 +70,8 @@ def show_correct_policies(ac_engine: AccessControlEngine):
     st.title("Access Control Policies")
     
     filter_container = st.container(border=False, key='filter_container')
-    policies_to_pdp = st.session_state.corrected_policies_pdp
     
-    with filter_container.expander("Filter"):
-        option = st.multiselect(
-            "By Policy Id", [policy.policyId for policy in st.session_state.corrected_policies_pdp], default=[], placeholder="Select a Policy Id"
-        )
-        
-        if option != []:
-            
-            policies_to_pdp = [policy for policy in st.session_state.corrected_policies_pdp if policy.policyId in option]
-            
-        else:
-            policies_to_pdp = st.session_state.corrected_policies_pdp
+    policies_to_pdp = filter(st.session_state.corrected_policies_pdp, filter_container)
 
     st.container(border=False, key='pad_container', height=50)
     

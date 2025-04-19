@@ -61,9 +61,13 @@ def generate_doc(hierarchy, models):
             #     generating_wo_hierarchy()
                 
             # else:
-                
+            # TODO: Add document editing    
             content = st.session_state.policy_doc.getvalue().decode('utf-8')
             agentv_batch(status_container, content, models.id_tokenizer, models.id_model, models.gen_tokenizer, models.gen_model, models.ver_model, models.ver_tokenizer, models.loc_tokenizer, models.loc_model, models.vectorestores, hierarchy, do_align=st.session_state.do_align)
+            
+            # Indexing NLACPs
+            # st.session_state.models.vectorestores['nlacps'].add(documents=[policy.policyDescription for policy in st.session_state.corrected_policies], ids=[policy.policyId for policy in st.session_state.corrected_policies])
+            
             st.session_state.is_generating = False
             # st.session_state.generate_wo_context = False
             # st.rerun()

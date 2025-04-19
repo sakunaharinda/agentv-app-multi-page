@@ -22,3 +22,6 @@ streamlit-flow-component
 plotly
 streamlit-aggrid
 chromadb
+bm25s
+nltk
+elasticsearch

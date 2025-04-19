@@ -2,6 +2,7 @@ import streamlit as st
 from loading import load_policy
 from pages.policy_tester import PolicyTester
 from pages.testing_utils import test_policy, test_system
+from pages.review_utils import filter
 from ac_engine_service import AccessControlEngine
 from models.pages import PAGE
 from menus import standard_menu
@@ -21,6 +22,22 @@ def test_policies(policy_tester: PolicyTester):
                 z-index: 9999 !important;
             }
             
+            [data-testid="stVerticalBlock"] .st-key-filter_container_test {
+                position: fixed !important;
+                top: 140px !important;
+                padding-top: 20px !important;
+                background-color: white !important;
+                padding-bottom: 10px !important;
+                z-index: 9999 !important;
+            }
+            
+            [data-testid="stVerticalBlock"] .st-key-pad_container_test {
+                position: fixed !important;
+                top: 180px !important;
+                //background-color: white !important;
+                //z-index: 9999 !important;
+            }
+            
             //[data-testid="stVerticalBlock"] .st-key-pdp_container {
             //    max-height: 80vh;
             //    overflow: scroll;
@@ -37,8 +54,14 @@ def test_policies(policy_tester: PolicyTester):
     
     st.title("Test Policies")
     
+    filter_container = st.container(border=False, key='filter_container_test')
+    
+    pdp_policies = filter(st.session_state.pdp_policies, filter_container)
+
+    st.container(border=False, key='pad_container_test', height=50)
+    
     pdp_pol_container = st.container(border=False, key='pdp_container')
-    pdp_policies = st.session_state.pdp_policies
+    # pdp_policies = st.session_state.pdp_policies
     for pdp_pol_object in pdp_policies:
         
         with pdp_pol_container.chat_message('user', avatar=":material/gavel:"):

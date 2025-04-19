@@ -7,7 +7,8 @@ from ml_layer import align_policy
 import ast
 from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
 import pandas as pd
-
+from vectorstore import create_bm25_retriever
+import bm25s
 
 def delete_single(pdp_policy: JSONPolicyRecordPDP, ac_engine: AccessControlEngine):
     
@@ -51,10 +52,6 @@ def publish_all(ac_engine: AccessControlEngine, count: int):
                 if policy.published == False:
                     policy.published = True
                     st.session_state.pdp_policies.append(policy)
-            # st.session_state.corrected_policies_pdp = list(map(set_published, st.session_state.corrected_policies_pdp))
-            
-            # st.session_state.pdp_policies.extend(st.session_state.corrected_policies_pdp)
-            # st.session_state.pdp_policies = list(set(st.session_state.pdp_policies))
             
     else:
         
@@ -263,13 +260,49 @@ def submit_corrected_policy(inc_policy, edited_df: pd.DataFrame, hierarchy, mode
         enforce_unique=True
     )
     
+    st.session_state.models.vectorestores['nlacps'].add(documents=[json_policy.policyDescription], ids=[json_policy.policyId])
+    
     inc_policy['policy'] = ast.literal_eval(edited_df.to_json(orient='records'))
     inc_policy['solved'] = True
     change_page_icon('incorrect_pol_icon')
     inc_policy['show'] = False
     
-def make_ready(object):
-    object.ready_to_publish = True
-    # else:
-    #     st.session_state.select_count = max(0, st.session_state.select_count-1)
+def filter(original_list, filter_container):
+    
+    with filter_container.expander("Filter", icon = ":material/tune:"):
+        by_id = st.multiselect(
+            "By Policy Id", [policy.policyId for policy in original_list], default=[], placeholder="Select a policy ID", key="correct_filter_id", disabled=len(original_list)==0
+        )
+        
+        by_nlacp = st.text_input(
+            label="By Text",
+            placeholder="Enter a part or the complete access requirement",
+            key="correct_filter_nlacp",
+            disabled=len(original_list)==0
+        )
+        
+        if by_id != []:
+            
+            filtered_policies = [policy for policy in original_list if policy.policyId in by_id]
+            
+            if by_nlacp:
+                
+                retriever = create_bm25_retriever(filtered_policies)
+                results, scores = retriever.retrieve(bm25s.tokenize(by_nlacp), k=len(filtered_policies))
+                mask = scores > 0
+                filtered_policies = results[mask].tolist()
+                
+            
+        else:
+            filtered_policies = original_list
+            
+            if by_nlacp:
+                
+                retriever = create_bm25_retriever()
+                results, scores = retriever.retrieve(bm25s.tokenize(by_nlacp), k=len(filtered_policies))
+                mask = scores > 0
+                filtered_policies = results[mask].tolist()
+            
+    return filtered_policies
+    
     
