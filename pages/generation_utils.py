@@ -44,7 +44,7 @@ def show_bar_chart(container):
     # Update layout for a stacked bar chart
     fig.update_layout(
         barmode='stack',
-        height=140,
+        height=142,
         margin=dict(l=50, r=50, t=50, b=50),
         legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1),
         xaxis=dict(title='Percentage (%)', range=[0, 100])
@@ -58,7 +58,7 @@ def show_summary(status_container):
 
     summary = f"Sentences in uploaded document: {len(st.session_state.results_document['sentences'])}\nAccess control requirements identified: {len(st.session_state.results_document['generated_nlacps'])}\nCorrectly generated policies: {st.session_state.results_document['final_verification'].count(11)}\nIncorrectly generated policies: {len(st.session_state.results_document['generated_nlacps']) - st.session_state.results_document['final_verification'].count(11)}"
     
-    status_container.text_area("Summary", summary, help=f"A summary of the completed access control policy generation process, outlining the total number of sentences found in the input document, the number of access control requirement found among the sentences, the number of correctly translated access control requirements into structured access control policies (See **Correct Policies** page), and the number of failed translations (See **Incorrect Policies** page)",disabled=False, height=115)
+    status_container.text_area("Summary", summary, help=f"A summary of the completed access control policy generation process, outlining the total number of sentences found in the input document, the number of access control requirement found among the sentences, the number of correctly translated access control requirements into structured access control policies (See **Correct Policies** page), and the number of failed translations (See **Incorrect Policies** page)",disabled=False, height=112)
         
         
 @st.dialog("Generation without Organization Hierarchy")

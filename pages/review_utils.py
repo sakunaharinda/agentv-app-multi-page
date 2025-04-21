@@ -260,7 +260,7 @@ def submit_corrected_policy(inc_policy, edited_df: pd.DataFrame, hierarchy, mode
         enforce_unique=True
     )
     
-    st.session_state.models.vectorestores['nlacps'].add(documents=[json_policy.policyDescription], ids=[json_policy.policyId])
+    # st.session_state.models.vectorestores['nlacps'].add(documents=[json_policy.policyDescription], ids=[json_policy.policyId])
     
     inc_policy['policy'] = ast.literal_eval(edited_df.to_json(orient='records'))
     inc_policy['solved'] = True
