@@ -114,7 +114,7 @@ def get_available_entities_chroma(query: str, _vectorstores: dict, n=3, return_s
 
     return entities
 
-@st.cache_data(show_spinner=False)
+@st.cache_resource(show_spinner=False)
 def create_bm25_retriever(policies: List[JSONPolicyRecordPDP] = st.session_state.corrected_policies_pdp):
     retriever = bm25s.BM25(corpus=policies)
     retriever.index(bm25s.tokenize([d.policyDescription for d in policies]))

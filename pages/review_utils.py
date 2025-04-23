@@ -267,6 +267,13 @@ def submit_corrected_policy(inc_policy, edited_df: pd.DataFrame, hierarchy, mode
     change_page_icon('incorrect_pol_icon')
     inc_policy['show'] = False
     
+def filter_by_nlacp(nlacp, filtered_policies):
+    retriever = create_bm25_retriever(filtered_policies)
+    results, scores = retriever.retrieve(bm25s.tokenize(nlacp), k=len(filtered_policies))
+    mask = scores > 0
+    return results[mask].tolist()
+    
+    
 def filter(original_list, filter_container):
     
     with filter_container.expander("Filter", icon = ":material/tune:"):
@@ -284,24 +291,13 @@ def filter(original_list, filter_container):
         if by_id != []:
             
             filtered_policies = [policy for policy in original_list if policy.policyId in by_id]
-            
-            if by_nlacp:
-                
-                retriever = create_bm25_retriever(filtered_policies)
-                results, scores = retriever.retrieve(bm25s.tokenize(by_nlacp), k=len(filtered_policies))
-                mask = scores > 0
-                filtered_policies = results[mask].tolist()
                 
             
         else:
             filtered_policies = original_list
             
-            if by_nlacp:
-                
-                retriever = create_bm25_retriever()
-                results, scores = retriever.retrieve(bm25s.tokenize(by_nlacp), k=len(filtered_policies))
-                mask = scores > 0
-                filtered_policies = results[mask].tolist()
+        if by_nlacp:
+            filtered_policies = filter_by_nlacp(by_nlacp, filtered_policies)
             
     return filtered_policies
     

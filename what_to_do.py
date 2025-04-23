@@ -135,7 +135,7 @@ def gen_sent_help():
     st.write("Click the **Review** button to go to the **Incorrect Policies** page, where you can inspect and fix the errors.")
 
     st.success(
-        "If the policy is generated correctly, no further action is needed. You can proceed to the **Correct Policies** page "
+        "If the policy is generated correctly, no further action is needed. You can proceed to the **Access Control Policies** page "
         "to continue the policy generation process."
     )
 
@@ -168,7 +168,7 @@ def write_xacml_help():
         "Later, you can send access requests to this database to evaluate whether your policy correctly enforces the intended access requirements."
     )
 
-    st.success("Once the policy is published, you can proceed to the **Correct Policies** page to continue with the policy generation workflow.")
+    st.success("Once the policy is published, you can proceed to the **Access Control Policies** page to continue with the policy generation workflow.")
     
 @st.dialog("What should I do?", width='large')
 def incorrect_pol_help():
@@ -179,13 +179,14 @@ def incorrect_pol_help():
         
     st.write("### Step 1: Review the Requirement")
     st.write(
-        "Carefully read the high-level requirement specification shown in the text box labeled **Incorrectly Generated Policy**."
+        "Carefully read the high-level requirement specification."
     )
 
     st.info(
-        "The generated access control rules from the high-level requirement specification are displayed in a table below the requirement sentence. "
+        "The generated access control rules from the high-level requirement specification are displayed in a table right below the requirement sentence. "
         "Each **row** represents a rule, and each **column** corresponds to a policy component: "
         "**decision**, **subject**, **action**, **resource**, **purpose**, and **condition**."
+        "The erroneous component is highlighted in red for greater visibility."
     )
 
     st.write("### Step 2: Understand the Feedback")
@@ -198,7 +199,7 @@ def incorrect_pol_help():
 
     st.write("### Step 3: Fix the Policy")
     st.write(
-        "Make the necessary corrections by editing specific table cells or adding new rows, as per the feedback."
+        "Make the necessary corrections by editing specific table cells."
     )
 
     st.info(
@@ -208,21 +209,20 @@ def incorrect_pol_help():
     st.write("### Step 4: Submit the Corrected Policy")
     st.write(
         "Once you’ve made all corrections, click the **Submit** button to move the policy from **Incorrect Policies** "
-        "to **Correct Policies**."
+        "to **Access Control Policies**."
     )
 
     st.warning(
         "After submission, changes cannot be made to the policy. Please review it carefully before clicking **Submit**."
     )
 
-    st.write("### Step 5: Navigate Between Policies")
+    st.write("### Step 5: Repeat")
     st.write(
-        "Use the **Next** and **Previous** buttons to navigate through the incorrectly generated policies. "
-        "Repeat Steps 1 to 4 for each one."
+        "Repeat the same procedure for all the incorrect policies listed in the page."
     )
 
     st.success(
-        "Once all incorrect policies are corrected and submitted, you will be automatically redirected to the **Correct Policies** page, "
+        "Once all incorrect policies are corrected and submitted, you will be automatically redirected to the **Access Control Policies** page, "
         "where you can review all your policies and publish them to the Policy Database."
     )
     
@@ -237,25 +237,26 @@ def correct_pol_help():
     )
 
     st.info(
-        "Each policy is shown in the text box labeled **Correctly Generated Policy**, and broken down into its components in a table format."
+        "Each policy is shown with its unique policy ID, access control requirement, and its access control rules broken down into its components in a table format."
     )
 
-    st.write("### Step 1: Navigate Through Policies")
+    st.write("### Step 1: Filter Policies")
     st.write(
-        "Use the **Next** and **Previous** buttons below the policy viewer to browse through all correct policies one at a time."
+        "Open the :material/tune: Filter expander and set the filtering criteria (i.e., policy ID or the sentence) to see only a subset of policies to review."
     )
 
     st.write("### Step 2: Publish Policies to the Database")
     st.write(
-        "Once you've reviewed the policies, you have two options to publish them to the **Policy Database**:"
+        "Once you've reviewed the policies, you have several options to publish them to the **Policy Database**:"
     )
     st.markdown(
-        "- Click **Publish Policy to Policy Database** to publish **only the currently viewed policy**.\n"
-        "- Click **Publish Policies to Policy Database** to publish **all correct policies at once**."
+        "- Click **Publish** infront of each policy to publish **only selected policy** to the policy database.\n"
+        "- Click **Publish All** to publish **all the policies at once** to the policy database."
+        "- Select the policies you want to publish to the policy database by using the checkbox next to the **Generated Policy** expander in each policy, and click **Publish (x)** button at the bottom of the page."
     )
 
     st.warning(
-        "Only published policies will be available in the next step for testing. "
+        "Only the published policies will be visualized and available in the next step for testing. "
         "Unpublished policies will not be stored in the Policy Database."
     )
 
@@ -294,8 +295,8 @@ def test_pol_help():
     st.write("### Step 3: Choose a Testing Option")
     st.write("You can test policies in two ways:")
     st.markdown(
-        "1. **Test Policy by Sending an Access Request** – Tests only the **currently viewed policy**.\n"
-        "2. **Test System by Sending an Access Request** – Tests **all policies** in the Policy Database."
+        "1. **Test** – Tests only the **selected policy**.\n"
+        "2. **Test** – Tests **all policies** in the Policy Database."
     )
 
     st.write("### Step 4: Build an Access Request")
