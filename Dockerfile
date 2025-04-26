@@ -22,7 +22,7 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 RUN pip install flash-attn --no-build-isolation
 
-RUN mkdir -p /app/data /app/downloads
+RUN mkdir -p /app/data /app/downloads /app/logs
 
 COPY . .
 

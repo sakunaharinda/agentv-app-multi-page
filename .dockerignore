@@ -23,3 +23,6 @@ __pycache__/
 # Docker
 .dockerignore
 Dockerfile
+
+run.sh
+cleanup.sh
