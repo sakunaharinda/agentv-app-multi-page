@@ -1,0 +1,25 @@
+.venv
+.env
+downloads
+logs
+data
+vectorestore_server
+.gitignore
+agentv.png
+*.sh
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+
+# Git directory
+.git/
+.gitignore
+
+# Docker
+.dockerignore
+Dockerfile

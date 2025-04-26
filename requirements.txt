@@ -24,5 +24,4 @@ chromadb
 bm25s
 nltk
 elasticsearch
-flash-attn --no-build-isolation
 streamlit-authenticator

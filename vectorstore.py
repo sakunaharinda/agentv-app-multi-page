@@ -33,6 +33,9 @@ def create_ent_list(h_dict: dict, combine_key_val = False, save_path = None):
 
 def extract_entities(hierarchies: dict, save_path = None):
     
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
+    
     subjects = create_ent_list(hierarchies['subject_hierarchy'], save_path= save_path + "/subjects.json" if save_path is not None else None)
     actions = create_ent_list(hierarchies['action_hierarchy'], save_path= save_path + "/actions.json" if save_path is not None else None)
     resources = create_ent_list(hierarchies['resource_hierarchy'], save_path= save_path + "/resources.json" if save_path is not None else None)

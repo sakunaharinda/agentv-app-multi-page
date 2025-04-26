@@ -64,8 +64,8 @@ else
     fi
 fi
 
-echo "Adding users..."
-python push_users.py --user_file=seed_users.json
+# echo "Adding users..."
+# python push_users.py --user_file=seed_users.json
 
 # Once the container is running, launch the Streamlit app
 echo "Launching AGentV..."
