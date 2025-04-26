@@ -1,9 +1,7 @@
 import streamlit as st
 from hierarchy_visualizer import visualize_hierarchy_dialog
 from what_to_do import show_page_help
-from loading import load_auth_config
 import streamlit as st
-import streamlit_authenticator as stauth
 from streamlit_authenticator.utilities import LoginError
 
 def switch_login(arg):
@@ -87,8 +85,3 @@ def standard_menu():
         if h_btn:
             visualize_hierarchy_dialog()
         authenticator.logout(button_name=":material/logout: Logout", location='sidebar', use_container_width=True, callback=switch_login)
-    
-    
-        
-        
-        

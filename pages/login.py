@@ -1,5 +1,7 @@
-from loading import load_auth_config
+import os
 import streamlit as st
+import yaml
+from yaml.loader import SafeLoader
 import streamlit_authenticator as stauth
 from streamlit_authenticator.utilities import (CredentialsError,
                                                ForgotError,
@@ -8,7 +10,28 @@ from streamlit_authenticator.utilities import (CredentialsError,
                                                RegisterError,
                                                ResetError,
                                                UpdateError)
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
 
+
+@st.cache_data(show_spinner=False)
+def load_auth_config(auth_file = 'auth_config.yaml'):
+    
+    uri = f"mongodb+srv://{os.environ['MONGODB_USER']}:{os.environ['MONGODB_PASSWORD']}@cluster0.hvz89.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+    client = MongoClient(uri, server_api=ServerApi('1'))
+    agentv_db = client['agentv']
+    users = agentv_db['user'].find()
+    usernames = {}
+    
+    for u in users:
+        usernames.update(u['user'])
+    
+    with open(f'.streamlit/{auth_file}') as file:
+        config = yaml.load(file, Loader=SafeLoader)
+        
+    config['credentials'] = {}
+    config['credentials']['usernames'] = usernames
+    return config
 
 def login():
     
