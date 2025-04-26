@@ -36,7 +36,8 @@ def start():
     full_container = st.container()
 
     with full_container:
-        st.title("Welcome to AGentV")
+        call_name = st.session_state.name.split(" ")[0]
+        st.title(f"Welcome to AGentV, {call_name}")
         
         st.container(height=20, border=False)
         
@@ -93,7 +94,6 @@ def start():
 
     # with pbar:
     #     set_hierarchy(hierarchy_file)
-        
     full_container.float("top: 20%;")
 
 standard_menu()

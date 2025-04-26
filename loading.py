@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 import yaml
+from yaml.loader import SafeLoader
 from models.record_dto import Hierarchy
 from typing import Literal
 import chromadb
@@ -189,6 +190,12 @@ def load_vectorstores(client):
     }
 
     return stores
+
+@st.cache_data(show_spinner=False)
+def load_auth_config(auth_file = 'auth_config.yaml'):
+    with open(f'.streamlit/{auth_file}') as file:
+        config = yaml.load(file, Loader=SafeLoader)
+    return config
 
 class ModelStore:
     
