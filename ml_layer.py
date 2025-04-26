@@ -9,7 +9,6 @@ from itertools import product
 import numpy as np
 import handlers as handlers
 from feedback import *
-from dotenv import load_dotenv
 import requests
 from models.record_dto import Results
 from models.ac_engine_dto import JSONPolicyRecord

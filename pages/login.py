@@ -3,21 +3,16 @@ import streamlit as st
 import yaml
 from yaml.loader import SafeLoader
 import streamlit_authenticator as stauth
-from streamlit_authenticator.utilities import (CredentialsError,
-                                               ForgotError,
-                                               Hasher,
-                                               LoginError,
-                                               RegisterError,
-                                               ResetError,
-                                               UpdateError)
+from streamlit_authenticator.utilities import LoginError
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
 
 @st.cache_data(show_spinner=False)
 def load_auth_config(auth_file = 'auth_config.yaml'):
-    
-    uri = f"mongodb+srv://{os.environ['MONGODB_USER']}:{os.environ['MONGODB_PASSWORD']}@cluster0.hvz89.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
+
+    uri = os.environ['MONGO_URI']
+
     client = MongoClient(uri, server_api=ServerApi('1'))
     agentv_db = client['agentv']
     users = agentv_db['user'].find()

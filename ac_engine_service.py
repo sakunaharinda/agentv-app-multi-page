@@ -2,9 +2,6 @@ import os
 import requests
 import uuid
 from models.ac_engine_dto import *
-from dotenv import load_dotenv
-
-_ = load_dotenv()
 
 # BASE_URL = os.environ['AC_ENGINE_SERVER_BASE_URL']
 

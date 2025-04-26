@@ -89,7 +89,7 @@ def init():
         
     if 'models' not in st.session_state:
         
-        st.session_state['models'] = ModelStore(fake=True)
+        st.session_state['models'] = ModelStore(fake=False)
         
     st.session_state.xacml_uuid = str(uuid4())
     

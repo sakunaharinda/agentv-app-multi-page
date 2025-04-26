@@ -4,7 +4,7 @@ import torch
 from dotenv import load_dotenv
 
 torch.classes.__path__ = []
-_ = load_dotenv()
+# _ = load_dotenv()
 init()
 
 
