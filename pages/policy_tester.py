@@ -81,21 +81,27 @@ class PolicyTester():
     @st.dialog("Create a request")
     def test_overall(self):
         
-        self.subjects = ["Write the component ..."] + self.subjects
-        self.actions = ["Write the component ..."] + self.actions
-        self.resources = ["Write the component ..."] + self.resources
+        self.new_subjects = ["Write the component ..."] + self.subjects
+        self.new_actions = ["Write the component ..."] + self.actions
+        self.new_resources = ["Write the component ..."] + self.resources
                  
-        subject = st.selectbox(label="Subject", options=self.subjects, index=len(self.subjects)-1)
+        subject = st.selectbox(label="Subject", options=self.new_subjects, index=len(self.new_subjects)-1)
         if subject == 'Write the component ...':
-            subject = st.text_input(label="Subject", label_visibility='collapsed', placeholder="Enter the Subject")
+            new_subject = st.text_input(label="Subject", label_visibility='collapsed', placeholder="Enter the Subject")
+        else:
+            new_subject = subject
             
-        action = st.selectbox(label="Action", options=self.actions, index=len(self.actions)-1)
+        action = st.selectbox(label="Action", options=self.new_actions, index=len(self.new_actions)-1)
         if action == 'Write the component ...':
-            action = st.text_input(label="Action", label_visibility='collapsed', placeholder="Enter the Action")
+            new_action = st.text_input(label="Action", label_visibility='collapsed', placeholder="Enter the Action")
+        else:
+            new_action = action
 
-        resource = st.selectbox(label="Resource", options=self.resources, index=len(self.resources)-1)
+        resource = st.selectbox(label="Resource", options=self.new_resources, index=len(self.new_resources)-1)
         if resource == 'Write the component ...':
-            resource = st.text_input(label="Resource", label_visibility='collapsed', placeholder="Enter the Resource")
+            new_resource = st.text_input(label="Resource", label_visibility='collapsed', placeholder="Enter the Resource")
+        else:
+            new_resource = resource
         
         
         ct = st.container(height=100, border=False)
@@ -110,9 +116,9 @@ class PolicyTester():
             
             request = PolicyEffectRequest(
                 policyId=str(uuid.uuid4()),
-                subject=subject,
-                action=action,
-                resource=resource
+                subject=new_subject,
+                action=new_action,
+                resource=new_resource
             )
             
             status_code, response = self.ac_engine.get_overall_effect(request)
