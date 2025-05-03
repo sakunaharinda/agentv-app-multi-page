@@ -11,7 +11,7 @@ from pymongo.server_api import ServerApi
 @st.cache_data(show_spinner=False)
 def load_auth_config(auth_file = 'auth_config.yaml'):
 
-    uri = os.environ['MONGO_URI']
+    uri = os.environ['MONGODB_URI']
 
     client = MongoClient(uri, server_api=ServerApi('1'))
     agentv_db = client['agentv']

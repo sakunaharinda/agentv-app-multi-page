@@ -26,3 +26,5 @@ Dockerfile
 
 run.sh
 cleanup.sh
+run_lazy.sh
+seed_users.py

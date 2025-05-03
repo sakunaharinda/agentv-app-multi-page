@@ -8,10 +8,14 @@ class PolicyTester():
     
     def __init__(self, hierarchy: dict, ac_engine: AccessControlEngine):
         
-        self.subjects = sorted(self.get_values(hierarchy['subject_hierarchy']))
-        self.actions = sorted(self.get_values(hierarchy['action_hierarchy']))
-        self.resources = sorted(self.get_values(hierarchy['resource_hierarchy']))
+        if hierarchy:
         
+            self.subjects = sorted(self.get_values(hierarchy['subject_hierarchy']))
+            self.actions = sorted(self.get_values(hierarchy['action_hierarchy']))
+            self.resources = sorted(self.get_values(hierarchy['resource_hierarchy']))
+        else:
+            self.subjects, self.actions, self.resources = [],[],[]
+            
         self.ac_engine = ac_engine
 
     def get_values(self, h: dict):
@@ -77,11 +81,22 @@ class PolicyTester():
     @st.dialog("Create a request")
     def test_overall(self):
         
-        # st.write(policy.policyDescription)
+        self.subjects = ["Write the component ..."] + self.subjects
+        self.actions = ["Write the component ..."] + self.actions
+        self.resources = ["Write the component ..."] + self.resources
+                 
+        subject = st.selectbox(label="Subject", options=self.subjects, index=len(self.subjects)-1)
+        if subject == 'Write the component ...':
+            subject = st.text_input(label="Subject", label_visibility='collapsed', placeholder="Enter the Subject")
+            
+        action = st.selectbox(label="Action", options=self.actions, index=len(self.actions)-1)
+        if action == 'Write the component ...':
+            action = st.text_input(label="Action", label_visibility='collapsed', placeholder="Enter the Action")
+
+        resource = st.selectbox(label="Resource", options=self.resources, index=len(self.resources)-1)
+        if resource == 'Write the component ...':
+            resource = st.text_input(label="Resource", label_visibility='collapsed', placeholder="Enter the Resource")
         
-        subject = st.selectbox(label="Subject", options=self.subjects, index=0)
-        action = st.selectbox(label="Action", options=self.actions, index=0)
-        resource = st.selectbox(label="Resource", options=self.resources, index=0)
         
         ct = st.container(height=100, border=False)
         col1, col2 = st.columns([1,1])
