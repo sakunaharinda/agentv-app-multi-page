@@ -176,4 +176,4 @@ vectorestore_server/.vvenv
 logs
 data/
 vectorestore_server/http_ca.crt
-seed_users.json
+seed_users.py

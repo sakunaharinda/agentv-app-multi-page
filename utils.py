@@ -397,16 +397,16 @@ def save(policy: JSONPolicyRecord, enforce_unique = False, index=None):
     
     if enforce_unique:
         st.session_state.corrected_policies = save_wo_duplicate(policy, st.session_state.corrected_policies)
-        st.session_state.corrected_policies_pdp = save_wo_duplicate(policy.to_json_record_pdp(), st.session_state.corrected_policies_pdp)
+        st.session_state.corrected_policies_pdp = save_wo_duplicate(policy.to_json_record_pdp(not st.session_state.no_hierarchy), st.session_state.corrected_policies_pdp)
         
     else:
         
         if index != None:
             st.session_state.corrected_policies.insert(index, policy)
-            st.session_state.corrected_policies_pdp.insert(index, policy.to_json_record_pdp())
+            st.session_state.corrected_policies_pdp.insert(index, policy.to_json_record_pdp(not st.session_state.no_hierarchy))
         else:
             st.session_state.corrected_policies.append(policy)
-            st.session_state.corrected_policies_pdp.append(policy.to_json_record_pdp())
+            st.session_state.corrected_policies_pdp.append(policy.to_json_record_pdp(not st.session_state.no_hierarchy))
     
 
     

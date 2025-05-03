@@ -33,11 +33,16 @@ def get_updated_description(policy: JSONPolicyRecordPDP):
     
     if policy.published:
         
-        return policy.policyDescription + " :green-badge[:material/check: Published]"
+        new_description = policy.policyDescription + " :green-badge[:material/check: Published]"
     else:
-        return policy.policyDescription + " :orange-badge[:material/publish: Ready to Publish]"
-    
-    
+        new_description = policy.policyDescription + " :orange-badge[:material/publish: Ready to Publish]"
+        
+    if not policy.with_context:
+        
+        new_description+= " :red-badge[:material/family_history: Without context]"
+        
+    return new_description
+
     
 def publish_all(ac_engine: AccessControlEngine, count: int):
     
@@ -160,28 +165,39 @@ def review_policy_aggrid(inc_policy, err_info, hierarchy, models):
     df = load_policy(inc_policy['policy'])
     df.insert(0, 'rule', [i+1 for i in range(len(df))])
     
-    subjects, actions, resources = update_options(df, get_options(hierarchy['subject_hierarchy']), get_options(hierarchy['action_hierarchy']), get_options(hierarchy['resource_hierarchy']))
-    
     gb = GridOptionsBuilder.from_dataframe(df)
+    gb.configure_column('rule', header_name="Rule ID", editable=True)
+    gb.configure_column('Decision', editable=True, cellEditor='agSelectCellEditor',
+        cellEditorParams={'values': ['allow', 'deny']})
+    
+    if hierarchy != None and not st.session_state.no_hierarchy:
+    
+        subjects, actions, resources = update_options(df, get_options(hierarchy['subject_hierarchy']), get_options(hierarchy['action_hierarchy']), get_options(hierarchy['resource_hierarchy']))
+
+        gb.configure_column('Subject', editable=True, cellEditor='agSelectCellEditor',
+            cellEditorParams={'values': subjects})
+        gb.configure_column('Action', editable=True, cellEditor='agSelectCellEditor',
+            cellEditorParams={'values': actions})
+        gb.configure_column('Resource', editable=True, cellEditor='agSelectCellEditor',
+            cellEditorParams={'values': resources})
+    else:
+        gb.configure_column('Subject', editable=True)
+        gb.configure_column('Action', editable=True)
+        gb.configure_column('Resource', editable=True)
+        
+    
+    
+    gb.configure_column('Condition', editable=True)
+    gb.configure_column('Purpose', editable=True)
+    gb.configure_grid_options(domLayout='autoHeight')
+    
     
     if error_ids != None:
         for row in error_ids:
             highlights.append((row, error_type.capitalize()))
         if not inc_policy['solved']:
             highlight_errors(highlights, gb)
-        
-    gb.configure_column('rule', header_name="Rule ID", editable=True)
-    gb.configure_column('Decision', editable=True, cellEditor='agSelectCellEditor',
-        cellEditorParams={'values': ['allow', 'deny']})
-    gb.configure_column('Subject', editable=True, cellEditor='agSelectCellEditor',
-        cellEditorParams={'values': subjects})
-    gb.configure_column('Action', editable=True, cellEditor='agSelectCellEditor',
-        cellEditorParams={'values': actions})
-    gb.configure_column('Resource', editable=True, cellEditor='agSelectCellEditor',
-        cellEditorParams={'values': resources})
-    gb.configure_column('Condition', editable=True)
-    gb.configure_column('Purpose', editable=True)
-    gb.configure_grid_options(domLayout='autoHeight')
+    
     grid_options = gb.build()
     grid_return = AgGrid(df, gridOptions=grid_options,
         width='100%',
@@ -247,7 +263,11 @@ def submit_corrected_policy(inc_policy, edited_df: pd.DataFrame, hierarchy, mode
     edited_df = edited_df.drop('rule', axis='columns')
     edited_df.columns = edited_df.columns.str.lower()
     corrected_policy = [v for _, v in edited_df.to_dict("index").items()]
-    policy, outside_hierarchy = align_policy(corrected_policy, models.vectorestores, hierarchy, chroma=st.session_state.use_chroma)
+    
+    if st.session_state.do_align:
+        policy, outside_hierarchy = align_policy(corrected_policy, models.vectorestores, hierarchy, chroma=st.session_state.use_chroma)
+    else:
+        policy = corrected_policy
     json_policy = JSONPolicyRecord.from_dict({
         'policyId': inc_policy['id'],
         'policyDescription': inc_policy['nlacp'],

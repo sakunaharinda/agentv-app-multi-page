@@ -5,6 +5,7 @@ export $(grep -v '^#' .env | xargs)
 CONTAINER_VECTOR="agentv-app-vectorstore-server"
 CONTAINER_PRE="agentv-app-preprocessing-server"
 CONTAINER_DB="agentv-app-db"
+CONTAINER_AE="sakunaharinda/agentv:agentv-app-ac-engine"
 
 DEFAULT_AGENTV_PORT=8506
 
@@ -49,18 +50,33 @@ else
     fi
 fi
 
-if [ "$(docker ps -q -f name=^/${CONTAINER_DB}$)" ]; then
+if [ "$(docker ps -q -f name=agentv-app-db)" ]; then
     echo "Container '$CONTAINER_DB' is already running."
 else
     echo "Container '$CONTAINER_DB' is not running. Attempting to start..."
     
     # Check if the container exists (but stopped)
-    if [ "$(docker ps -aq -f name=^/${CONTAINER_DB}$)" ]; then
+    if [ "$(docker ps -aq -f name=agentv-app-db)" ]; then
         docker start "$CONTAINER_DB"
         echo "Container '$CONTAINER_DB' started."
-    else
-        echo "Container '$CONTAINER_DB' does not exist. Creating and starting..."
-        docker run -d --name "$CONTAINER_DB" -p 27017:27017 mongodb/mongodb-community-server
+    # else
+    #     echo "Container '$CONTAINER_DB' does not exist. Creating and starting..."
+    #     docker run -d --name "$CONTAINER_DB" -p 27017:27017 mongodb/mongodb-community-server
+    fi
+fi
+
+if [ "$(docker ps -q -f name=agentv-app-ac-engine)" ]; then
+    echo "Container '$CONTAINER_AE' is already running."
+else
+    echo "Container '$CONTAINER_AE' is not running. Attempting to start..."
+    
+    # Check if the container exists (but stopped)
+    if [ "$(docker ps -aq -f name=agentv-app-ac-engine)" ]; then
+        docker start "$CONTAINER_AE"
+        echo "Container '$CONTAINER_AE' started."
+    # else
+    #     echo "Container '$CONTAINER_AE' does not exist. Creating and starting..."
+    #     docker run -d --name "$CONTAINER_AE" -p 27017:27017 mongodb/mongodb-community-server
     fi
 fi
 

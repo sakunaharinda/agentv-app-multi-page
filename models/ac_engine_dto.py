@@ -52,14 +52,15 @@ class JSONPolicyRecord:
     def to_dict(self):
         return asdict(self)
     
-    def to_json_record_pdp(self):
+    def to_json_record_pdp(self, with_context = True):
         
         return JSONPolicyRecordPDP(
             policyId=self.policyId,
             policyDescription=self.policyDescription,
             policy=self.policy,
             published=False,
-            ready_to_publish=False
+            ready_to_publish=False,
+            with_context=with_context
         )
     
     def __eq__(self, __value: object) -> bool:
@@ -91,6 +92,7 @@ class JSONPolicyRecordPDP:
     policy: List[ACR] = field(default_factory= list)
     published: bool = False
     ready_to_publish: bool = False
+    with_context: bool = True
     
     @staticmethod
     def from_dict(data: dict):
@@ -102,6 +104,7 @@ class JSONPolicyRecordPDP:
             policy=policy,
             published=data.get('published', False),
             ready_to_publish=data.get('ready_to_publish', False),
+            with_context=data.get('with_context', True),
         )
         
     def to_json_record(self):
@@ -120,7 +123,8 @@ class JSONPolicyRecordPDP:
             self.policyDescription == __value.policyDescription and
             self.policy == __value.policy and
             self.published == __value.published and 
-            self.ready_to_publish == __value.ready_to_publish
+            self.ready_to_publish == __value.ready_to_publish and
+            self.with_context == __value.with_context
         )
         
     def __hash__(self) -> int:
@@ -135,7 +139,7 @@ class JSONPolicyRecordPDP:
         ) for acr in self.policy))
         
         # Hash the combination of immutable attributes
-        return hash((self.policyId, self.policyDescription, policy_tuple, self.published, self.ready_to_publish))
+        return hash((self.policyId, self.policyDescription, policy_tuple, self.published, self.ready_to_publish, self.with_context))
     
 
 @dataclass

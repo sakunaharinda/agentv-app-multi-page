@@ -8,7 +8,7 @@ def switch_login(arg):
     st.switch_page('pages/login.py')
 
 
-def standard_menu():
+def standard_menu(turn_on=True):
     
     authenticator = st.session_state.authenticator
     
@@ -67,21 +67,21 @@ def standard_menu():
     if st.session_state["authentication_status"]:
         st.sidebar.page_link("pages/get_started.py", label=st.session_state.start_title, icon=st.session_state.start_icon, disabled=st.session_state.is_generating)
         st.sidebar.write("**Policy Generation**")
-        st.sidebar.page_link("pages/generate_document.py", label=st.session_state.generate_doc_title, icon=st.session_state.gen_doc_icon, disabled=st.session_state.is_generating or not st.session_state.hierarchy_upload)
-        st.sidebar.page_link("pages/generate_individual.py", label=st.session_state.generate_single_title, icon=st.session_state.gen_sent_icon, disabled=st.session_state.is_generating or not st.session_state.hierarchy_upload)
-        st.sidebar.page_link("pages/write_policy.py", label=st.session_state.write_xacml_title, icon=st.session_state.write_xacml_icon, disabled=st.session_state.is_generating or not st.session_state.hierarchy_upload)
+        st.sidebar.page_link("pages/generate_document.py", label=st.session_state.generate_doc_title, icon=st.session_state.gen_doc_icon, disabled=st.session_state.is_generating or not turn_on)
+        st.sidebar.page_link("pages/generate_individual.py", label=st.session_state.generate_single_title, icon=st.session_state.gen_sent_icon, disabled=st.session_state.is_generating or not turn_on)
+        st.sidebar.page_link("pages/write_policy.py", label=st.session_state.write_xacml_title, icon=st.session_state.write_xacml_icon, disabled=st.session_state.is_generating or not turn_on)
         st.sidebar.write("**Policy Review**")
-        st.sidebar.page_link("pages/correct_policies.py", label=st.session_state.cor_policies_title, icon=st.session_state.correct_pol_icon, disabled=st.session_state.is_generating or not st.session_state.hierarchy_upload)
-        st.sidebar.page_link("pages/incorrect_policies.py", label=st.session_state.inc_policies_title, icon=st.session_state.incorrect_pol_icon, disabled=st.session_state.is_generating or not st.session_state.hierarchy_upload)
+        st.sidebar.page_link("pages/correct_policies.py", label=st.session_state.cor_policies_title, icon=st.session_state.correct_pol_icon, disabled=st.session_state.is_generating or not turn_on)
+        st.sidebar.page_link("pages/incorrect_policies.py", label=st.session_state.inc_policies_title, icon=st.session_state.incorrect_pol_icon, disabled=st.session_state.is_generating or not turn_on)
         st.sidebar.write("**Policy Testing**")
-        st.sidebar.page_link("pages/policy_visualization.py", label=st.session_state.policy_viz_title, icon=st.session_state.viz_icon, disabled=st.session_state.is_generating or not st.session_state.hierarchy_upload)
-        st.sidebar.page_link("pages/test_policies.py", label=st.session_state.policy_test_title, icon=st.session_state.test_icon, disabled=st.session_state.is_generating or not st.session_state.hierarchy_upload)
+        st.sidebar.page_link("pages/policy_visualization.py", label=st.session_state.policy_viz_title, icon=st.session_state.viz_icon, disabled=st.session_state.is_generating or not turn_on)
+        st.sidebar.page_link("pages/test_policies.py", label=st.session_state.policy_test_title, icon=st.session_state.test_icon, disabled=st.session_state.is_generating or not turn_on)
         st.sidebar.write("**Policy Exporting**")
-        st.sidebar.page_link("pages/policy_export.py", label=st.session_state.policy_export_title, icon=st.session_state.save_icon, disabled=st.session_state.is_generating or not st.session_state.hierarchy_upload)
+        st.sidebar.page_link("pages/policy_export.py", label=st.session_state.policy_export_title, icon=st.session_state.save_icon, disabled=st.session_state.is_generating or not turn_on)
         
         st.button(label="What should I do?", icon=":material/help:", type='primary',key='fab', on_click=show_page_help)
         st.sidebar.container(height=10, border=False)
-        h_btn = st.sidebar.button(":material/family_history: Organization Hierarchy", use_container_width=True, key='org_hierarchy', type='primary', disabled=(not st.session_state.hierarchies or st.session_state.is_generating))
+        h_btn = st.sidebar.button(":material/family_history: Organization Hierarchy", use_container_width=True, key='org_hierarchy', type='primary', disabled=(not st.session_state.hierarchies or st.session_state.is_generating or not ('hierarchy_upload' in st.session_state and st.session_state.hierarchy_upload!=None) or st.session_state.no_hierarchy))
         if h_btn:
             visualize_hierarchy_dialog()
         authenticator.logout(button_name=":material/logout: Logout", location='sidebar', use_container_width=True, callback=switch_login)

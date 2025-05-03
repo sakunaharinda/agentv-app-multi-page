@@ -26,11 +26,20 @@ class PolicyTester():
     def test_policy(self, policy: JSONPolicyRecordPDP):
         random_rule = policy.to_dict()['policy'][0]
         
-        st.write(policy.policyDescription)
+        with_context = policy.with_context
         
-        subject = st.selectbox(label="Subject", options=self.subjects, index=self.subjects.index(random_rule['subject']) if random_rule['subject'] in self.subjects else 0)
-        action = st.selectbox(label="Action", options=self.actions, index=self.actions.index(random_rule['action']) if random_rule['action'] in self.actions else 0)
-        resource = st.selectbox(label="Resource", options=self.resources, index=self.resources.index(random_rule['resource']) if random_rule['resource'] in self.resources else 0)
+        st.write(policy.policyDescription + (" :red-badge[:material/family_history: Without context]" if not with_context else ""))
+        
+        if with_context:
+        
+            subject = st.selectbox(label="Subject", options=self.subjects, index=self.subjects.index(random_rule['subject']) if random_rule['subject'] in self.subjects else 0)
+            action = st.selectbox(label="Action", options=self.actions, index=self.actions.index(random_rule['action']) if random_rule['action'] in self.actions else 0)
+            resource = st.selectbox(label="Resource", options=self.resources, index=self.resources.index(random_rule['resource']) if random_rule['resource'] in self.resources else 0)
+        else:
+            
+            subject = st.text_input(label="Subject")
+            action = st.text_input(label="Action")
+            resource = st.text_input(label="Resource")
         
         ct = st.container(height=100, border=False)
         col1, col2 = st.columns([1,1])
