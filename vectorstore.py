@@ -8,6 +8,7 @@ import streamlit as st
 from models.ac_engine_dto import JSONPolicyRecordPDP
 from typing import List
 import bm25s
+# import time
 
 def create_ent_list(h_dict: dict, combine_key_val = False, save_path = None):
     
@@ -86,7 +87,7 @@ def build_vectorstores_chroma(pbar, save_path = 'data/entities'):
     vs_build_bar = pbar.progress(0, text=progress_text)
     
     for i, ent in enumerate([('subject', subjects), ('action', actions), ('resource', resources), ('condition', conditions)]):
-
+        # time.sleep(3)
         st.session_state.models.vectorestores[ent[0]].add(documents=ent[1], ids=[f"id {k+1}" for k in range(len(ent[1]))])
         if i==3:
             progress_text = "Uploaded hierarchy is processed successfully!"

@@ -7,8 +7,6 @@ from streamlit_authenticator.utilities import LoginError
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
-
-@st.cache_data(show_spinner=False)
 def load_auth_config(auth_file = 'auth_config.yaml'):
 
     uri = os.environ['MONGODB_URI']
