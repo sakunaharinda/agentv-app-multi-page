@@ -10,6 +10,7 @@ from models.record_dto import Results
 from models.ac_engine_dto import JSONPolicyRecord
 from loading import get_entity_hierarchy
 from vectorstore import build_vectorstores, build_vectorstores_chroma
+from ac_engine_service import AccessControlEngine
 
 class Task(Enum):
     NLACP_ID = 'nlacp_identification',
@@ -395,18 +396,24 @@ def save_wo_duplicate(policy, record_list):
     
 def save(policy: JSONPolicyRecord, enforce_unique = False, index=None):
     
+    ac_engine = AccessControlEngine()
+    
+    pdp_record = policy.to_json_record_pdp(not st.session_state.no_hierarchy)
+    
     if enforce_unique:
         st.session_state.corrected_policies = save_wo_duplicate(policy, st.session_state.corrected_policies)
-        st.session_state.corrected_policies_pdp = save_wo_duplicate(policy.to_json_record_pdp(not st.session_state.no_hierarchy), st.session_state.corrected_policies_pdp)
+        st.session_state.corrected_policies_pdp = save_wo_duplicate(pdp_record, st.session_state.corrected_policies_pdp)
         
     else:
         
         if index != None:
             st.session_state.corrected_policies.insert(index, policy)
-            st.session_state.corrected_policies_pdp.insert(index, policy.to_json_record_pdp(not st.session_state.no_hierarchy))
+            st.session_state.corrected_policies_pdp.insert(index, pdp_record)
         else:
             st.session_state.corrected_policies.append(policy)
-            st.session_state.corrected_policies_pdp.append(policy.to_json_record_pdp(not st.session_state.no_hierarchy))
+            st.session_state.corrected_policies_pdp.append(pdp_record)
+            
+    ac_engine.create_policy_json(pdp_record)
     
 
     

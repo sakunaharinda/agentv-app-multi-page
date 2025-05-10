@@ -9,29 +9,45 @@ from models.ac_engine_dto import *
 class AccessControlEngine():
     
     def __init__(self, base_url = os.environ['AC_ENGINE_SERVER_BASE_URL'],
-                 get_policies_path = '/policy', 
+                 get_policies_path = '/policy',
+                 get_policies_json_path = '/policy/json',
+                 get_published_policies_path = '/policy/published', 
                  get_policy_by_id_path = '/policy/{id}',
                  get_overall_effect_path = '/policy/effectAll',
                  get_effect_path = '/policy/effect',
                  create_policy_path = '/policy/add',
                  create_policies_path = '/policy/addAll',
+                 create_policies_json_path = '/policy/addAll/json',
                  delete_policy_by_id_path = '/policy/{id}',
-                 create_policy_xacml_path = '/policy/add/xacml'
+                 create_policy_xacml_path = '/policy/add/xacml',
+                 create_policy_json_path = '/policy/add/json'
                  ):
         self.base_url = base_url
         self.get_policies_url = base_url + get_policies_path
         self.get_policy_by_id_url = base_url + get_policy_by_id_path
+        self.get_policies_json_url = base_url + get_policies_json_path
+        self.get_published_policies_url = base_url + get_published_policies_path
         self.get_overall_effect_url = base_url + get_overall_effect_path
         self.get_effect_url = base_url + get_effect_path
         self.create_policy_url = base_url + create_policy_path
         self.create_policies_url = base_url + create_policies_path
+        self.create_policies_json_url = base_url + create_policies_json_path
         self.delete_policy_by_id_url = base_url + delete_policy_by_id_path
         self.create_policy_xacml_url = base_url + create_policy_xacml_path
+        self.create_policy_json_url = base_url + create_policy_json_path
 
 
     def get_all_policies(self):
         response = requests.get(self.get_policies_url)
         return response.status_code, [XACMLPolicyRecord(**record) for record in response.json()]
+    
+    def get_all_policies_json(self):
+        response = requests.get(self.get_policies_json_url)
+        return response.status_code, [JSONPolicyRecordPDP.from_dict(record) for record in response.json()]
+    
+    def get_published_policies(self):
+        response = requests.get(self.get_published_policies_url)
+        return response.status_code, [JSONPolicyRecordPDP.from_dict(record) for record in response.json()]
 
     def get_policy_by_id(self, id):
         response = requests.get(self.get_policy_by_id_url.format_map({'id': id}))
@@ -58,8 +74,17 @@ class AccessControlEngine():
         policy_create_request = body.to_dict()
         response = requests.post(self.create_policy_xacml_url, json=policy_create_request)
         return response.status_code
-        
     
+    def create_policy_json(self, body: JSONPolicyRecordPDP):
+        policy_create_request = body.to_dict()
+        response = requests.post(self.create_policy_json_url, json=policy_create_request)
+        return response.status_code
+    
+    def create_multiple_policies_json(self, body: List[JSONPolicyRecordPDP]):
+        policy_create_request = [r.to_dict() for r in body]
+        response = requests.post(self.create_policies_json_url, json=policy_create_request)
+        return response.status_code
+        
     def create_multiple_policies(self, body: List[JSONPolicyRecord]):
         policy_create_request = [r.to_dict() for r in body]
         response = requests.post(self.create_policies_url, json=policy_create_request)

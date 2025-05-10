@@ -56,13 +56,13 @@ def test_policies(policy_tester: PolicyTester):
     
     filter_container = st.container(border=False, key='filter_container_test')
     
-    pdp_policies = filter(st.session_state.pdp_policies, filter_container)
+    policies_from_pdp = filter(st.session_state.pdp_policies, filter_container)
 
     st.container(border=False, key='pad_container_test', height=50)
     
     pdp_pol_container = st.container(border=False, key='pdp_container')
     # pdp_policies = st.session_state.pdp_policies
-    for pdp_pol_object in pdp_policies:
+    for pdp_pol_object in policies_from_pdp:
         
         with pdp_pol_container.chat_message('user', avatar=":material/gavel:"):
             nlacp_col, btn_col = st.columns([7,1])

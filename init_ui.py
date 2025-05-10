@@ -85,13 +85,28 @@ def init():
         st.session_state.first_time = False
         
     if 'ac_engine' not in st.session_state:
-
-        st.session_state["ac_engine"] = AccessControlEngine()
+        ac_engine = AccessControlEngine()
+        st.session_state["ac_engine"] = ac_engine
+        
+        response, prev_policies = ac_engine.get_all_policies_json()
+        
+        if response == 200:
+            st.session_state.corrected_policies_pdp = prev_policies
+            st.session_state.corrected_policies = [policy.to_json_record() for policy in prev_policies]
+            
+        response, published_policies = ac_engine.get_published_policies()
+        
+        if response == 200:
+            
+            st.session_state.pdp_policies = published_policies
+            
         
     if 'models' not in st.session_state:
         
         st.session_state['models'] = ModelStore(fake=False)
         
     st.session_state.xacml_uuid = str(uuid4())
+    
+    
     
     

@@ -12,6 +12,18 @@ class ACR:
     purpose: str
     condition: str
     
+    @staticmethod
+    def from_dict(data: dict):
+        
+        return ACR(
+            decision=data.get('decision'),
+            subject=data.get('subject'),
+            action=data.get('action'),
+            resource=data.get('resource'),
+            purpose=data.get('purpose'),
+            condition=data.get('condition')
+        )
+    
     def __eq__(self, __value: object) -> bool:
         return (
             self.decision == __value.decision and
@@ -42,7 +54,7 @@ class JSONPolicyRecord:
     @staticmethod
     def from_dict(data: dict):
         
-        policy = [ACR(**acr) for acr in data.get('policy', [])]
+        policy = [ACR.from_dict(acr) for acr in data.get('policy', [])]
         return JSONPolicyRecord(
             policyId=data.get('policyId', ''),
             policyDescription=data.get('policyDescription', ''),
@@ -97,7 +109,7 @@ class JSONPolicyRecordPDP:
     @staticmethod
     def from_dict(data: dict):
         
-        policy = [ACR(**acr) for acr in data.get('policy', [])]
+        policy = [ACR.from_dict(acr) for acr in data.get('policy', [])]
         return JSONPolicyRecordPDP(
             policyId=data.get('policyId', ''),
             policyDescription=data.get('policyDescription', ''),

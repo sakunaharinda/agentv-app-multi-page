@@ -16,6 +16,7 @@ def delete_single(pdp_policy: JSONPolicyRecordPDP, ac_engine: AccessControlEngin
     if status == 200:
         st.session_state.pdp_policies.remove(pdp_policy)
         pdp_policy.published = False
+        ac_engine.create_policy_json(pdp_policy)
 
 def publish_single(pdp_policy: JSONPolicyRecordPDP, ac_engine: AccessControlEngine):
     
@@ -28,6 +29,7 @@ def publish_single(pdp_policy: JSONPolicyRecordPDP, ac_engine: AccessControlEngi
             st.session_state.pdp_policies.append(pdp_policy)
             # st.session_state.pdp_policies = list(set(st.session_state.pdp_policies))
             pdp_policy.published = True
+            ac_engine.create_policy_json(pdp_policy)
     
 def get_updated_description(policy: JSONPolicyRecordPDP):
     
@@ -69,8 +71,7 @@ def publish_all(ac_engine: AccessControlEngine, count: int):
                     policy.published = True
                     st.session_state.pdp_policies.append(policy)
                     
-        
-        
+    ac_engine.create_multiple_policies_json(st.session_state.pdp_policies)
 
 @st.dialog(title="Publish to Policy Database")
 def policy_db_feedback(status_code, single = False):
@@ -94,10 +95,7 @@ def policy_db_feedback(status_code, single = False):
     elif ok:
         st.rerun()
         
-        
 def publish_delete_policy(policy: JSONPolicyRecordPDP, ac_engine, col, col_delete):
-    
-    # _,_,col = st.columns([1,1,1])
     
     col.button("Publish", key=f"publish_{policy.policyId}", use_container_width=True, on_click=publish_single, args=(policy, ac_engine,), type='primary', help = "Publish the policy to the policy database", disabled=policy.published, icon=":material/database_upload:")
     
