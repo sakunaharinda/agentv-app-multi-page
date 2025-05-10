@@ -41,7 +41,7 @@ def get_updated_description(policy: JSONPolicyRecordPDP):
         
     if not policy.with_context:
         
-        new_description+= " :red-badge[:material/family_history: Without context]"
+        new_description+= " :red-badge[:material/family_history: Outside context]"
         
     return new_description
 

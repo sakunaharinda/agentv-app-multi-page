@@ -32,7 +32,7 @@ class PolicyTester():
         
         with_context = policy.with_context
         
-        st.write(policy.policyDescription + (" :red-badge[:material/family_history: Without context]" if not with_context else ""))
+        st.write(policy.policyDescription + (" :red-badge[:material/family_history: Outside context]" if not with_context else ""))
         
         if with_context:
         
