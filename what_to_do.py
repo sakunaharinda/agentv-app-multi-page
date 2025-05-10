@@ -254,11 +254,20 @@ def correct_pol_help():
         "- Click **Publish All** to publish **all the policies at once** to the policy database."
         "- Select the policies you want to publish to the policy database by using the checkbox next to the **Generated Policy** expander in each policy, and click **Publish (x)** button at the bottom of the page."
     )
+    
+    st.info(
+        "There are three badges that can be seen in front of the English access control requirement.\n"
+        
+        "- :orange-badge[:material/publish: Ready to Publish] : Indicates that the policy is ready to publish to the policy database.\n"
+        "- :green-badge[:material/check: Published] : Indicate that the policy is already published to the policy database.\n"
+        "- :red-badge[:material/family_history: Outside context] : Indicates that the policy is generated **without** using an organization hierarchy."
+        )
 
     st.warning(
         "Only the published policies will be visualized and available in the next step for testing. "
         "Unpublished policies will not be stored in the Policy Database."
     )
+    
 
     st.success(
         "After publishing the required policies, go to the **Test Policies** pages. "
@@ -279,17 +288,21 @@ def test_pol_help():
         "It mimics how real-world access decisions are made using your policies."
     )
 
-    st.write("### Step 1: Review Published Policies")
-    st.write(
-        "Use the **Next** and **Previous** buttons to navigate through the policies currently stored in the Policy Database."
-    )
     st.info(
-        "The **Access Control Policy Database** serves as the Policy Administration Point (PAP), where all policies created using AGentV are stored."
+        "Each published policy is shown with its unique policy ID, access control requirement, and its access control rules broken down into its components in a table format."
     )
+
+    st.write("### Step 1: Filter Policies")
+    st.write(
+        "Open the :material/tune: Filter expander and set the filtering criteria (i.e., policy ID or the sentence) to see only a subset of policies to test."
+    )
+    # st.info(
+    #     "The **Access Control Policy Database** serves as the Policy Administration Point (PAP), where all policies created using AGentV are stored."
+    # )
 
     st.write("### Step 2: Ensure All Required Policies Are Available")
     st.write(
-        "If any required policies are missing, return to the **Correct Policies** page and publish them before proceeding."
+        "If any required policies are missing, return to the **Access Control Policies** page and publish them before proceeding."
     )
 
     st.write("### Step 3: Choose a Testing Option")
@@ -298,15 +311,20 @@ def test_pol_help():
         "1. **Test** – Tests only the **selected policy**.\n"
         "2. **Test** – Tests **all policies** in the Policy Database."
     )
+    
+    st.warning("If the policy is generated without using an organization hierarchy, :red-badge[:material/family_history: Outside context] badge can be seen in front of the English access control requirement.")
 
     st.write("### Step 4: Build an Access Request")
     st.write(
-        "After choosing a testing option, a dialog will appear where you can select the **Subject**, **Action**, and **Resource** using dropdown menus."
+        "After choosing a testing option, a dialog will appear where you can select the **Subject**, **Action**, and **Resource** (i.e., policy components) using dropdown menus."
     )
+    
     st.info(
         "These dropdown options are based on the organization hierarchy file you uploaded earlier. "
         "To view the hierarchy, click the :material/family_history: **Organization Hierarchy** button at the bottom of the sidebar."
     )
+    
+    st.write("In case you decide to test a policy generated without using an organization hierarachy, you will need to write the above policy components instead of selecting them via a drop down menu.")
 
     st.write("### Step 5: Send the Request")
     st.write(
