@@ -222,7 +222,7 @@ def incorrect_pol_help():
     )
 
     st.success(
-        "Once all incorrect policies are corrected and submitted, you will be automatically redirected to the **Access Control Policies** page, "
+        "Once all incorrect policies are corrected and submitted, go to the **Access Control Policies** page, "
         "where you can review all your policies and publish them to the Policy Database."
     )
     
