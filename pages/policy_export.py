@@ -141,7 +141,7 @@ def save_policies(ac_engine: AccessControlEngine, save_path = 'downloads'):
         unsafe_allow_html=True,
     )
     
-    st.title("Save Policies")
+    st.title("Download Policies")
     
     btn_container = st.container()
     

@@ -10,8 +10,6 @@ from menus import standard_menu
 @st.cache_data(show_spinner = False)
 def create_access_matrix(correct_policies: List[JSONPolicyRecord]):
     
-    st.session_state.current_page = PAGE.VIZ_POLICY
-    
     data = []
     
     if len(correct_policies) > 0:
@@ -62,20 +60,26 @@ def create_access_matrix(correct_policies: List[JSONPolicyRecord]):
         access_matrix.to_csv("logs/access_matrix.csv")
         
         return access_matrix
+    
+@st.fragment
+def visualize_page():
+    _, viz_col, _ = st.columns([1,1,1])
+    
+    st.session_state.current_page = PAGE.VIZ_POLICY
+        
+    st.title("Policy Visualization")
+    change_page_icon('viz_icon')
+    if len(st.session_state.pdp_policies)>0:
+        with st.container(height=400, border=False):
+
+            st.dataframe(create_access_matrix(st.session_state.pdp_policies), use_container_width=True, key="access_matrix")
+            
+        _,leg_col1,leg_col2,_ = st.columns([4,2,2,4])
+
+        leg_col1.markdown("#### ✅ :green[Allowed]")
+        leg_col2.markdown("#### 🚫 :red[Denied]")
+    
         
 
 standard_menu()
-_, viz_col, _ = st.columns([1,1,1])
-        
-
-st.title("Policy Visualization")
-change_page_icon('viz_icon')
-if len(st.session_state.pdp_policies)>0:
-    with st.container(height=400, border=False):
-
-        st.dataframe(create_access_matrix(st.session_state.pdp_policies), use_container_width=True, key="access_matrix")
-        
-    _,leg_col1,leg_col2,_ = st.columns([4,2,2,4])
-
-    leg_col1.markdown("#### ✅ :green[Allowed]")
-    leg_col2.markdown("#### 🚫 :red[Denied]")
+visualize_page()

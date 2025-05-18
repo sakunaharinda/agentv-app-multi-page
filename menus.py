@@ -88,7 +88,7 @@ def standard_menu(turn_on=True):
         st.sidebar.page_link("pages/policy_visualization.py", label=st.session_state.policy_viz_title, icon=":material/bar_chart:", disabled=st.session_state.is_generating or not turn_on)
         st.sidebar.page_link("pages/test_policies.py", label=st.session_state.policy_test_title, icon=":material/assignment:", disabled=st.session_state.is_generating or not turn_on)
         st.sidebar.write("**Policy Exporting**")
-        st.sidebar.page_link("pages/policy_export.py", label=st.session_state.policy_export_title, icon=":material/save_as:", disabled=st.session_state.is_generating or not turn_on)
+        st.sidebar.page_link("pages/policy_export.py", label=st.session_state.policy_export_title, icon=":material/download:", disabled=st.session_state.is_generating or not turn_on)
         
         st.button(label="", icon=":material/help:", type='primary',key='fab', on_click=show_page_help)
         st.sidebar.container(height=10, border=False)
