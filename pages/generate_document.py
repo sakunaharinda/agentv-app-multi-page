@@ -1,7 +1,7 @@
 import streamlit as st
 from utils import on_click_generate, store_value_pol_doc
 from ml_layer import agentv_batch
-from pages.generation_utils import show_summary, review_incorrects, show_bar_chart
+from pages.generation_utils import show_summary, review_incorrects, show_bar_chart, review_incorrects_notification
 from models.pages import PAGE
 from menus import standard_menu
 
@@ -22,6 +22,13 @@ def generate_doc(hierarchy, models):
                 z-index: 9999 !important;
             }
             
+            [data-testid=stToastContainer] {
+                z-index: 9999 !important;
+                //position: fixed !important;
+                //top: 30% !important;
+            }
+            
+            
             /* Add padding at the bottom of the page to prevent content from being hidden */
             section.main {
                 padding-bottom: 100px !important;
@@ -33,9 +40,9 @@ def generate_doc(hierarchy, models):
     st.session_state['sentence_page'] = False
 
     st.title("Policy Generation from a Document")
-    
-    status_container = st.container(border=False, height=175)
-    barchart = st.container(border=False, height=150)
+    st.container(height=1, border=False)
+    status_container = st.container(border=False, height=173)
+    barchart = st.container(border=False, height=145)
     
     footer_container = st.container(key='doc_container')
     
@@ -65,17 +72,20 @@ def generate_doc(hierarchy, models):
             content = st.session_state.policy_doc.getvalue().decode('utf-8')
             agentv_batch(status_container, content, models.id_tokenizer, models.id_model, models.gen_tokenizer, models.gen_model, models.ver_model, models.ver_tokenizer, models.loc_tokenizer, models.loc_model, models.vectorestores, hierarchy, do_align=st.session_state.do_align)
             
-            # Indexing NLACPs
-            # st.session_state.models.vectorestores['nlacps'].add(documents=[policy.policyDescription for policy in st.session_state.corrected_policies], ids=[policy.policyId for policy in st.session_state.corrected_policies])
             
             st.session_state.is_generating = False
-            # st.session_state.generate_wo_context = False
-            # st.rerun()
-            incorrects = len(st.session_state.results_document['final_verification'])-st.session_state.results_document['final_verification'].count(11)
-            if (not st.session_state.reviewed) and incorrects>0:
-                review_incorrects(incorrects)
-            else:
+            if st.session_state.refresh:
+                st.session_state.refresh = False
                 st.rerun()
+
+    if 'results_document' in st.session_state:
+    
+        incorrects = len(st.session_state.results_document['final_verification'])-st.session_state.results_document['final_verification'].count(11)
+        if  incorrects>0:
+            # st.rerun()
+            review_incorrects_notification(incorrects)
+        # else:
+        #     st.rerun()
     
     if 'results_document' in st.session_state and not st.session_state.new_doc:
         show_summary(status_container)

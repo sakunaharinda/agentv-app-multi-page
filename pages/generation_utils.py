@@ -44,7 +44,7 @@ def show_bar_chart(container):
     # Update layout for a stacked bar chart
     fig.update_layout(
         barmode='stack',
-        height=142,
+        height=130,
         margin=dict(l=50, r=50, t=50, b=50),
         legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1),
         xaxis=dict(title='Percentage (%)', range=[0, 100])
@@ -107,6 +107,12 @@ def review_incorrects(incorrects):
         
     elif wait:
         st.rerun()
+        
+    st.session_state.reviewed = True
+    
+def review_incorrects_notification(incorrects):
+    
+    st.toast(f"You have incorrectly generated policies. Go to **Incorrect Access Control Policies** page to review.",icon=":material/warning:")
         
     st.session_state.reviewed = True
     

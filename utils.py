@@ -385,6 +385,10 @@ def on_click_generate(page_icon):
 def change_page_icon(state, icon = ":material/task_alt:"):
     
     st.session_state[state] = icon
+    
+def toast_download_sucess():
+    
+    st.toast("Policies were downloaded successfully!", icon=":material/download_done:")
 
 @st.cache_resource(show_spinner=False)
 def save_wo_duplicate(policy, record_list):
