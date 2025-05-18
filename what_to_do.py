@@ -369,7 +369,7 @@ def save_pol_help():
 
     st.write("### Overview")
     st.write(
-        "This page allows you to **export and save** all the policies you’ve created or corrected using AGentV. "
+        "This page allows you to **download and save** all the **published** policies. "
         "You can choose to download them in two formats: **JSON** or **XACML**."
     )
 
@@ -377,7 +377,7 @@ def save_pol_help():
     st.write("You have two options to save your policies:")
 
     st.markdown(
-        "1. **Save as JSON** – Click this button to download **all policies in a single JSON file**.\n"
+        "1. **Save as JSON** – Click this button to download **published policies in a single JSON file**.\n"
         "2. **Save as XACML** – Click this button to download the policies as **separate XML files** written in XACML. "
         "Each file will represent one policy."
     )

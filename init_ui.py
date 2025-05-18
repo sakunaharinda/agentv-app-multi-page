@@ -61,7 +61,7 @@ def init():
     set_state('policy_viz_title', 'Visualize Policies')
     set_state('write_xacml_title', 'Write in XACML')
     set_state('policy_test_title', "Test Policies")
-    set_state('policy_export_title', "Save Policies")
+    set_state('policy_export_title', "Download Policies")
     set_state('started', False)
     set_state('new_doc', True)
     set_state('use_chroma', os.getenv('USE_CHROMA'))

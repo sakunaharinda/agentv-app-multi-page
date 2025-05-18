@@ -26,9 +26,10 @@ def publish_single(pdp_policy: JSONPolicyRecordPDP, ac_engine: AccessControlEngi
 
     if status == 200:
         if pdp_policy not in st.session_state.pdp_policies:
+            pdp_policy.published = True
             st.session_state.pdp_policies.append(pdp_policy)
             # st.session_state.pdp_policies = list(set(st.session_state.pdp_policies))
-            pdp_policy.published = True
+            
             ac_engine.create_policy_json(pdp_policy)
     
 def get_updated_description(policy: JSONPolicyRecordPDP):

@@ -12,3 +12,8 @@ is_section = true
 path = "inputs.py"
 name = "Inputs"
 icon = ":material/history:"
+
+toolbarMode = "minimal"
+
+[ui]
+hideTopBar = true
