@@ -75,17 +75,20 @@ def test_policies(policy_tester: PolicyTester):
 
     with st.container(border=False, height=100, key='test_container'):
 
-        st.button(
+        test_sys = st.button(
             "Test System",
             type="primary",
             help="Test the entire system (i.e., all the policies in the policy database) by sending an access request",
             use_container_width=True,
             key="test_all",
             disabled=len(st.session_state.pdp_policies) < 1,
-            on_click=test_system,
-            args=(policy_tester,),
+            # on_click=test_system,
+            # args=(policy_tester,),
             icon=":material/output:"
         )
+        
+        if test_sys:
+            test_system(policy_tester)
 
 hierarchy = st.session_state.hierarchies
 
