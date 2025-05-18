@@ -20,6 +20,12 @@ def show_incorrect_policies(models, hierarchy):
                 z-index: 9999 !important;
             }
             
+            [data-testid=stToastContainer] {
+                z-index: 9999 !important;
+                //position: fixed !important;
+                //top: 30% !important;
+            }
+            
             
             /* Add padding at the bottom of the page to prevent content from being hidden */
             section.main {
@@ -34,6 +40,15 @@ def show_incorrect_policies(models, hierarchy):
     st.title("Incorrect Access Control Policies")
     
     inc_policy_container = st.container(key='inc_pol_container')
+    
+    if len(st.session_state.inc_policies)>0:
+    
+        for incorrect_pol_object in st.session_state.inc_policies:
+            
+            if incorrect_pol_object['solved'] == False:
+                break
+        else:
+            st.toast("All the policies are refined. Go to **Access Control Policies** page.", icon=":material/check:")
     
     for incorrect_pol_object in st.session_state.inc_policies:
         

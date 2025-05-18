@@ -81,7 +81,7 @@ def generate_doc(hierarchy, models):
     if 'results_document' in st.session_state:
     
         incorrects = len(st.session_state.results_document['final_verification'])-st.session_state.results_document['final_verification'].count(11)
-        if  incorrects>0:
+        if (not st.session_state.reviewed) and incorrects>0:
             # st.rerun()
             review_incorrects_notification(incorrects)
         # else:
