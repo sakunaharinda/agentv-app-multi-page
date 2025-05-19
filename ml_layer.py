@@ -530,6 +530,7 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
         
         st.session_state['results_individual'] = results.to_dict()
         st.session_state.is_generating = False
+        st.session_state.review_single = True
         # st.session_state.correct_policies = list(set(st.session_state.corrected_policies))
     
     

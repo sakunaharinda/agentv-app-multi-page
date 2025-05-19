@@ -24,6 +24,7 @@ def init():
     set_state('test_icon', ':material/radio_button_unchecked:')
     set_state('save_icon', ':material/radio_button_unchecked:')
     set_state('no_hierarchy', False)
+    set_state('review_single', False)
     
     
     set_state('enable_generation', False)

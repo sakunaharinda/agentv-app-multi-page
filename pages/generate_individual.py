@@ -26,6 +26,12 @@ def generate_sent(hierarchy, models):
                 z-index: 9999 !important;
             }
             
+            [data-testid=stToastContainer] {
+                z-index: 9999 !important;
+                //position: fixed !important;
+                //top: 30% !important;
+            }
+            
             /* Add padding at the bottom of the page to prevent content from being hidden */
             section.main {
                 padding-bottom: 100px !important;

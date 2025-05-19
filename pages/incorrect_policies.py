@@ -48,7 +48,7 @@ def show_incorrect_policies(models, hierarchy):
             if incorrect_pol_object['solved'] == False:
                 break
         else:
-            st.toast("All the policies are refined. Go to **Access Control Policies** page.", icon=":material/check:")
+            st.toast("All the policies are refined. Go to **Access Control Policies** page to review and publish.", icon=":material/check:")
     
     for incorrect_pol_object in st.session_state.inc_policies:
         
