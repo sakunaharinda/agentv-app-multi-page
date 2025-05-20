@@ -135,7 +135,7 @@ def review_individual(id, incorrect = False):
             on_click_publish()
             
         if st.session_state.review_single:
-            st.toast(f"Generated the policy successfully. Go to **Access Control Policies** page to review and publish.",icon=":material/check:")
+            st.toast(f"Policy is generated successfully. Go to **Access Control Policies** page to review and publish.",icon=":material/check:")
             st.session_state.review_single = False
         
     return review_container

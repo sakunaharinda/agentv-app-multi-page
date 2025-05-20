@@ -149,7 +149,7 @@ def save_policies(ac_engine: AccessControlEngine, save_path = 'downloads'):
         
         _,col1, col2,_ = st.columns([0.15, 1,1, 0.15])
         save_json = col1.button(
-                label="Save as JSON",
+                label="Download as JSON",
                 type='secondary',
                 use_container_width=True,
                 disabled=len(st.session_state.pdp_policies) == 0,
@@ -160,7 +160,7 @@ def save_policies(ac_engine: AccessControlEngine, save_path = 'downloads'):
             )
         
         save_xacml = col2.button(
-            label=f"Save as XACML", 
+            label=f"Download as XACML", 
             key='save_xacml', 
             type='secondary', 
             icon=":material/code:", 

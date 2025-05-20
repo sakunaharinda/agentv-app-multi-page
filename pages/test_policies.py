@@ -38,10 +38,6 @@ def test_policies(policy_tester: PolicyTester):
                 //z-index: 9999 !important;
             }
             
-            //[data-testid="stVerticalBlock"] .st-key-pdp_container {
-            //    max-height: 80vh;
-            //    overflow: scroll;
-            //}
             
             /* Add padding at the bottom of the page to prevent content from being hidden */
             section.main {
@@ -76,7 +72,7 @@ def test_policies(policy_tester: PolicyTester):
     with st.container(border=False, height=100, key='test_container'):
 
         test_sys = st.button(
-            "Test System",
+            "Test All",
             type="primary",
             help="Test the entire system (i.e., all the policies in the policy database) by sending an access request",
             use_container_width=True,

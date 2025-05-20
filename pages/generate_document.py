@@ -86,6 +86,9 @@ def generate_doc(hierarchy, models):
             review_incorrects_notification(incorrects)
         # else:
         #     st.rerun()
+        elif (not st.session_state.reviewed) and incorrects==0:
+            
+            st.toast("Policies are generated successfully. Go to **Access Control Policies** page to review and publish.")
     
     if 'results_document' in st.session_state and not st.session_state.new_doc:
         show_summary(status_container)
