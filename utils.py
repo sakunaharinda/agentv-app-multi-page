@@ -203,6 +203,7 @@ def prepare_inputs_bart(s,l,tokenizer, device = 'cuda:0'):
     return {k:v.to(device) for k,v in tokens.items()}
 
 def convert_to_sent(sample):
+    random.seed(0)
     error = 0
     sample = ast.literal_eval(str(sample))
     pol_sent = []
