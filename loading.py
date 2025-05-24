@@ -73,6 +73,20 @@ def flatten(nested_list):
     
     return result
 
+def reverse_hierarchy(hierarchy):
+    
+    reversed = {}
+    
+    for k,v in hierarchy.items():
+        for vv in v:
+            if vv not in reversed:
+                reversed[vv] = [k]
+            else:
+                if k not in reversed[vv]:
+                    reversed[vv].append(k)
+                    
+    return reversed
+
 @st.cache_data(show_spinner=False)
 def remove_itself(hierarchy: dict):
     

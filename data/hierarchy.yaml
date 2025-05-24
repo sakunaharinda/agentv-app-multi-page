@@ -1,23 +1,23 @@
 subjects:
   - hcp:
-    - lhcp
+    - lhcp:
+      - doctor
+      - nurse
+    - mhp
     - dlhcp
     - er personnel
     - uap
     - lt
-  - administration:
-    - administrator
-    - software tester
-  - patient representative:
-    - patient
-    - personal representative
-    - publich health agent
+  - administrator
+  - software tester
+  - patient
+  - personal representative
+  - publich health agent
 
 actions:
   - access:
     - view
     - write
-    - read
   - edit
   - enter
   - modify
@@ -45,18 +45,19 @@ resources:
     - patient-record access log
   - personnel:
     - hcp:
-      - lhcp
+      - lhcp:
+        - doctor
+        - nurse
+      - mhp
       - dlhcp
       - er personnel
       - uap
       - lt
-    - administration:
-      - administrator
-      - software tester
-    - patient representative:
-      - patient
-      - personal representative
-      - publich health agent
+    - administrator
+    - software tester
+    - patient
+    - personal representative
+    - publich health agent
 
 conditions:
   - patient_consent:
@@ -65,5 +66,3 @@ conditions:
   - situation:
     - emergency
     - normal
-  
-

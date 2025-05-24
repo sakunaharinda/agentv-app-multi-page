@@ -34,8 +34,6 @@ def test_policies(policy_tester: PolicyTester):
             [data-testid="stVerticalBlock"] .st-key-pad_container_test {
                 position: fixed !important;
                 top: 180px !important;
-                //background-color: white !important;
-                //z-index: 9999 !important;
             }
             
             
@@ -68,13 +66,13 @@ def test_policies(policy_tester: PolicyTester):
             with st.expander(f"Generated Policy", expanded=False):
                 st.dataframe(load_policy(pdp_pol_object.policy), use_container_width=True, key=f"pdp_policy_{pdp_pol_object.policyId}", hide_index=True)
 
-
-    with st.container(border=False, height=100, key='test_container'):
+    test_container = st.container(key="test_container")
+    with test_container:
 
         test_sys = st.button(
             "Test All",
             type="primary",
-            help="Test the entire system (i.e., all the policies in the policy database) by sending an access request",
+            help="Test all the policies by sending an access request",
             use_container_width=True,
             key="test_all",
             disabled=len(st.session_state.pdp_policies) < 1,

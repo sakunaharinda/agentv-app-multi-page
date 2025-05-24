@@ -24,6 +24,15 @@ def show_correct_policies(ac_engine: AccessControlEngine):
                 z-index: 9999 !important;
             }
             
+            [class*="st-key-remove_"] button {
+                background-color: #EA4335;
+                border: none;
+            }
+            [class*="st-key-remove_"] button:hover {
+                background-color: #DC143C;
+                border: none;
+            }
+            
             [data-testid="stVerticalBlock"] .st-key-filter_container {
                 position: fixed !important;
                 top: 140px !important;
@@ -85,8 +94,10 @@ def show_correct_policies(ac_engine: AccessControlEngine):
         MODE = 'All'
     else:
         MODE = f"({select_count})"
+        
+    correct_container = st.container(key="correct_container")
     
-    with st.container(border=False, height=100, key="correct_container"):
+    with correct_container:
 
         publish_all_btn = st.button(
             f"Publish {MODE}",
@@ -94,7 +105,7 @@ def show_correct_policies(ac_engine: AccessControlEngine):
             use_container_width=True,
             key="publish_all",
             disabled=len(st.session_state.corrected_policies) < 1,
-            help="Publish all the policies above to the policy database",
+            help="Publish all the policies to the policy database",
             icon=":material/database_upload:",
             on_click=publish_all,
             args=(ac_engine, select_count,)
