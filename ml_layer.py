@@ -76,7 +76,7 @@ def verify_policies(_loader, _model, results: Results):
     assert sentences == results.generated_nlacps,'Mismatch between verifier sentence ordering and the original ordering'
     assert policies == list(map(str,results.generated_policies)),'Mismatch between verifier policy ordering and the original ordering'
     
-    results.init_verification = np.argmax(all_preds, axis=-1).tolist()
+    return np.argmax(all_preds, axis=-1).tolist()
     # return results
 
 
@@ -536,8 +536,7 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
     
 # @st.cache_data(show_spinner=False)
 def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_tokenizer, _gen_model, _ver_model, _ver_tokenizer, _loc_tokenizer, _loc_model, _vectorstores, hierarchy, do_align = True):
-    if st.session_state.use_chroma:
-        print("Using Chroma")
+
     with _status_container.status("Generating policies ...", expanded=True) as _status:
         results = Results()
         
@@ -581,11 +580,15 @@ def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_toke
                 results.generated_policies.append(policy)
                 results.converted_policies.append(convert_to_sent(policy)[0])
                 
+            else:
+                print()
+                print(nlacp)
+                
         st.write("Verifying and Refining the translation ...")
         
         ver_loader = data_loaders.get_loader(results, Task.POLICY_VER, max_len=1024, batch_size=8)
         
-        verify_policies(ver_loader, _ver_model, results)
+        results.init_verification = verify_policies(ver_loader, _ver_model, results)
         
         # st.write("Refining the translation ...")
         
