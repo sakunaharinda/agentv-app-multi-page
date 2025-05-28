@@ -398,6 +398,8 @@ def align_policy_chroma(policy, _vectorstore: dict, hierarchy: dict):
 # @st.cache_data(show_spinner=False)
 def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_tokenizer, _gen_model, _ver_model, _ver_tokenizer, _loc_tokenizer, _loc_model, _vectorstores, hierarchy, do_align=True):
     
+    uuid = str(uuid4())
+    
     with _status_container.status("Generating the policy ...", expanded=True) as _status:
 
         results = Results()
@@ -465,7 +467,7 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
                             
                         else:
                             json_policy = JSONPolicyRecord.from_dict({
-                                'policyId': str(uuid4()),
+                                'policyId': uuid,
                                 'policyDescription': nlacp,
                                 'policy': policy
                             })
@@ -476,14 +478,14 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
                     else:
                     
                         json_policy = JSONPolicyRecord.from_dict({
-                            'policyId': str(uuid4()),
+                            'policyId': uuid,
                             'policyDescription': nlacp,
                             'policy': policy
                         })
                         
                         save(json_policy, index=0)
                         results.final_correct_policies.append(json_policy)
-                        handlers.cor_policy_nav_last()
+                        # handlers.cor_policy_nav_last()
                 else:
                     if ver_result != 10:
                         error_type = CAT2ERROR[ver_result]
@@ -501,7 +503,7 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
 
                     st.session_state.inc_policies.append(
                         {
-                            "id": str(uuid4()),
+                            "id": uuid,
                             "nlacp": nlacp,
                             "policy": policy,
                             "warning": warning,
@@ -532,6 +534,8 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
         st.session_state.is_generating = False
         st.session_state.review_single = True
         # st.session_state.correct_policies = list(set(st.session_state.corrected_policies))
+        
+    return uuid
     
     
 # @st.cache_data(show_spinner=False)

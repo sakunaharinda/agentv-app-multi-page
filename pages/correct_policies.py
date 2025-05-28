@@ -111,8 +111,8 @@ def show_correct_policies(ac_engine: AccessControlEngine):
             args=(ac_engine, select_count,)
         )
         
-        if publish_all_btn and MODE == 'All':
-            st.switch_page("pages/test_policies.py")
+        # if publish_all_btn and MODE == 'All':
+            # st.switch_page("pages/test_policies.py")
             
 standard_menu()
 ac_engine = AccessControlEngine()

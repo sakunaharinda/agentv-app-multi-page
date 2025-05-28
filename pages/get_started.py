@@ -69,7 +69,7 @@ def start():
         else:
             st.session_state.enable_generation = False
 
-        _,col1, col2,col3,_ = st.columns([0.05, 1,1,1, 0.05])
+        _,col1, col2,_ = st.columns([0.15, 1,1, 0.15])
         gen_doc = col1.button(f"Generate from a **Document**", 
                             key='gen_doc', 
                             type='secondary', 
@@ -84,10 +84,10 @@ def start():
                             key='gen_sent', type='secondary', icon=":material/create:", use_container_width=True, disabled= not st.session_state.enable_generation
                             )
         
-        write_xacml = col3.button(f"Write in **XACML**", 
-                                help="Manually author your access control policy directly in XACML for full control and customization.", 
-                                key='write_xacml', type='secondary', icon=":material/code:", use_container_width=True, disabled= not st.session_state.enable_generation
-                                )
+        # write_xacml = col3.button(f"Write in **XACML**", 
+        #                         help="Manually author your access control policy directly in XACML for full control and customization.", 
+        #                         key='write_xacml', type='secondary', icon=":material/code:", use_container_width=True, disabled= not st.session_state.enable_generation
+        #                         )
             
 
     if gen_doc:
@@ -98,9 +98,9 @@ def start():
         change_page_icon('start_icon')
         st.switch_page('pages/generate_individual.py')
         
-    elif write_xacml:
-        change_page_icon('start_icon')
-        st.switch_page('pages/write_policy.py')
+    # elif write_xacml:
+    #     change_page_icon('start_icon')
+    #     st.switch_page('pages/write_policy.py')
         
 
 

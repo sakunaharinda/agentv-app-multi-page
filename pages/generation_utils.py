@@ -2,6 +2,21 @@ import streamlit as st
 from feedback import warning
 
 import plotly.graph_objects as go
+from models.record_dto import WrittenPolicy
+
+def get_updated_description(policy: WrittenPolicy):
+    
+    if not policy.is_incorrect:
+        
+        new_description = policy.sentence + " :green-badge[:material/check: Generated]"
+    else:
+        new_description = policy.sentence + " :red-badge[:material/error: Attention Needed]"
+        
+    # if not policy.with_context:
+        
+    #     new_description+= " :red-badge[:material/family_history: Outside context]"
+        
+    return new_description
 
 def show_bar_chart(container):
     

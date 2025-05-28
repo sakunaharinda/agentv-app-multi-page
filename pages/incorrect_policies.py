@@ -5,10 +5,11 @@ from menus import standard_menu
 from feedback import get_locate_warning_msg
 from uuid import uuid4
 
-@st.fragment
+# @st.fragment
 def show_incorrect_policies(models, hierarchy):
     
-    ADD_INC = False
+    ADD_INC = True
+    ALL_SOLVED = True
     
     st.session_state.current_page = PAGE.INCORRECT_POL
     
@@ -50,9 +51,12 @@ def show_incorrect_policies(models, hierarchy):
         for incorrect_pol_object in st.session_state.inc_policies:
             
             if incorrect_pol_object['solved'] == False:
-                break
-        else:
+                st.session_state.inc_policy_count +=1
+                ALL_SOLVED = False
+        if ALL_SOLVED:
             st.toast("All the policies are refined successfully. Go to **Access Control Policies** page to review and publish.", icon=":material/check:")
+            
+            st.session_state.inc_policy_count = 0
             
     if ADD_INC and len(st.session_state.inc_policies) == 0:
         

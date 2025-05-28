@@ -14,7 +14,7 @@ def delete_single(pdp_policy: JSONPolicyRecordPDP, ac_engine: AccessControlEngin
     
     status = ac_engine.delete_policy_by_id(pdp_policy.policyId)
     if status == 200:
-        st.toast("Deleted the policy from the database successfully.", icon=":material/check:")
+        st.toast("Policy is deleted from the database successfully.", icon=":material/check:")
         st.session_state.pdp_policies.remove(pdp_policy)
         pdp_policy.published = False
         ac_engine.create_policy_json(pdp_policy)
@@ -32,7 +32,7 @@ def publish_single(pdp_policy: JSONPolicyRecordPDP, ac_engine: AccessControlEngi
             # st.session_state.pdp_policies = list(set(st.session_state.pdp_policies))
             
             ac_engine.create_policy_json(pdp_policy)
-            st.toast(f"Published the policy {pdp_policy.policyId} successfully. Go to **Test Policies** page to test it.", icon=":material/check:")
+            st.toast(f"Policy {pdp_policy.policyId} is published successfully. Go to **Test Policies** page to test it.", icon=":material/check:")
     
 def get_updated_description(policy: JSONPolicyRecordPDP):
     
@@ -58,7 +58,7 @@ def publish_all(ac_engine: AccessControlEngine, count: int):
         status = ac_engine.create_multiple_policies(policies)
         
         if status == 200:
-            st.toast(f"Published all the policies successfully. Go to **Test Policies** page to test them.", icon=":material/check:")
+            st.toast(f"All the policies are published successfully. Go to **Test Policies** page to test them.", icon=":material/check:")
             for policy in st.session_state.corrected_policies_pdp:
                 if policy.published == False:
                     policy.published = True
@@ -70,7 +70,7 @@ def publish_all(ac_engine: AccessControlEngine, count: int):
         status = ac_engine.create_multiple_policies(policies)
         
         if status == 200:
-            st.toast(f"Published the selected policies successfully. Go to **Test Policies** page to test them.", icon=":material/check:")
+            st.toast(f"All the selected policies are published successfully. Go to **Test Policies** page to test them.", icon=":material/check:")
             for policy in st.session_state.corrected_policies_pdp:
                 if not policy.published and policy.ready_to_publish:
                     policy.published = True

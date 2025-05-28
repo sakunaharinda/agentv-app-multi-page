@@ -6,6 +6,13 @@ from streamlit_authenticator.utilities import LoginError
 
 def switch_login(arg):
     st.switch_page('pages/login.py')
+    
+    
+def update_nav_lable(init_lable, var, badge = 'error'):
+    if var > 0:
+        return init_lable + f' :material/{badge}:'
+    else:
+        return init_lable
 
 
 def standard_menu(turn_on=True):
@@ -53,7 +60,7 @@ def standard_menu(turn_on=True):
         .css-1d391kg .st-key-Logout,
         section[data-testid="stSidebar"] .st-key-Logout {{
             position: absolute !important;
-            top: -15% !important;
+            top: -15.5% !important;
             right: -1px !important; /* 1cm from right edge */
             z-index: 999 !important;
         }}
@@ -80,7 +87,7 @@ def standard_menu(turn_on=True):
         st.sidebar.write("**Policy Generation**")
         st.sidebar.page_link("pages/generate_document.py", label=st.session_state.generate_doc_title, icon=":material/article:", disabled=st.session_state.is_generating or not turn_on)
         st.sidebar.page_link("pages/generate_individual.py", label=st.session_state.generate_single_title, icon=":material/create:", disabled=st.session_state.is_generating or not turn_on)
-        st.sidebar.page_link("pages/write_policy.py", label=st.session_state.write_xacml_title, icon=":material/code:", disabled=st.session_state.is_generating or not turn_on)
+        # st.sidebar.page_link("pages/write_policy.py", label=st.session_state.write_xacml_title, icon=":material/code:", disabled=st.session_state.is_generating or not turn_on)
         st.sidebar.write("**Policy Review**")
         st.sidebar.page_link("pages/incorrect_policies.py", label=st.session_state.inc_policies_title, icon=":material/gpp_bad:", disabled=st.session_state.is_generating or not turn_on)
         st.sidebar.page_link("pages/correct_policies.py", label=st.session_state.cor_policies_title, icon=":material/verified_user:", disabled=st.session_state.is_generating or not turn_on)

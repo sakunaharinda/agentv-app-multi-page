@@ -46,7 +46,6 @@ class WrittenPolicy:
             'policy': self.policy,
             'error': self.error,
             'is_incorrect': self.is_incorrect,
-            'is_unrelated': self.is_unrelated
         }
         
 

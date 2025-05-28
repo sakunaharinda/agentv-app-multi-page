@@ -4,7 +4,7 @@ from models.record_dto import WrittenPolicy
 from loading import load_policy
 from ml_layer import agentv_single
 from uuid import uuid4
-from pages.generation_utils import review_individual
+from pages.generation_utils import review_individual, get_updated_description
 from models.pages import PAGE
 import streamlit_float
 from menus import standard_menu
@@ -48,7 +48,8 @@ def generate_sent(hierarchy, models):
 
     for written_p in st.session_state.written_nlacps:
         with nlacp_container.chat_message("user", avatar=":material/create:"):
-            st.markdown(written_p.sentence)
+            st.markdown(f"**Policy Id: {written_p.id}**")
+            st.markdown(get_updated_description(written_p))
             if written_p.error == None:
                 policy = load_policy(written_p.policy)
                 with st.expander("Generated Policy", expanded=False):
@@ -66,7 +67,6 @@ def generate_sent(hierarchy, models):
 
     if st.session_state.is_generating:
         
-        uuid = str(uuid4())
 
         if cur_nlacp == "":
             nlacp_container.error(
@@ -80,7 +80,7 @@ def generate_sent(hierarchy, models):
             with nlacp_container.chat_message("user", avatar=":material/create:"):
                 st.markdown(cur_nlacp)
         
-            agentv_single(nlacp_container, cur_nlacp, models.id_tokenizer, models.id_model, models.gen_tokenizer, models.gen_model, models.ver_model, models.ver_tokenizer, models.loc_tokenizer, models.loc_model, models.vectorestores, hierarchy, do_align=st.session_state.do_align)
+            uuid = agentv_single(nlacp_container, cur_nlacp, models.id_tokenizer, models.id_model, models.gen_tokenizer, models.gen_model, models.ver_model, models.ver_tokenizer, models.loc_tokenizer, models.loc_model, models.vectorestores, hierarchy, do_align=st.session_state.do_align)
             
             if len(st.session_state.results_individual['interrupted_errors']) > 0:
                 st.session_state.written_nlacps.append(
@@ -88,7 +88,8 @@ def generate_sent(hierarchy, models):
                         id = uuid,
                         sentence=cur_nlacp,
                         policy=[],
-                        error=st.session_state.results_individual['interrupted_errors'][0]
+                        error=st.session_state.results_individual['interrupted_errors'][0],
+                        is_incorrect=True
                     )
                 )
                 

@@ -24,10 +24,11 @@ def generate_doc(hierarchy, models):
             
             [data-testid=stToastContainer] {
                 z-index: 9999 !important;
-                //position: fixed !important;
-                //top: 30% !important;
             }
             
+            //div[data-testid=stToast] {
+            //    background-color: #E6F2E9;
+            //}
             
             /* Add padding at the bottom of the page to prevent content from being hidden */
             section.main {
@@ -51,7 +52,7 @@ def generate_doc(hierarchy, models):
         with st.container(border=False, height=162):
             policy_doc = st.file_uploader("Upload the provided high-level requirement specification document", key='_policy_doc', help='Upload a high-level requirement specification document provided to you. It specifies who can access what information under what circumstances in the organization.', type=['md'], on_change=store_value_pol_doc, args=('policy_doc',))
 
-        generate_button = st.button(label='Generate', type='primary', key='generate_doc_btn', use_container_width=True, disabled=st.session_state.is_generating, on_click=on_click_generate, args=('gen_doc_icon',), help=f"Click to start generating access control policies from the uploaded high-level requirement specification document", icon=":material/play_circle:")
+        generate_button = st.button(label='Generate', type='primary', key='generate_doc_btn', use_container_width=True, disabled=st.session_state.is_generating or policy_doc == None, on_click=on_click_generate, args=('gen_doc_icon',), help=f"Click to start generating access control policies from the uploaded high-level requirement specification document", icon=":material/play_circle:")
 
     if st.session_state.is_generating:
 
@@ -88,7 +89,7 @@ def generate_doc(hierarchy, models):
         #     st.rerun()
         elif (not st.session_state.reviewed) and incorrects==0:
             
-            st.toast("Policies are generated successfully. Go to **Access Control Policies** page to review and publish.")
+            st.toast("Policies are generated successfully. Go to **Access Control Policies** page to review and publish.",icon=":material/check:")
     
     if 'results_document' in st.session_state and not st.session_state.new_doc:
         show_summary(status_container)
