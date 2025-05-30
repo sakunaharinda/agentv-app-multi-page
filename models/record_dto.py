@@ -38,6 +38,7 @@ class WrittenPolicy:
     error: str = None
     is_incorrect: bool = False
     is_unrelated: bool = False
+    is_reviewed: bool = False
     
     def to_dict(self):
         return {
@@ -46,6 +47,7 @@ class WrittenPolicy:
             'policy': self.policy,
             'error': self.error,
             'is_incorrect': self.is_incorrect,
+            'is_reviewed': self.is_reviewed
         }
         
 

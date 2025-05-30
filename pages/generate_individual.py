@@ -54,7 +54,7 @@ def generate_sent(hierarchy, models):
                 policy = load_policy(written_p.policy)
                 with st.expander("Generated Policy", expanded=False):
                     st.dataframe(policy, use_container_width=True, key=f'df_{written_p.id}', hide_index=True)
-                    review_individual(written_p.id, written_p.is_incorrect)
+                    review_individual(written_p)
             else:
                 st.error(body=written_p.error, icon=":material/dangerous:")
 
@@ -89,7 +89,8 @@ def generate_sent(hierarchy, models):
                         sentence=cur_nlacp,
                         policy=[],
                         error=st.session_state.results_individual['interrupted_errors'][0],
-                        is_incorrect=True
+                        is_incorrect=True,
+                        is_reviewed=False
                     )
                 )
                 
@@ -102,6 +103,7 @@ def generate_sent(hierarchy, models):
                         policy=st.session_state.results_individual['final_policies'][0],
                         is_incorrect= st.session_state.results_individual['final_verification'][0]!=11,
                         # is_unrelated=st.session_state.results_individual['final_verification'][0]==-1
+                        is_reviewed=False
                     )
                 )
 

@@ -132,26 +132,26 @@ def review_incorrects_notification(incorrects):
     st.session_state.reviewed = True
     
 
-def review_individual(id, incorrect = False):
-    
+def review_individual(written_p: WrittenPolicy):
+    print(written_p.is_incorrect)
     review_container = st.container()
-    if incorrect:
+    if written_p.is_incorrect:
         review_container.error("The generated policy is found incorrect. Do you want to review it?", icon=":material/dangerous:")
-        if review_container.button("Review", key=f'review_btn_{id}', use_container_width=True, type='primary', icon=":material/rate_review:"):
+        if review_container.button("Review", key=f'review_btn_{written_p.id}', use_container_width=True, type='primary', icon=":material/rate_review:"):
             on_click_review()
             
-        if st.session_state.review_single:
+        if not written_p.is_reviewed:
             st.toast(f"You have an incorrectly generated policy. Go to **Incorrect Access Control Policies** page to review.",icon=":material/warning:")
-            st.session_state.review_single = False
+            written_p.is_reviewed = True
         
     else:
         review_container.info("Do you want to review and publish the generated policy to the policy database?", icon=":material/rate_review:")
-        if review_container.button("Review", key=f'review_btn_{id}', use_container_width=True, type='primary', icon=":material/rate_review:"):
+        if review_container.button("Review", key=f'review_btn_{written_p.id}', use_container_width=True, type='primary', icon=":material/rate_review:"):
             on_click_publish()
             
-        if st.session_state.review_single:
+        if not written_p.is_reviewed:
             st.toast(f"Policy is generated successfully. Go to **Access Control Policies** page to review and publish.",icon=":material/check:")
-            st.session_state.review_single = False
+            written_p.is_reviewed = True
         
     return review_container
     

@@ -5,10 +5,9 @@ from menus import standard_menu
 from feedback import get_locate_warning_msg
 from uuid import uuid4
 
-# @st.fragment
+@st.fragment
 def show_incorrect_policies(models, hierarchy):
     
-    ADD_INC = True
     ALL_SOLVED = True
     
     st.session_state.current_page = PAGE.INCORRECT_POL
@@ -57,39 +56,6 @@ def show_incorrect_policies(models, hierarchy):
             st.toast("All the policies are refined successfully. Go to **Access Control Policies** page to review and publish.", icon=":material/check:")
             
             st.session_state.inc_policy_count = 0
-            
-    if ADD_INC and len(st.session_state.inc_policies) == 0:
-        
-        inc_policy = [
-            {
-                'decision': 'deny',
-                'subject': 'lhcp',
-                'action': 'access',
-                'resource': 'medical record',
-                'purpose': 'protect patient confidentiality',
-                'condition': 'none'
-            },
-            {
-                'decision': 'deny',
-                'subject': 'administrator',
-                'action': 'access',
-                'resource': 'medical record',
-                'purpose': 'protect patient confidentiality',
-                'condition': 'none'
-            }
-        ]
-        
-        warning = get_locate_warning_msg('incorrect subject', [0])
-        st.session_state.inc_policies.append(
-            {
-                "id": str(uuid4()),
-                "nlacp": "Medical records cannot be accessed either by LTs or administrators, to protect patient confidentiality.",
-                "policy": inc_policy,
-                "warning": warning,
-                "solved": False,
-                "show": True
-            }
-        )
     
     for incorrect_pol_object in st.session_state.inc_policies:
         
