@@ -5,7 +5,7 @@ from models.ac_engine_dto import JSONPolicyRecord, JSONPolicyRecordPDP
 from loading import load_policy
 from ml_layer import align_policy
 import ast
-from st_aggrid import AgGrid, GridOptionsBuilder, JsCode
+from st_aggrid import AgGrid, GridOptionsBuilder, JsCode, GridUpdateMode
 import pandas as pd
 from vectorstore import create_bm25_retriever
 import bm25s
@@ -156,6 +156,13 @@ def highlight_errors(highlights, gb: GridOptionsBuilder):
         }}
         """)
         gb.configure_column(column_field, cellStyle=cell_style_jscode)
+        
+def add_rule_ids(policy):
+    p = []
+    for i,rule in enumerate(policy):
+        rule['rule'] = i+1
+        p.append(rule)
+    return p
 
 def review_policy_aggrid(inc_policy, err_info, hierarchy, models):
     
@@ -164,8 +171,13 @@ def review_policy_aggrid(inc_policy, err_info, hierarchy, models):
     error_ids, error_type = err_info
     
     pol_id = inc_policy['id']
+    
+    # if isinstance(inc_policy['policy'], list):
+    inc_policy['policy'] = add_rule_ids(inc_policy['policy'])
+        
     df = load_policy(inc_policy['policy'])
-    df.insert(0, 'rule', [i+1 for i in range(len(df))])
+    # df.insert(0, 'rule', [i+1 for i in range(len(df))])
+    df = df[['rule'] + [col for col in df.columns if col != 'rule']]
     
     gb = GridOptionsBuilder.from_dataframe(df)
     gb.configure_column('rule', header_name="Rule ID", editable=True)
@@ -186,12 +198,11 @@ def review_policy_aggrid(inc_policy, err_info, hierarchy, models):
         gb.configure_column('Subject', editable=True)
         gb.configure_column('Action', editable=True)
         gb.configure_column('Resource', editable=True)
-        
-    
     
     gb.configure_column('Condition', editable=True)
     gb.configure_column('Purpose', editable=True)
     gb.configure_grid_options(domLayout='autoHeight')
+    gb.configure_selection('multiple', use_checkbox=True)
     
     
     if error_ids != None:
@@ -205,15 +216,39 @@ def review_policy_aggrid(inc_policy, err_info, hierarchy, models):
         width='100%',
         allow_unsafe_jscode=True, fit_columns_on_grid_load=True, editable=True,
         # pinned_top_row_data=[pinned_row]
-        key=f'incorrect_policy_{pol_id}'
+        key=f'incorrect_policy_{pol_id}',
         )
+
+    selected_rows = grid_return.get('selected_rows')
     
-    if error_ids == error_type == None:
-        _,add_col = st.columns([8,2])
+    
+    # if selected_rows is not None and not selected_rows.empty:
+    #     print(selected_rows.to_dict('records'))
         
-        add_rule = add_col.button("Add rule", key=f'add_rule_btn_{pol_id}', use_container_width=True, type='secondary', icon=":material/add:", on_click=add_new_rule, args=(inc_policy,))
+    _,add_col,delete_col = st.columns([8,2,2])
+    
+    add_col.button("Add rule", key=f'add_rule_btn_{pol_id}', use_container_width=True, type='secondary', icon=":material/add:", on_click=add_new_rule, args=(inc_policy,))
+    
+    delete_col.button("Delete rule", key=f'delete_rule_btn_{pol_id}', use_container_width=True, type='secondary', icon=":material/delete:", on_click=delete_rule, args=(selected_rows,inc_policy,), disabled=selected_rows is None)
     
     st.button("Submit", key=f'submit_inc_btn_{pol_id}', use_container_width=True, type='primary', on_click=submit_corrected_policy, args=(inc_policy, grid_return['data'], hierarchy, models,), icon=":material/send:")
+    
+def delete_rule(selected_rows, inc_policy):
+    
+    df = pd.DataFrame(inc_policy['policy'])
+    
+    has_selections = not selected_rows.empty
+    if has_selections:
+        selected_rows = selected_rows.to_dict('records')
+        ids_to_delete = []
+        for row in selected_rows:
+            if isinstance(row, dict) and 'rule' in row:
+                ids_to_delete.append(row['rule'])
+        if ids_to_delete:
+            df = df[~df['rule'].isin(ids_to_delete)].reset_index(drop=True)
+            
+    inc_policy['policy'] = df.to_dict(orient='records')
+        
     
 def add_new_rule(inc_policy):
     new_rule = pd.DataFrame({
@@ -225,7 +260,7 @@ def add_new_rule(inc_policy):
         "condition": ['none'],
     })
     
-    inc_policy['policy'] = pd.concat([pd.DataFrame(inc_policy['policy']), new_rule])
+    inc_policy['policy'] = pd.concat([pd.DataFrame(inc_policy['policy']), new_rule]).to_dict(orient='records')
     
 
 def review_policy(inc_policy, hierarchy, models):
@@ -281,6 +316,8 @@ def review_policy(inc_policy, hierarchy, models):
     
 def submit_corrected_policy(inc_policy, edited_df: pd.DataFrame, hierarchy, models):
     
+    ALL_SOLVED = True
+    
     edited_df = edited_df.drop('rule', axis='columns')
     edited_df.columns = edited_df.columns.str.lower()
     corrected_policy = [v for _, v in edited_df.reset_index(drop=True).to_dict("index").items()]
@@ -307,6 +344,18 @@ def submit_corrected_policy(inc_policy, edited_df: pd.DataFrame, hierarchy, mode
     inc_policy['solved'] = True
     change_page_icon('incorrect_pol_icon')
     inc_policy['show'] = False
+    
+    if len(st.session_state.inc_policies)>0:
+    
+        for incorrect_pol_object in st.session_state.inc_policies:
+            
+            if incorrect_pol_object['solved'] == False:
+                st.session_state.inc_policy_count +=1
+                ALL_SOLVED = False
+        if ALL_SOLVED:
+            st.toast("All the policies are refined successfully. Go to **Access Control Policies** page to review and publish.", icon=":material/check:")
+            
+            st.session_state.inc_policy_count = 0
     
 def filter_by_nlacp(nlacp, filtered_policies):
     retriever = create_bm25_retriever(filtered_policies)

@@ -8,8 +8,6 @@ from uuid import uuid4
 @st.fragment
 def show_incorrect_policies(models, hierarchy):
     
-    ALL_SOLVED = True
-    
     st.session_state.current_page = PAGE.INCORRECT_POL
     
     st.markdown("""
@@ -26,10 +24,11 @@ def show_incorrect_policies(models, hierarchy):
             
             [data-testid=stToastContainer] {
                 z-index: 9999 !important;
-                //position: fixed !important;
-                //top: 30% !important;
             }
-            
+            [class*="st-key-delete_rule_btn_"] button:hover {
+                border-color: #EA4335;
+                color: #EA4335;
+            }
             
             /* Add padding at the bottom of the page to prevent content from being hidden */
             section.main {
@@ -45,17 +44,6 @@ def show_incorrect_policies(models, hierarchy):
     
     inc_policy_container = st.container(key='inc_pol_container')
     
-    if len(st.session_state.inc_policies)>0:
-    
-        for incorrect_pol_object in st.session_state.inc_policies:
-            
-            if incorrect_pol_object['solved'] == False:
-                st.session_state.inc_policy_count +=1
-                ALL_SOLVED = False
-        if ALL_SOLVED:
-            st.toast("All the policies are refined successfully. Go to **Access Control Policies** page to review and publish.", icon=":material/check:")
-            
-            st.session_state.inc_policy_count = 0
     
     for incorrect_pol_object in st.session_state.inc_policies:
         
