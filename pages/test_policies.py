@@ -68,7 +68,8 @@ def test_policies(policy_tester: PolicyTester):
 
     test_container = st.container(key="test_container")
     with test_container:
-
+        col,_,_ = st.columns([1,1,1])
+        col.write(f"{len(policies_from_pdp)}/{len(st.session_state.pdp_policies)} records are shown.")
         test_sys = st.button(
             "Test All",
             type="primary",

@@ -158,7 +158,6 @@ def highlight_errors(highlights, gb: GridOptionsBuilder):
         gb.configure_column(column_field, cellStyle=cell_style_jscode)
 
 def review_policy_aggrid(inc_policy, err_info, hierarchy, models):
-    # TODO: Cannot add new rows as of now
     
     highlights = []
     
@@ -208,7 +207,26 @@ def review_policy_aggrid(inc_policy, err_info, hierarchy, models):
         # pinned_top_row_data=[pinned_row]
         key=f'incorrect_policy_{pol_id}'
         )
+    
+    if error_ids == error_type == None:
+        _,add_col = st.columns([8,2])
+        
+        add_rule = add_col.button("Add rule", key=f'add_rule_btn_{pol_id}', use_container_width=True, type='secondary', icon=":material/add:", on_click=add_new_rule, args=(inc_policy,))
+    
     st.button("Submit", key=f'submit_inc_btn_{pol_id}', use_container_width=True, type='primary', on_click=submit_corrected_policy, args=(inc_policy, grid_return['data'], hierarchy, models,), icon=":material/send:")
+    
+def add_new_rule(inc_policy):
+    new_rule = pd.DataFrame({
+        "decision": ['allow'],
+        "subject": ['none'],
+        "action": ['none'],
+        "resource": ['none'],
+        "purpose": ['none'],
+        "condition": ['none'],
+    })
+    
+    inc_policy['policy'] = pd.concat([pd.DataFrame(inc_policy['policy']), new_rule])
+    
 
 def review_policy(inc_policy, hierarchy, models):
     
@@ -265,7 +283,7 @@ def submit_corrected_policy(inc_policy, edited_df: pd.DataFrame, hierarchy, mode
     
     edited_df = edited_df.drop('rule', axis='columns')
     edited_df.columns = edited_df.columns.str.lower()
-    corrected_policy = [v for _, v in edited_df.to_dict("index").items()]
+    corrected_policy = [v for _, v in edited_df.reset_index(drop=True).to_dict("index").items()]
     
     if st.session_state.do_align:
         policy, outside_hierarchy = align_policy(corrected_policy, models.vectorestores, hierarchy, chroma=st.session_state.use_chroma)

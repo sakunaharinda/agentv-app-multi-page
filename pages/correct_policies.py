@@ -66,9 +66,13 @@ def show_correct_policies(ac_engine: AccessControlEngine):
     
     filter_container = st.container(border=False, key='filter_container')
     
+    # expander, info = filter_container.columns([10,2])
+    
     policies_to_pdp = filter(st.session_state.corrected_policies_pdp, filter_container)
 
-    st.container(border=False, key='pad_container', height=50)
+    st.container(border=False, key='pad_container', height=40)
+        
+    # info.write(f"{len(policies_to_pdp)}/{len(st.session_state.corrected_policies_pdp)} records are shown")
     
     cor_pol_container = st.container(border=False)
     
@@ -98,7 +102,8 @@ def show_correct_policies(ac_engine: AccessControlEngine):
     correct_container = st.container(key="correct_container")
     
     with correct_container:
-
+        col,_,_ = st.columns([1,1,1])
+        col.write(f"{len(policies_to_pdp)}/{len(st.session_state.corrected_policies_pdp)} records are shown.")
         publish_all_btn = st.button(
             f"Publish {MODE}",
             type="primary",

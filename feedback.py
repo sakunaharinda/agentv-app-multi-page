@@ -35,7 +35,7 @@ def get_locate_warning_msg(error_type, error_rules: List):
 
 def get_locate_warning_missing_rule_msg():
     
-    msg = f"#### :material/dangerous: Error: Missing Access Control Rules\nIt appears that one or more access control rules are absent from the current policy, which may lead to unintended access permissions.\nTo correct this:\n1. **Add a New Rule**: In the table below, locate the last row and click on an empty cell within this row to initiate the addition of a new rule.\n2. **Enter Rule Details**: Input the necessary policy components, such as subject, action, resource, purpose, and condition, ensuring each field accurately reflects the intended access control requirement.\n3. **Submit the Policy**: Click the **'Submit'** button to save the corrected policy."
+    msg = f"#### :material/dangerous: Error: Missing Access Control Rules\nIt appears that one or more access control rules are absent from the current policy, which may lead to unintended access permissions.\nTo correct this:\n1. **Add a New Rule**: Click :material/add: Add rule to add an empty row to the table below.\n2. **Enter Rule Details**: Input the necessary policy components, such as decision, subject, action, resource, purpose, and condition, ensuring each field accurately reflects the intended access control requirement.\n3. **Submit the Policy**: Click the **'Submit'** button to save the corrected policy."
     
 
     return msg, [None, None]
