@@ -84,7 +84,7 @@ def show_correct_policies(ac_engine: AccessControlEngine):
             nlacp_col.markdown(f"**Policy Id: {correct_pol_object.policyId}**")
             st.markdown(get_updated_description(correct_pol_object))
             cbox, expander = st.columns([1,70])
-            ready_publish = cbox.checkbox(label="Ready to publish", label_visibility='collapsed', key=f'publish_cbox_{correct_pol_object.policyId}', disabled=correct_pol_object.published, value=correct_pol_object.published)
+            ready_publish = cbox.checkbox(label="Ready to publish", label_visibility='collapsed', key=f'publish_cbox_{correct_pol_object.policyId}', disabled=correct_pol_object.published, value=(correct_pol_object.published or correct_pol_object.ready_to_publish))
             if ready_publish and not correct_pol_object.published:
                 correct_pol_object.ready_to_publish = True
                 select_count+=1
@@ -95,7 +95,7 @@ def show_correct_policies(ac_engine: AccessControlEngine):
     
     # print('rerun')
     if select_count == 0 or select_count == len(st.session_state.corrected_policies_pdp):
-        MODE = 'All'
+        MODE = 'Shown'
     else:
         MODE = f"({select_count})"
         
@@ -109,11 +109,11 @@ def show_correct_policies(ac_engine: AccessControlEngine):
             type="primary",
             use_container_width=True,
             key="publish_all",
-            disabled=len(st.session_state.corrected_policies) < 1,
-            help="Publish all the policies to the policy database",
+            disabled=len(policies_to_pdp) < 1,
+            help="Publish the shown policies to the policy database",
             icon=":material/database_upload:",
             on_click=publish_all,
-            args=(ac_engine, select_count,)
+            args=(ac_engine, select_count, policies_to_pdp,)
         )
         
         # if publish_all_btn and MODE == 'All':

@@ -52,19 +52,20 @@ def get_updated_description(policy: JSONPolicyRecordPDP):
     return new_description
 
     
-def publish_all(ac_engine: AccessControlEngine, count: int):
+def publish_all(ac_engine: AccessControlEngine, count: int, policies_to_pdp: list):
     
     change_page_icon('correct_pol_icon')
     
-    if count == 0 or count == len(st.session_state.corrected_policies_pdp):
-        policies = st.session_state.corrected_policies
+    if count == 0 or count == len(policies_to_pdp):
+        # policies = st.session_state.corrected_policies
+        policies = [k.to_json_record() for k in policies_to_pdp]
         status = ac_engine.create_multiple_policies(policies)
         
         if status == 200:
             # st.toast(f"All the policies are published successfully. Go to **Test Policies** page to test them.", icon=":material/check:")
             success_publish_feedback('multiple')
             for policy in st.session_state.corrected_policies_pdp:
-                if policy.published == False:
+                if policy in policies_to_pdp and policy.published == False:
                     policy.published = True
                     st.session_state.pdp_policies.append(policy)
             
