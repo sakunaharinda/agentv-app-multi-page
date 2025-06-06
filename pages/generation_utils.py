@@ -3,6 +3,7 @@ from feedback import warning
 
 import plotly.graph_objects as go
 from models.record_dto import WrittenPolicy
+from feedback import success_generation_feedback, failed_generation_feedback
 
 def get_updated_description(policy: WrittenPolicy):
     
@@ -141,7 +142,8 @@ def review_individual(written_p: WrittenPolicy):
             on_click_review()
             
         if not written_p.is_reviewed:
-            st.toast(f"You have an incorrectly generated policy. Go to **Incorrect Access Control Policies** page to review.",icon=":material/warning:")
+            # st.toast(f"You have an incorrectly generated policy. Go to **Incorrect Access Control Policies** page to review.",icon=":material/warning:")
+            failed_generation_feedback()
             written_p.is_reviewed = True
         
     else:
@@ -150,7 +152,8 @@ def review_individual(written_p: WrittenPolicy):
             on_click_publish()
             
         if not written_p.is_reviewed:
-            st.toast(f"Policy is generated successfully. Go to **Access Control Policies** page to review and publish.",icon=":material/check:")
+            # st.toast(f"Policy is generated successfully. Go to **Access Control Policies** page to review and publish.",icon=":material/check:")
+            success_generation_feedback(mode='single')
             written_p.is_reviewed = True
         
     return review_container

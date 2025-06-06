@@ -3,6 +3,7 @@ import streamlit.components.v1 as components
 from utils import store_value
 from feedback import *
 from utils import set_hierarchy
+from hierarchy_editor import edit_hierarchy
 
 @st.dialog("Upload the Organization Hierarchy")
 def ask_hierarchy():
@@ -147,6 +148,15 @@ def visualize_hierarchy_dialog():
         show_hierarchy = hcol.segmented_control(label="Organization hierarchy", label_visibility='hidden', options=["Subjects", "Actions", "Resources"], selection_mode='single', default="Subjects")
             
         display_hierarchy(st.session_state.main_hierarchy, show_hierarchy, height=350, vertical_padding=40)
+        
+        # entity_hierarchy = {show_hierarchy.lower(): st.session_state.main_hierarchy[show_hierarchy.lower()]}
+        
+        # _,edit_col = st.columns([10,2])
+        # edit = edit_col.button("Edit", key=f'edit_{show_hierarchy.lower()}', help=f"Add/Delete entities from the {show_hierarchy[:-1].lower()} hierarchy.", type='secondary', use_container_width=True, icon=":material/edit:")
+        
+        # if edit:
+        #     edit_hierarchy(entity_hierarchy)
+        
     
     ok = st.button("OK", key='ok', type='primary', use_container_width=True)
     

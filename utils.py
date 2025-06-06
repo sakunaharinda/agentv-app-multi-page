@@ -350,7 +350,6 @@ def set_hierarchy(hierarchy_file, pbar):
         st.session_state['hierarchies'] = hierarchies.to_dict()
         
         if st.session_state.use_chroma:
-            print("Using chroma to build")
             build_vectorstores_chroma(pbar)
         else:    
             st.session_state.models.vectorestores = build_vectorstores(pbar)

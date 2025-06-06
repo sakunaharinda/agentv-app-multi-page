@@ -4,6 +4,7 @@ from ml_layer import agentv_batch
 from pages.generation_utils import show_summary, review_incorrects, show_bar_chart, review_incorrects_notification
 from models.pages import PAGE
 from menus import standard_menu
+from feedback import success_generation_feedback, failed_generation_feedback
 
 # @st.fragment
 def generate_doc(hierarchy, models):
@@ -83,13 +84,18 @@ def generate_doc(hierarchy, models):
     
         incorrects = len(st.session_state.results_document['final_verification'])-st.session_state.results_document['final_verification'].count(11)
         if (not st.session_state.reviewed) and incorrects>0:
-            # st.rerun()
-            review_incorrects_notification(incorrects)
-        # else:
-        #     st.rerun()
+            
+            # review_incorrects_notification(incorrects)
+            
+            failed_generation_feedback()
+            st.session_state.reviewed = True
+
         elif (not st.session_state.reviewed) and incorrects==0:
             
-            st.toast("Policies are generated successfully. Go to **Access Control Policies** page to review and publish.",icon=":material/check:")
+            # st.toast("Policies are generated successfully. Go to **Access Control Policies** page to review and publish.",icon=":material/check:")
+            
+            success_generation_feedback(mode='multiple')
+            st.session_state.reviewed = True
     
     if 'results_document' in st.session_state and not st.session_state.new_doc:
         show_summary(status_container)

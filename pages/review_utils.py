@@ -9,12 +9,14 @@ from st_aggrid import AgGrid, GridOptionsBuilder, JsCode, GridUpdateMode
 import pandas as pd
 from vectorstore import create_bm25_retriever
 import bm25s
+from feedback import success_publish_feedback, success_delete_feedback, success_refine_feedback
 
 def delete_single(pdp_policy: JSONPolicyRecordPDP, ac_engine: AccessControlEngine):
     
     status = ac_engine.delete_policy_by_id(pdp_policy.policyId)
     if status == 200:
-        st.toast("Policy is deleted from the database successfully.", icon=":material/check:")
+        # st.toast("Policy is deleted from the database successfully.", icon=":material/check:")
+        success_delete_feedback()
         st.session_state.pdp_policies.remove(pdp_policy)
         pdp_policy.published = False
         ac_engine.create_policy_json(pdp_policy)
@@ -32,7 +34,8 @@ def publish_single(pdp_policy: JSONPolicyRecordPDP, ac_engine: AccessControlEngi
             # st.session_state.pdp_policies = list(set(st.session_state.pdp_policies))
             
             ac_engine.create_policy_json(pdp_policy)
-            st.toast(f"Policy {pdp_policy.policyId} is published successfully. Go to **Test Policies** page to test it.", icon=":material/check:")
+            # st.toast(f"Policy {pdp_policy.policyId} is published successfully. Go to **Test Policies** page to test it.", icon=":material/check:")
+            success_publish_feedback('single')
     
 def get_updated_description(policy: JSONPolicyRecordPDP):
     
@@ -58,7 +61,8 @@ def publish_all(ac_engine: AccessControlEngine, count: int):
         status = ac_engine.create_multiple_policies(policies)
         
         if status == 200:
-            st.toast(f"All the policies are published successfully. Go to **Test Policies** page to test them.", icon=":material/check:")
+            # st.toast(f"All the policies are published successfully. Go to **Test Policies** page to test them.", icon=":material/check:")
+            success_publish_feedback('multiple')
             for policy in st.session_state.corrected_policies_pdp:
                 if policy.published == False:
                     policy.published = True
@@ -70,7 +74,8 @@ def publish_all(ac_engine: AccessControlEngine, count: int):
         status = ac_engine.create_multiple_policies(policies)
         
         if status == 200:
-            st.toast(f"All the selected policies are published successfully. Go to **Test Policies** page to test them.", icon=":material/check:")
+            # st.toast(f"All the selected policies are published successfully. Go to **Test Policies** page to test them.", icon=":material/check:")
+            success_publish_feedback('multiple')
             for policy in st.session_state.corrected_policies_pdp:
                 if not policy.published and policy.ready_to_publish:
                     policy.published = True
@@ -353,7 +358,8 @@ def submit_corrected_policy(inc_policy, edited_df: pd.DataFrame, hierarchy, mode
                 st.session_state.inc_policy_count +=1
                 ALL_SOLVED = False
         if ALL_SOLVED:
-            st.toast("All the policies are refined successfully. Go to **Access Control Policies** page to review and publish.", icon=":material/check:")
+            # st.toast("All the policies are refined successfully. Go to **Access Control Policies** page to review and publish.", icon=":material/check:")
+            success_refine_feedback()
             
             st.session_state.inc_policy_count = 0
     
