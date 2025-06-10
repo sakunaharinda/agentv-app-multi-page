@@ -373,7 +373,7 @@ def filter_by_nlacp(nlacp, filtered_policies):
     
 def filter(original_list, filter_container):
     
-    with filter_container.expander("Filter", icon = ":material/tune:"):
+    with filter_container.popover("Filter", icon = ":material/tune:", use_container_width=True):
         by_id = st.multiselect(
             "By Policy Id", [policy.policyId for policy in original_list], default=[], placeholder="Select a policy ID", key="correct_filter_id", disabled=len(original_list)==0
         )
