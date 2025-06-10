@@ -8,6 +8,7 @@ from pages.generation_utils import review_individual, get_updated_description
 from models.pages import PAGE
 import streamlit_float
 from menus import standard_menu
+from hierarchy_visualizer import visualize_hierarchy_dialog
 
 # @st.fragment
 def generate_sent(hierarchy, models):
@@ -41,6 +42,9 @@ def generate_sent(hierarchy, models):
 
     st.session_state['sentence_page'] = True
     st.session_state['document_page'] = False
+    
+    if st.session_state.show_ask_hierarchy_dialog:
+        visualize_hierarchy_dialog()
     
     st.title("Policy Generation from a Sentence")
 

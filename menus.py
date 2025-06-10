@@ -99,7 +99,9 @@ def standard_menu(turn_on=True):
         
         st.button(label="", icon=":material/help:", type='primary',key='fab', on_click=show_page_help)
         st.sidebar.container(height=10, border=False)
-        h_btn = st.sidebar.button(":material/family_history: Organization Hierarchy", use_container_width=True, key='org_hierarchy', type='primary', disabled=(not st.session_state.hierarchies or st.session_state.is_generating or not ('hierarchy_upload' in st.session_state and st.session_state.hierarchy_upload!=None) or st.session_state.no_hierarchy))
+        h_btn = st.sidebar.button(":material/family_history: Organization Hierarchy", use_container_width=True, key='org_hierarchy', type='primary', 
+                                #   disabled=(not st.session_state.hierarchies or st.session_state.is_generating or not ('hierarchy_upload' in st.session_state and st.session_state.hierarchy_upload!=None) or st.session_state.no_hierarchy)
+                                  )
         if h_btn:
             visualize_hierarchy_dialog()
         authenticator.logout(button_name=":material/logout: Logout", location='sidebar', use_container_width=False, callback=switch_login)

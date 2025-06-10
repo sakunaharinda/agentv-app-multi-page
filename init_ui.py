@@ -69,6 +69,7 @@ def init():
     set_state('new_doc', True)
     set_state('use_chroma', os.getenv('USE_CHROMA'))
     set_state('refresh', False)
+    set_state('show_ask_hierarchy_dialog', True)
 
     set_state('current_page', PAGE.START)
     

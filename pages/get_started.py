@@ -4,7 +4,7 @@ from feedback import *
 from streamlit_float import *
 from models.pages import PAGE
 from menus import standard_menu
-from hierarchy_visualizer import visualize_hierarchy_dialog, set_store_hierarchy
+from hierarchy_visualizer import visualize_hierarchy_dialog
 
 # @st.fragment
 def start():
@@ -16,6 +16,10 @@ def start():
             f"""
             <style>
                 .st-key-gen_doc button,
+                .st-key-cor_pol button,
+                .st-key-inc_pol button,
+                .st-key-test_pol button,
+                .st-key-save_pol button,
                 .st-key-write_xacml button,
                 .st-key-gen_sent button {{
                     height: 100px;
@@ -38,70 +42,95 @@ def start():
         
         # st.container(height=20, border=False)
         
-        st.markdown("## To start the policy generation, ")
-        st.markdown("### Upload the provided organization hierarchy in YAML format.")
+        # st.markdown("## To start the policy generation, ")
+        # st.markdown("### Upload the provided organization hierarchy in YAML format.")
         
-        # load_value("hierarchy_upload")
-        upload_container =  st.container(border=False)
-        pbar = st.container(border=False)
+        # upload_container =  st.container(border=False)
         
-        hierarchy_file = upload_container.file_uploader("Upload the provided organization hierarchy in YAML format.", key='_hierarchy_upload', help='The provided organization hierarchy shows how the subjects (i.e., roles), actions, and resources are arranged in the organization. The **subjects/roles** are the different job titles or responsibilities people have (like HCP, LHCP, and DLHCP). Each role can perform certain **actions** (like read, edit, or write) on specific **resources** (like medical records), which helps define who can do what in access control policies.', type=['yaml', 'yml'], on_change=set_store_hierarchy, args=("hierarchy_upload",pbar,), label_visibility='collapsed')
-        
-        if st.session_state.hierarchy_upload and st.session_state.show_hierarchy:
-            change_page_icon('start_icon')
-            st.session_state.show_hierarchy = False
-            visualize_hierarchy_dialog()
-            
-            
-        no_hierarchy = st.checkbox(label="I don't want to use a organization hierarchy.", key='_no_hierarchy', on_change=store_value, args=("no_hierarchy",), value = False)
-        
-        if no_hierarchy:
-            st.session_state.do_align = False
-            pbar.warning("**Caution**\nYou are not using an **Organization Hierarchy** to generate access control policies. The generated policies may not align with the organizational context.", icon=":material/warning:")
-        else:
-            st.session_state.do_align = True
-        
-        if no_hierarchy or st.session_state._hierarchy_upload or st.session_state.hierarchy_upload:
-            st.session_state.enable_generation = True
             
             # st.container(height=50, border=False)
             
-            _,col1, col2,_ = st.columns([0.15, 1,1, 0.15])
-            gen_doc = col1.button(f"Generate from a **Document**", 
-                                key='gen_doc', 
-                                type='secondary', 
-                                icon=":material/article:", 
-                                use_container_width=True, 
-                                disabled= not st.session_state.enable_generation, 
-                                help = "Upload a high-level requirement document (e.g., Hospital.md) to auto-generate machine-executable access control policies."
-                                )
+        _,r1col1,s1,r1col2,_ = st.columns([0.20, 1,0.03, 1, 0.20])
+        gen_doc = r1col1.button(f"Generate from a **Document**", 
+                            key='gen_doc', 
+                            type='secondary', 
+                            icon=":material/article:", 
+                            use_container_width=True, 
+                            # disabled= not st.session_state.enable_generation, 
+                            help = "Upload a high-level requirement document (e.g., Hospital.md) to auto-generate machine-executable access control policies."
+                            )
+        
+        gen_sent = r1col2.button(f"Generate from a **Sentence**",
+                                help = "Enter your access control requirement in plain English and let AGentV convert it into a machine-executable policy.",
+                            key='gen_sent', type='secondary', icon=":material/create:", use_container_width=True, 
+                            # disabled= not st.session_state.enable_generation
+                            )
+        
+        st.container(height=10, border=False)
+        _,r2col1, s2, r2col2,_ = st.columns([0.20, 1,0.03, 1, 0.20])
+        corr_policies = r2col1.button(f"Access Control Policies", 
+                            key='cor_pol', 
+                            type='secondary', 
+                            icon=":material/verified_user:", 
+                            use_container_width=True, 
+                            # disabled= not st.session_state.enable_generation, 
+                            help = "Review already generated access control policies and publish to the policy database for testing."
+                            )
+        
+        inc_policies = r2col2.button(f"Incorrect Access Control Policies",
+                                help = "Review and refine the incorrectly generated policies manually.",
+                            key='inc_pol', type='secondary', icon=":material/gpp_bad:", use_container_width=True, 
+                            # disabled= not st.session_state.enable_generation
+                            )
+        
+        st.container(height=10, border=False)
+        _,r3col1, s3, r3col2,_ = st.columns([0.20, 1, 0.03, 1, 0.20])
+        test_policies = r3col1.button(f"Test Policies", 
+                            key='test_pol', 
+                            type='secondary', 
+                            icon=":material/assignment:", 
+                            use_container_width=True, 
+                            # disabled= not st.session_state.enable_generation, 
+                            help = "Test the published policies by sending access requests."
+                            )
+        
+        save_policies = r3col2.button(f"Download Policies",
+                                help = "Download the generated policies.",
+                            key='save_pol', type='secondary', icon=":material/download:", use_container_width=True, 
+                            # disabled= not st.session_state.enable_generation
+                            )
+        
+        # write_xacml = col3.button(f"Write in **XACML**", 
+        #                         help="Manually author your access control policy directly in XACML for full control and customization.", 
+        #                         key='write_xacml', type='secondary', icon=":material/code:", use_container_width=True, disabled= not st.session_state.enable_generation
+        #                         )
             
-            gen_sent = col2.button(f"Generate from a **Sentence**",
-                                    help = "Enter your access control requirement in plain English and let AGentV convert it into a machine-executable policy.",
-                                key='gen_sent', type='secondary', icon=":material/create:", use_container_width=True, disabled= not st.session_state.enable_generation
-                                )
-            
-            # write_xacml = col3.button(f"Write in **XACML**", 
-            #                         help="Manually author your access control policy directly in XACML for full control and customization.", 
-            #                         key='write_xacml', type='secondary', icon=":material/code:", use_container_width=True, disabled= not st.session_state.enable_generation
-            #                         )
-                
 
-            if gen_doc:
-                change_page_icon('start_icon')
-                st.switch_page('pages/generate_document.py')
-                
-            elif gen_sent:
-                change_page_icon('start_icon')
-                st.switch_page('pages/generate_individual.py')
-            # elif write_xacml:
-            #     change_page_icon('start_icon')
-            #     st.switch_page('pages/write_policy.py')
-        else:
-            st.session_state.enable_generation = False
+        if gen_doc:
+            change_page_icon('start_icon')
+            st.switch_page('pages/generate_document.py')
+            
+            
+        elif gen_sent:
+            change_page_icon('start_icon')
+            st.switch_page('pages/generate_individual.py')
+        # elif write_xacml:
+        #     change_page_icon('start_icon')
+        #     st.switch_page('pages/write_policy.py')
+        # else:
+        #     st.session_state.enable_generation = False
+        
+        elif corr_policies:
+            st.switch_page('pages/correct_policies.py')
+        elif inc_policies:
+            st.switch_page('pages/incorrect_policies.py')
+        elif test_policies:
+            st.switch_page('pages/test_policies.py')
+        elif save_policies:
+            st.switch_page('pages/policy_export.py')
 
     full_container.float("top: 30%;")
     
 start()
-standard_menu(turn_on=st.session_state.enable_generation)
+standard_menu(turn_on=True)
 

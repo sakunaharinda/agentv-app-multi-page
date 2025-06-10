@@ -63,7 +63,7 @@ def set_hierarchy(hierarchy_file, pbar):
             build_vectorstores_chroma(pbar)
         else:    
             st.session_state.models.vectorestores = build_vectorstores(pbar)
-        st.session_state.enable_generation = True
+        # st.session_state.enable_generation = True
         st.session_state.show_hierarchy = True
         
          # To show all the tabs
@@ -152,11 +152,11 @@ def get_mardowns(hierarchy):
     return subject_h, action_h, resource_h, condition_h
 
 
-@st.cache_data(show_spinner=False)
-def display_hierarchy(main_hierarchy, show_hierarchy, height=300, vertical_padding=40):
-    container = st.container()
+# @st.cache_data(show_spinner=False)
+def display_hierarchy(hierarchy_visualize_container, main_hierarchy, show_hierarchy, height=300, vertical_padding=40):
+    # container = st.container()
     subject_m, action_m, resource_m, condition_m = get_mardowns(main_hierarchy)
-    with container:
+    with hierarchy_visualize_container:
         # Optional: add columns for extra centering control
         _, col2, _ = st.columns([1, 10, 1])
         with col2:
@@ -168,16 +168,14 @@ def display_hierarchy(main_hierarchy, show_hierarchy, height=300, vertical_paddi
                 markmap(resource_m, height=height, vertical_padding=vertical_padding)
             # else:
             #     markmap(condition_m, height=height, vertical_padding=vertical_padding)
-                
-@st.fragment
-@st.dialog("Organization Hierarchy", width='large')
-def visualize_hierarchy_dialog():
-    
+
+
+def hierarchy_visualization(hierarchy_visualize_container):
     if st.session_state.main_hierarchy is not None:
-        _,hcol,_ = st.columns([0.70,1,0.5])
+        _,hcol,_ = hierarchy_visualize_container.columns([0.70,1,0.5])
         show_hierarchy = hcol.segmented_control(label="Organization hierarchy", label_visibility='hidden', options=["Subjects", "Actions", "Resources"], selection_mode='single', default="Subjects")
             
-        display_hierarchy(st.session_state.main_hierarchy, show_hierarchy, height=350, vertical_padding=40)
+        display_hierarchy(hierarchy_visualize_container, st.session_state.main_hierarchy, show_hierarchy, height=350, vertical_padding=40)
         
         # entity_hierarchy = {show_hierarchy.lower(): st.session_state.main_hierarchy[show_hierarchy.lower()]}
         
@@ -186,6 +184,38 @@ def visualize_hierarchy_dialog():
         
         # if edit:
         #     edit_hierarchy(entity_hierarchy)
+    
+
+
+@st.fragment
+@st.dialog("Organization Hierarchy", width='large')
+def visualize_hierarchy_dialog():
+    
+    st.session_state.show_ask_hierarchy_dialog = False
+    
+    hierarchy_visualize_container = st.container(border=False)
+    file_upload_container = st.container(border=False)
+    pbar = st.container(border=False)
+        
+    hierarchy_file = file_upload_container.file_uploader("Upload the organization hierarchy in YAML format.", key='_hierarchy_upload', help='The provided organization hierarchy shows how the subjects (i.e., roles), actions, and resources are arranged in the organization. The **subjects/roles** are the different job titles or responsibilities people have (like HCP, LHCP, and DLHCP). Each role can perform certain **actions** (like read, edit, or write) on specific **resources** (like medical records), which helps define who can do what in access control policies.', type=['yaml', 'yml'], on_change=set_store_hierarchy, args=("hierarchy_upload",pbar,), label_visibility='visible')
+    
+    if st.session_state.hierarchy_upload:
+        # change_page_icon('start_icon')
+        # st.session_state.show_hierarchy = False
+        hierarchy_visualization(hierarchy_visualize_container)
+        
+    
+    if st.session_state.hierarchy_upload !=None:    
+        hierarchy_visualize_container.checkbox(label="I don't want to use a organization hierarchy.", key='_no_hierarchy', on_change=store_value, args=("no_hierarchy",), value = st.session_state.no_hierarchy)
+    
+    if st.session_state.no_hierarchy or st.session_state.hierarchy_upload == None:
+        st.session_state.do_align = False
+        pbar.warning("**Caution**\nYou are not using an **Organization Hierarchy** to generate access control policies. The generated policies may not align with the organizational context.", icon=":material/warning:")
+    else:
+        st.session_state.do_align = True
+    
+    # if no_hierarchy or st.session_state._hierarchy_upload or st.session_state.hierarchy_upload:
+    #     st.session_state.enable_generation = True
         
     
     ok = st.button("OK", key='ok', type='primary', use_container_width=True)

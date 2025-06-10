@@ -5,6 +5,7 @@ from pages.generation_utils import show_summary, review_incorrects, show_bar_cha
 from models.pages import PAGE
 from menus import standard_menu
 from feedback import success_generation_feedback, failed_generation_feedback
+from hierarchy_visualizer import visualize_hierarchy_dialog
 
 # @st.fragment
 def generate_doc(hierarchy, models):
@@ -37,6 +38,9 @@ def generate_doc(hierarchy, models):
             }
         </style>
         """, unsafe_allow_html=True)
+    
+    if st.session_state.show_ask_hierarchy_dialog:
+        visualize_hierarchy_dialog()
 
     st.session_state['document_page'] = True
     st.session_state['sentence_page'] = False
