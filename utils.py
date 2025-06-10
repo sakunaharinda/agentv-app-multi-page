@@ -8,8 +8,6 @@ from typing import List
 from torch.utils.data import Dataset, DataLoader
 from models.record_dto import Results
 from models.ac_engine_dto import JSONPolicyRecord
-from loading import get_entity_hierarchy
-from vectorstore import build_vectorstores, build_vectorstores_chroma
 from ac_engine_service import AccessControlEngine
 
 class Task(Enum):
@@ -340,28 +338,6 @@ class DataLoaders():
             loader = DataLoader(dataset, batch_size=batch_size)
             
         return loader
-    
-def set_hierarchy(hierarchy_file, pbar):
-    
-    # try:
-    if hierarchy_file is not None:
-        main_hierarchy, hierarchies = get_entity_hierarchy(hierarchy_file)
-        st.session_state['main_hierarchy'] = main_hierarchy
-        st.session_state['hierarchies'] = hierarchies.to_dict()
-        
-        if st.session_state.use_chroma:
-            build_vectorstores_chroma(pbar)
-        else:    
-            st.session_state.models.vectorestores = build_vectorstores(pbar)
-        st.session_state.enable_generation = True
-        st.session_state.show_hierarchy = True
-        
-         # To show all the tabs
-        
-    
-def store_value_gen_h(key, pbar):
-    store_value(key)
-    set_hierarchy(st.session_state[key], pbar)
     
     
 def store_value_pol_doc(key):

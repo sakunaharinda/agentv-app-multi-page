@@ -4,4 +4,7 @@ primaryColor="#4285F4"
 
 [client]
 showSidebarNavigation = false
+toolbarMode = "minimal"
 
+[ui]
+hideTopBar = true

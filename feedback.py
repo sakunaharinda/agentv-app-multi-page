@@ -71,12 +71,14 @@ def success_publish_feedback(mode: Literal['single', 'multiple']='single'):
         _,c1,_ = st.columns([1,6,1]) 
         
         with c1:
-            st.write("# Policy Published Successfully!")
+            st.markdown("<h2 style='text-align: center;'>Policy Published Successfully!</h2>",unsafe_allow_html=True)
+            st.markdown("<p style='text-align: center;'>Go to <strong>Test Policies</strong> page to test the published policies.<p>",unsafe_allow_html=True)
     elif mode=='multiple':
         _,c1,_ = st.columns([1,7,1]) 
         
         with c1:
-            st.write("# Policies Published Successfully!")
+            st.markdown("<h2 style='text-align: center;'>Policies Published Successfully!</h2>",unsafe_allow_html=True)
+            st.markdown("<p style='text-align: center;'>Go to <strong>Test Policies</strong> page to test the published policies.<p>",unsafe_allow_html=True)
             
 @st.dialog(" ")
 def success_delete_feedback():
@@ -88,7 +90,7 @@ def success_delete_feedback():
     _,c1,_ = st.columns([1,7,1]) 
     
     with c1:
-        st.write("# Policy Unpublished Successfully!")
+        st.markdown("<h2 style='text-align: center;'>Policy Unpublished Successfully!</h2>",unsafe_allow_html=True)
         
 @st.dialog(" ")
 def success_refine_feedback():
@@ -100,7 +102,8 @@ def success_refine_feedback():
     _,c1,_ = st.columns([1,6,1]) 
     
     with c1:
-        st.write("# Policy Refinement Completed!")
+        st.markdown("<h2 style='text-align: center;'>Policy Refinement Completed!</h2>",unsafe_allow_html=True)
+        st.markdown("<p style='text-align: center;'>Go to <strong>Access Control Policies</strong> page to review and publish policies.</h2>",unsafe_allow_html=True)
         
 @st.dialog(" ")
 def success_generation_feedback(mode: Literal['single', 'multiple']='single'):
@@ -114,13 +117,16 @@ def success_generation_feedback(mode: Literal['single', 'multiple']='single'):
         _,c1,_ = st.columns([1,7,1]) 
         
         with c1:
-            st.write("# Policies Generated Successfully!")
+            st.markdown("<h2 style='text-align: center;'>Policies Generated Successfully!</h2>",unsafe_allow_html=True)
+            st.markdown("<p style='text-align: center;'>Go to <strong>Access Control Policies</strong> page to review and publish policies.</p>", unsafe_allow_html=True)
             
     elif mode=='single':
         _,c1,_ = st.columns([1,6,1]) 
         
         with c1:
-            st.write("# Policy Generated Successfully!")
+            # st.write("# Policy Generated Successfully!")
+            st.markdown("<h2 style='text-align: center;'>Policy Generated Successfully!</h2>", unsafe_allow_html=True)
+            st.markdown("<p style='text-align: center;'>Go to <strong>Access Control Policies</strong> page to review and publish the policy.</p>", unsafe_allow_html=True)
             
 @st.dialog(" ")
 def failed_generation_feedback():
@@ -132,5 +138,5 @@ def failed_generation_feedback():
     _,c1,_ = st.columns([1,15,1]) 
     
     with c1:
-        st.write("# Incorrectly Generated Policies Found!")
-    
+        st.markdown("<h2 style='text-align: center;'>Incorrectly Generated Policies Found!</h2>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align: center;'>Go to <strong>Incorrect Access Control Policies</strong> page to refine.</p>", unsafe_allow_html=True)

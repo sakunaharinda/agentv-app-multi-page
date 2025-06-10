@@ -1,10 +1,10 @@
 import streamlit as st
-from utils import store_value_gen_h, change_page_icon, store_value
+from utils import change_page_icon, store_value
 from feedback import *
 from streamlit_float import *
 from models.pages import PAGE
 from menus import standard_menu
-from hierarchy_visualizer import visualize_hierarchy_dialog
+from hierarchy_visualizer import visualize_hierarchy_dialog, set_store_hierarchy
 
 # @st.fragment
 def start():
@@ -45,7 +45,7 @@ def start():
         upload_container =  st.container(border=False)
         pbar = st.container(border=False)
         
-        hierarchy_file = upload_container.file_uploader("Upload the provided organization hierarchy in YAML format.", key='_hierarchy_upload', help='The provided organization hierarchy shows how the subjects (i.e., roles), actions, and resources are arranged in the organization. The **subjects/roles** are the different job titles or responsibilities people have (like HCP, LHCP, and DLHCP). Each role can perform certain **actions** (like read, edit, or write) on specific **resources** (like medical records), which helps define who can do what in access control policies.', type=['yaml', 'yml'], on_change=store_value_gen_h, args=("hierarchy_upload",pbar,), label_visibility='collapsed')
+        hierarchy_file = upload_container.file_uploader("Upload the provided organization hierarchy in YAML format.", key='_hierarchy_upload', help='The provided organization hierarchy shows how the subjects (i.e., roles), actions, and resources are arranged in the organization. The **subjects/roles** are the different job titles or responsibilities people have (like HCP, LHCP, and DLHCP). Each role can perform certain **actions** (like read, edit, or write) on specific **resources** (like medical records), which helps define who can do what in access control policies.', type=['yaml', 'yml'], on_change=set_store_hierarchy, args=("hierarchy_upload",pbar,), label_visibility='collapsed')
         
         if st.session_state.hierarchy_upload and st.session_state.show_hierarchy:
             change_page_icon('start_icon')
@@ -100,14 +100,6 @@ def start():
         else:
             st.session_state.enable_generation = False
 
-       
-        
-    
-        
-
-
-    # with pbar:
-    #     set_hierarchy(hierarchy_file)
     full_container.float("top: 30%;")
     
 start()

@@ -2,8 +2,13 @@ import streamlit as st
 import streamlit.components.v1 as components
 from utils import store_value
 from feedback import *
-from utils import set_hierarchy
+from utils import store_value
+from loading import get_entity_hierarchy
+from vectorstore import build_vectorstores, build_vectorstores_chroma
 from hierarchy_editor import edit_hierarchy
+
+
+################################# OUTDATED #################################
 
 @st.dialog("Upload the Organization Hierarchy")
 def ask_hierarchy():
@@ -29,6 +34,44 @@ def ask_hierarchy():
             
     elif req_back:
         st.rerun()
+        
+@st.fragment
+def visualize_hierarchy_expander(key):
+    
+    if st.session_state.main_hierarchy is not None:
+        with st.expander("Organization Hierarchy", expanded=st.session_state.expand):
+            _,hcol,_ = st.columns([2,2,2])
+            show_hierarchy = hcol.segmented_control(label="Organization hierarchy", label_visibility='hidden', options=["Subjects", "Actions", "Resources"], selection_mode='single', default="Subjects", key=key)
+            
+            display_hierarchy(st.session_state.main_hierarchy, show_hierarchy, height=350, vertical_padding=40)
+            
+    else:
+        ask_hierarchy()
+        
+        
+##############################################################################
+
+def set_hierarchy(hierarchy_file, pbar):
+    
+    # try:
+    if hierarchy_file is not None:
+        main_hierarchy, hierarchies = get_entity_hierarchy(hierarchy_file)
+        st.session_state['main_hierarchy'] = main_hierarchy
+        st.session_state['hierarchies'] = hierarchies.to_dict()
+        
+        if st.session_state.use_chroma:
+            build_vectorstores_chroma(pbar)
+        else:    
+            st.session_state.models.vectorestores = build_vectorstores(pbar)
+        st.session_state.enable_generation = True
+        st.session_state.show_hierarchy = True
+        
+         # To show all the tabs
+        
+    
+def set_store_hierarchy(key, pbar):
+    store_value(key)
+    set_hierarchy(st.session_state[key], pbar)
 
 def markmap(data, height=600, vertical_padding=50):
     data = str(data)
@@ -126,19 +169,6 @@ def display_hierarchy(main_hierarchy, show_hierarchy, height=300, vertical_paddi
             # else:
             #     markmap(condition_m, height=height, vertical_padding=vertical_padding)
                 
-@st.fragment
-def visualize_hierarchy_expander(key):
-    
-    if st.session_state.main_hierarchy is not None:
-        with st.expander("Organization Hierarchy", expanded=st.session_state.expand):
-            _,hcol,_ = st.columns([2,2,2])
-            show_hierarchy = hcol.segmented_control(label="Organization hierarchy", label_visibility='hidden', options=["Subjects", "Actions", "Resources"], selection_mode='single', default="Subjects", key=key)
-            
-            display_hierarchy(st.session_state.main_hierarchy, show_hierarchy, height=350, vertical_padding=40)
-            
-    else:
-        ask_hierarchy()
-
 @st.fragment
 @st.dialog("Organization Hierarchy", width='large')
 def visualize_hierarchy_dialog():
