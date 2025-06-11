@@ -5,105 +5,97 @@ from streamlit_float import *
 from models.pages import PAGE
 from menus import standard_menu
 from hierarchy_visualizer import visualize_hierarchy_dialog
+from streamlit_tile import streamlit_tile
 
 # @st.fragment
 def start():
     st.session_state.current_page = PAGE.START
 
-    float_init()
-
-    st.markdown(
-            f"""
-            <style>
-                .st-key-gen_doc button,
-                .st-key-cor_pol button,
-                .st-key-inc_pol button,
-                .st-key-test_pol button,
-                .st-key-save_pol button,
-                .st-key-write_xacml button,
-                .st-key-gen_sent button {{
-                    height: 100px;
-                    font-size: 100px !important;
-                    border-radius: 2rem;
-                    box-shadow: rgba(0, 0, 0, 0.16) 0px 4px 16px;
-                }}
-                
-            </style>
-            """,
-            unsafe_allow_html=True,
-        )
-
 
     full_container = st.container()
     call_name = st.session_state.name.split(" ")[0]
     st.title(f"Welcome to AGentV, {call_name}")
+
     with full_container:
         
         
-        # st.container(height=20, border=False)
-        
-        # st.markdown("## To start the policy generation, ")
-        # st.markdown("### Upload the provided organization hierarchy in YAML format.")
-        
-        # upload_container =  st.container(border=False)
+        st.container(height=50, border=False)
         
             
-            # st.container(height=50, border=False)
+        r1col1,s1,r1col2 = st.columns([ 1,0.03, 1])
+
+        
+        with r1col1:
+            gen_doc = streamlit_tile(
+                title="Generate from a Document",
+                description="Generate Access Control Policies from High-level Requirement Specification Document",
+                icon="article",
+                color_theme="blue",
+                height=190,
+                width='full',
+                key="gen_doc_tile"
+            )
             
-        _,r1col1,s1,r1col2,_ = st.columns([0.20, 1,0.03, 1, 0.20])
-        gen_doc = r1col1.button(f"Generate from a **Document**", 
-                            key='gen_doc', 
-                            type='secondary', 
-                            icon=":material/article:", 
-                            use_container_width=True, 
-                            # disabled= not st.session_state.enable_generation, 
-                            help = "Upload a high-level requirement document (e.g., Hospital.md) to auto-generate machine-executable access control policies."
-                            )
+        with r1col2:
+            gen_sent = streamlit_tile(
+                title="Generate from a Sentence",
+                description="Generate an Access Control Policy from an English Sentence",
+                icon="create",
+                color_theme="indigo",
+                height=190,
+                width='full',
+                key="gen_sent_tile"
+            )
         
-        gen_sent = r1col2.button(f"Generate from a **Sentence**",
-                                help = "Enter your access control requirement in plain English and let AGentV convert it into a machine-executable policy.",
-                            key='gen_sent', type='secondary', icon=":material/create:", use_container_width=True, 
-                            # disabled= not st.session_state.enable_generation
-                            )
+        # st.container(height=10, border=False)
+        r2col1, s2, r2col2 = st.columns([1,0.03, 1])
         
-        st.container(height=10, border=False)
-        _,r2col1, s2, r2col2,_ = st.columns([0.20, 1,0.03, 1, 0.20])
-        corr_policies = r2col1.button(f"Access Control Policies", 
-                            key='cor_pol', 
-                            type='secondary', 
-                            icon=":material/verified_user:", 
-                            use_container_width=True, 
-                            # disabled= not st.session_state.enable_generation, 
-                            help = "Review already generated access control policies and publish to the policy database for testing."
-                            )
+        with r2col1:
+            corr_policies = streamlit_tile(
+                title="Access Control Policies",
+                description="Review generated access control policies and publish to the policy database for testing.",
+                icon="verified_user",
+                color_theme="yellow",
+                height=190,
+                width='full',
+                key="cor_pol_tile"
+            )
+            
+        with r2col2:
+            inc_policies = streamlit_tile(
+                title="Incorrect Access Control Policies",
+                description="Review and refine the incorrectly generated policies manually.",
+                icon="gpp_bad",
+                color_theme="red",
+                height=190,
+                width='full',
+                key="onc_pol_tile"
+            )
         
-        inc_policies = r2col2.button(f"Incorrect Access Control Policies",
-                                help = "Review and refine the incorrectly generated policies manually.",
-                            key='inc_pol', type='secondary', icon=":material/gpp_bad:", use_container_width=True, 
-                            # disabled= not st.session_state.enable_generation
-                            )
+        r3col1, s3, r3col2 = st.columns([1, 0.03, 1])
         
-        st.container(height=10, border=False)
-        _,r3col1, s3, r3col2,_ = st.columns([0.20, 1, 0.03, 1, 0.20])
-        test_policies = r3col1.button(f"Test Policies", 
-                            key='test_pol', 
-                            type='secondary', 
-                            icon=":material/assignment:", 
-                            use_container_width=True, 
-                            # disabled= not st.session_state.enable_generation, 
-                            help = "Test the published policies by sending access requests."
-                            )
+        with r3col1:
+            test_policies = streamlit_tile(
+                title="Test Policies",
+                description="Test the published policies by sending access requests.",
+                icon="assignment",
+                color_theme="purple",
+                height=190,
+                width='full',
+                key="tesl_pol_tile"
+            )
+            
+        with r3col2:
+            save_policies = streamlit_tile(
+                title="Download Policies",
+                description="Download the generated policies.",
+                icon="download",
+                color_theme="green",
+                height=190,
+                width='full',
+                key="save_pol_tile"
+            )
         
-        save_policies = r3col2.button(f"Download Policies",
-                                help = "Download the generated policies.",
-                            key='save_pol', type='secondary', icon=":material/download:", use_container_width=True, 
-                            # disabled= not st.session_state.enable_generation
-                            )
-        
-        # write_xacml = col3.button(f"Write in **XACML**", 
-        #                         help="Manually author your access control policy directly in XACML for full control and customization.", 
-        #                         key='write_xacml', type='secondary', icon=":material/code:", use_container_width=True, disabled= not st.session_state.enable_generation
-        #                         )
             
 
         if gen_doc:
@@ -129,7 +121,6 @@ def start():
         elif save_policies:
             st.switch_page('pages/policy_export.py')
 
-    full_container.float("top: 30%;")
     
 start()
 standard_menu(turn_on=True)
