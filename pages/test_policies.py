@@ -16,7 +16,7 @@ def test_policies(policy_tester: PolicyTester):
             [data-testid="stVerticalBlock"] .st-key-test_container {
                 position: fixed !important;
                 bottom: 0.0% !important;
-                background-color: white !important;
+                background-color: #F9F9F9 !important;
                 padding-top: 10px !important;
                 padding-bottom: 20px !important;
                 z-index: 9999 !important;
@@ -26,7 +26,7 @@ def test_policies(policy_tester: PolicyTester):
                 position: fixed !important;
                 top: 140px !important;
                 padding-top: 20px !important;
-                background-color: white !important;
+                background-color: #F9F9F9 !important;
                 padding-bottom: 10px !important;
                 z-index: 9999 !important;
             }

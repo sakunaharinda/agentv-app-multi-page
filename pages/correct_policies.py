@@ -18,7 +18,7 @@ def show_correct_policies(ac_engine: AccessControlEngine):
             [data-testid="stVerticalBlock"] .st-key-correct_container {
                 position: fixed !important;
                 bottom: 0.0% !important;
-                background-color: white !important;
+                background-color: #F9F9F9 !important;
                 padding-top: 10px !important;
                 padding-bottom: 20px !important;
                 z-index: 9999 !important;
@@ -37,7 +37,7 @@ def show_correct_policies(ac_engine: AccessControlEngine):
                 position: fixed !important;
                 top: 140px !important;
                 padding-top: 20px !important;
-                background-color: white !important;
+                background-color: #F9F9F9 !important;
                 padding-bottom: 10px !important;
                 z-index: 9999 !important;
             }
@@ -45,7 +45,7 @@ def show_correct_policies(ac_engine: AccessControlEngine):
             [data-testid="stVerticalBlock"] .st-key-pad_container {
                 position: fixed !important;
                 top: 180px !important;
-                //background-color: white !important;
+                //background-color: #F9F9F9 !important;
                 //z-index: 9999 !important;
             }
             

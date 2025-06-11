@@ -18,7 +18,7 @@ def start():
 
     with full_container:
         
-        
+        HEIGHT = 205
         st.container(height=50, border=False)
         
             
@@ -31,7 +31,7 @@ def start():
                 description="Generate Access Control Policies from High-level Requirement Specification Document",
                 icon="article",
                 color_theme="blue",
-                height=190,
+                height=HEIGHT,
                 width='full',
                 key="gen_doc_tile"
             )
@@ -42,7 +42,7 @@ def start():
                 description="Generate an Access Control Policy from an English Sentence",
                 icon="create",
                 color_theme="indigo",
-                height=190,
+                height=HEIGHT,
                 width='full',
                 key="gen_sent_tile"
             )
@@ -56,7 +56,7 @@ def start():
                 description="Review generated access control policies and publish to the policy database for testing.",
                 icon="verified_user",
                 color_theme="yellow",
-                height=190,
+                height=HEIGHT,
                 width='full',
                 key="cor_pol_tile"
             )
@@ -67,7 +67,7 @@ def start():
                 description="Review and refine the incorrectly generated policies manually.",
                 icon="gpp_bad",
                 color_theme="red",
-                height=190,
+                height=HEIGHT,
                 width='full',
                 key="onc_pol_tile"
             )
@@ -80,7 +80,7 @@ def start():
                 description="Test the published policies by sending access requests.",
                 icon="assignment",
                 color_theme="purple",
-                height=190,
+                height=HEIGHT,
                 width='full',
                 key="tesl_pol_tile"
             )
@@ -91,7 +91,7 @@ def start():
                 description="Download the generated policies.",
                 icon="download",
                 color_theme="green",
-                height=190,
+                height=HEIGHT,
                 width='full',
                 key="save_pol_tile"
             )

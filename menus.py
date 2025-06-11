@@ -50,7 +50,7 @@ def standard_menu(turn_on=True):
                 left: auto !important; /* Don't use left: 0 */
                 width: calc(100% - var(--sidebar-width, 21rem)) !important; /* Subtract sidebar width */
                 margin-left: 0 !important;
-                background-color: white !important;
+                background-color: #F9F9F9 !important;
                 z-index: 999 !important;
                 padding: 10px !important;
                 

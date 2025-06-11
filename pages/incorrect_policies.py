@@ -16,7 +16,7 @@ def show_incorrect_policies(models, hierarchy):
             [data-testid="stVerticalBlock"] .st-key-incorrect_container {
                 position: fixed !important;
                 bottom: -0.8% !important;
-                background-color: white !important;
+                background-color: #F9F9F9 !important;
                 padding-top: 10px !important;
                 padding-bottom: 15px !important;
                 z-index: 9999 !important;
