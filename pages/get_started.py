@@ -19,7 +19,7 @@ def start():
     with full_container:
         
         HEIGHT = 205
-        st.container(height=50, border=False)
+        st.container(height=80, border=False)
         
             
         r1col1,s1,r1col2 = st.columns([ 1,0.03, 1])
@@ -33,7 +33,8 @@ def start():
                 color_theme="blue",
                 height=HEIGHT,
                 width='full',
-                key="gen_doc_tile"
+                key="gen_doc_tile",
+                label="Generate"
             )
             
         with r1col2:
@@ -44,7 +45,8 @@ def start():
                 color_theme="indigo",
                 height=HEIGHT,
                 width='full',
-                key="gen_sent_tile"
+                key="gen_sent_tile",
+                label="Generate"
             )
         
         # st.container(height=10, border=False)
@@ -53,23 +55,25 @@ def start():
         with r2col1:
             corr_policies = streamlit_tile(
                 title="Access Control Policies",
-                description="Review generated access control policies and publish to the policy database for testing.",
+                description="Review generated access control policies and publish to the policy database for testing",
                 icon="verified_user",
-                color_theme="yellow",
+                color_theme="green",
                 height=HEIGHT,
                 width='full',
-                key="cor_pol_tile"
+                key="cor_pol_tile",
+                label="Review"
             )
             
         with r2col2:
             inc_policies = streamlit_tile(
                 title="Incorrect Access Control Policies",
-                description="Review and refine the incorrectly generated policies manually.",
+                description="Review and refine the incorrectly generated policies manually",
                 icon="gpp_bad",
                 color_theme="red",
                 height=HEIGHT,
                 width='full',
-                key="onc_pol_tile"
+                key="onc_pol_tile",
+                label="Refine"
             )
         
         r3col1, s3, r3col2 = st.columns([1, 0.03, 1])
@@ -77,23 +81,25 @@ def start():
         with r3col1:
             test_policies = streamlit_tile(
                 title="Test Policies",
-                description="Test the published policies by sending access requests.",
+                description="Test the published policies by sending access requests",
                 icon="assignment",
                 color_theme="purple",
                 height=HEIGHT,
                 width='full',
-                key="tesl_pol_tile"
+                key="tesl_pol_tile",
+                label="Test"
             )
             
         with r3col2:
             save_policies = streamlit_tile(
                 title="Download Policies",
-                description="Download the generated policies.",
+                description="Download the generated policies",
                 icon="download",
-                color_theme="green",
+                color_theme="yellow",
                 height=HEIGHT,
                 width='full',
-                key="save_pol_tile"
+                key="save_pol_tile",
+                label="Download"
             )
         
             
