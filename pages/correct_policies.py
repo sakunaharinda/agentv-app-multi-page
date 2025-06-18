@@ -76,6 +76,9 @@ def show_correct_policies(ac_engine: AccessControlEngine):
     
     cor_pol_container = st.container(border=False)
     
+    overall_select_count = 0
+        
+    
     for correct_pol_object in policies_to_pdp:
 
         with cor_pol_container.chat_message('user', avatar=":material/gavel:"):
@@ -85,19 +88,27 @@ def show_correct_policies(ac_engine: AccessControlEngine):
             st.markdown(get_updated_description(correct_pol_object))
             cbox, expander = st.columns([1,70])
             ready_publish = cbox.checkbox(label="Ready to publish", label_visibility='collapsed', key=f'publish_cbox_{correct_pol_object.policyId}', disabled=correct_pol_object.published, value=(correct_pol_object.published or correct_pol_object.ready_to_publish))
-            if ready_publish and not correct_pol_object.published:
+            if ready_publish:
                 correct_pol_object.ready_to_publish = True
-                select_count+=1
             else:
                 correct_pol_object.ready_to_publish = False
             with expander.expander("Generated Policy", expanded=False):
                 corr_df = st.dataframe(load_policy(correct_pol_object.policy), use_container_width=True, key=f"correct_policy_{correct_pol_object.policyId}", hide_index=True)
+                
+    for overall_correct_pol_object in st.session_state.corrected_policies_pdp:
+        if overall_correct_pol_object.ready_to_publish and not overall_correct_pol_object.published:
+                # correct_pol_object.ready_to_publish = True
+            overall_select_count+=1
     
     # print('rerun')
-    if select_count == 0 or select_count == len(st.session_state.corrected_policies_pdp):
-        MODE = 'Shown'
+    
+    if overall_select_count == 0:
+        if len(policies_to_pdp) == len(st.session_state.corrected_policies_pdp):
+            MODE = "All"
+        else:
+            MODE = "Shown"
     else:
-        MODE = f"({select_count})"
+        MODE = f"({overall_select_count})"
         
     correct_container = st.container(key="correct_container")
     
@@ -113,7 +124,7 @@ def show_correct_policies(ac_engine: AccessControlEngine):
             help="Publish the shown policies to the policy database",
             icon=":material/database_upload:",
             on_click=publish_all,
-            args=(ac_engine, select_count, policies_to_pdp,)
+            args=(ac_engine, overall_select_count, policies_to_pdp,)
         )
         
         # if publish_all_btn and MODE == 'All':

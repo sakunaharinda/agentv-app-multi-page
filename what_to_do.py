@@ -49,27 +49,17 @@ def starting_page_help():
         "AGentV is an intelligent access control policy generation system that helps you translate high-level, human-readable access control requirements "
         "into machine-executable policies using a combination of natural language processing and policy authoring tools."
     )
-
-    st.write("### Step 1: Upload Organization Hierarchy")
     
-    st.write(
-        "To get started, please **upload the provided organization hierarchy file** in `.yaml` format using the file uploader above."
+    st.write("### Step 1: Select what do you want to perform using AGentV")
+    
+    st.write("AGentV allows you to perform several things like generate access control policies from documents (e.g., organization's high-level requirement specification document), generate policies from individual natural language sentences, refine incorrectly generated policies, etc." 
+    "If you are a first time user, you have two main options:"
+
     )
     
-    st.info(
-        "The organization hierarchy shows how the subjects (i.e., roles), actions, and resources are arranged in the organization. The **subjects/roles** are the different job titles or responsibilities people have (like HCP, LHCP, and DLHCP). Each role can perform certain **actions** (like read, edit, or write) on specific **resources** (like medical records), which helps define who can do what in access control policies."
-    )
-
-    st.write(
-        "Once the hierarchy is uploaded, AGentV will automatically process it in the background. "
-        "After processing is complete, you’ll see three buttons become active—these are your entry points to begin policy generation."
-    )
-
-    st.write("### Step 2: Choose How You Want to Generate Policies")
-
     st.markdown(
         "**1. Generate from a Document** – Upload a complete access control requirement specification (e.g., `Hospital.md`).\n\n"
-        "AGentV will extract and generate access control policies from the document's contents."
+        "AGentV will extract and generate access control policies from an uploaded document's contents."
     )
     
     st.markdown(
@@ -77,13 +67,8 @@ def starting_page_help():
         "AGentV will convert your sentence into a structured policy by identifying subjects, actions, resources, and other components."
     )
 
-    st.markdown(
-        "**3. Write in XACML** – If you’re an experienced user, you can write access control policies directly in XACML.\n\n"
-        "This option gives you full control over the policy definition and is ideal for advanced customization."
-    )
-
     st.success(
-        "After choosing one of the above options and generating policies, you’ll be able to review, correct, test, and save your policies through AGentV’s guided interface."
+        "After choosing one of the above options and generating policies, you’ll be able to review, refine, test, and save your policies through AGentV’s guided interface."
     )
 
 
@@ -102,10 +87,10 @@ def gen_doc_help():
     st.info("Once generation is complete, a **Summary** of the results will be displayed, including the number of sentences in the uploaded document, how many of them are access control requirements, how many of the requirements were correctly translated by AGentV, and how many were incorrectly transltaed.")
 
     st.write("### Step 3: Review Incorrect Policies")
-    st.error("If any policies are generated incorrectly, you’ll be prompted to review them.")
-    st.write("Click the **Review** button to navigate to the **Incorrect Policies** page where you can inspect and correct them.")
+    st.error("If any policies are generated incorrectly, you’ll be prompted to review them. In that case, navigate to the **Incorrect Access Control Policies** page to refine them.")
+    # st.write("Navigate to the **Incorrect Access Control Policies** page to refine them.")
 
-    st.success("If all policies are generated correctly, you’ll be automatically redirected to the **Correct Policies** page.")
+    st.success("If all policies are generated correctly, you can go to **Access Control Policies** page to publish the policies to AGentV's internal database and test them.")
     
 @st.dialog("What should I do?", width='large')
 def gen_sent_help():
@@ -132,10 +117,10 @@ def gen_sent_help():
         "If the policy is generated incorrectly, an error message will appear. You will be prompted to review and correct the "
         "incorrectly generated policy."
     )
-    st.write("Click the **Review** button to go to the **Incorrect Policies** page, where you can inspect and fix the errors.")
+    st.write("Click the **Review** button to go to the **Incorrect Access Control Policies** page, where you can inspect and fix the errors.")
 
     st.success(
-        "If the policy is generated correctly, no further action is needed. You can proceed to the **Access Control Policies** page "
+        "If the policy is generated correctly, no further action is needed. You may proceed to the **Access Control Policies** page "
         "to continue the policy generation process."
     )
 
@@ -208,13 +193,12 @@ def incorrect_pol_help():
 
     st.write("### Step 4: Submit the Corrected Policy")
     st.write(
-        "Once you’ve made all corrections, click the **Submit** button to move the policy from **Incorrect Policies** "
-        "to **Access Control Policies**."
+        "Once you’ve made all corrections, click the **Submit** button."
     )
 
-    st.warning(
-        "After submission, changes cannot be made to the policy. Please review it carefully before clicking **Submit**."
-    )
+    # st.warning(
+    #     "After submission, changes cannot be made to the policy. Please review it carefully before clicking **Submit**."
+    # )
 
     st.write("### Step 5: Repeat")
     st.write(
@@ -223,7 +207,7 @@ def incorrect_pol_help():
 
     st.success(
         "Once all incorrect policies are corrected and submitted, go to the **Access Control Policies** page, "
-        "where you can review all your policies and publish them to the Policy Database."
+        "where you can review all your policies and publish them to AGentV's internal policy database."
     )
     
 @st.dialog("What should I do?", width='large')
@@ -233,7 +217,7 @@ def correct_pol_help():
     st.write(
         "This page allows you to view all the correct access control policies, including:\n"
         "- Policies **automatically generated correctly** by AGentV.\n"
-        "- Policies **corrected and submitted** by you from the **Incorrect Policies** page."
+        "- Policies **corrected and submitted** by you from the **Incorrect Access Control Policies** page."
     )
 
     st.info(
@@ -309,7 +293,7 @@ def test_pol_help():
     st.write("You can test policies in two ways:")
     st.markdown(
         "1. **Test** – Tests only the **selected policy**.\n"
-        "2. **Test** – Tests **all policies** in the Policy Database."
+        "2. **Test All** – Tests **all policies** in the Policy Database."
     )
     
     st.warning("If the policy is generated without using an organization hierarchy, :red-badge[:material/family_history: Outside context] badge can be seen in front of the English access control requirement.")
@@ -374,11 +358,11 @@ def save_pol_help():
     )
 
     st.write("### Step 1: Choose a Format")
-    st.write("You have two options to save your policies:")
+    st.write("You have two options to download your policies:")
 
     st.markdown(
-        "1. **Save as JSON** – Click this button to download **published policies in a single JSON file**.\n"
-        "2. **Save as XACML** – Click this button to download the policies as **separate XML files** written in XACML. "
+        "1. **Download as JSON** – Click this button to download **published policies in a single JSON file**.\n"
+        "2. **Download as XACML** – Click this button to download the policies as **separate XML files** written in XACML. "
         "Each file will represent one policy."
     )
 
@@ -390,7 +374,7 @@ def save_pol_help():
 
     st.write("### Step 2: Download the Policies")
     st.write(
-        "Once you click your preferred option, your browser will start downloading the file(s). "
+        "Once you click your preferred option, you can select the policies you want to download and click **Download as (X)** button. "
         "You can store these files locally or use them in your organization’s access control infrastructure."
     )
 

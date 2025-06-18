@@ -20,7 +20,7 @@ WORKDIR /app
 COPY requirements.txt .
 
 RUN pip install -r requirements.txt
-RUN pip install flash-attn --no-build-isolation
+RUN pip install flash-attn==2.7.4.post1 --no-build-isolation
 
 RUN mkdir -p /app/data /app/downloads /app/logs
 

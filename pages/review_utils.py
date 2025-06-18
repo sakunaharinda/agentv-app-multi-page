@@ -56,7 +56,7 @@ def publish_all(ac_engine: AccessControlEngine, count: int, policies_to_pdp: lis
     
     change_page_icon('correct_pol_icon')
     
-    if count == 0 or count == len(policies_to_pdp):
+    if count == 0:
         # policies = st.session_state.corrected_policies
         policies = [k.to_json_record() for k in policies_to_pdp]
         status = ac_engine.create_multiple_policies(policies)

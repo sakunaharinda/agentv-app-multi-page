@@ -6,11 +6,11 @@ pandas
 python-dotenv
 streamlit==1.44.0
 torch==2.6.0
-transformers
-bitsandbytes
-einops
-trl
-peft
+transformers==4.52.4
+bitsandbytes==0.46.0
+einops==0.8.1
+trl==0.18.1
+peft==0.15.2
 pymongo
 st-pages
 faiss-cpu
@@ -25,3 +25,4 @@ bm25s
 nltk
 elasticsearch
 streamlit-authenticator
+streamlit-tile==3.0.0

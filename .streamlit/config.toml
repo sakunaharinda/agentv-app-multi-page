@@ -5,4 +5,7 @@ backgroundColor="#F9F9F9"
 
 [client]
 showSidebarNavigation = false
+toolbarMode = "minimal"
 
+[ui]
+hideTopBar = true
