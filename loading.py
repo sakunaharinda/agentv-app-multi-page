@@ -105,7 +105,7 @@ def get_entity_hierarchy(hierarchy_file):
     
     main_hierarchy = load_hierarchy_yaml(hierarchy_file)
     
-    subject_h = flatten(main_hierarchy.get('subjects', {}))
+    subject_h = remove_itself(flatten(main_hierarchy.get('subjects', {})))
     action_h = remove_itself(flatten(main_hierarchy.get('actions', {})))
     resource_h = remove_itself(flatten(main_hierarchy.get('resources', {})))
     condition_h = remove_itself(flatten(main_hierarchy.get('conditions', {})))

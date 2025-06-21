@@ -56,15 +56,20 @@ def test_policies(policy_tester: PolicyTester):
     
     pdp_pol_container = st.container(border=False, key='pdp_container')
     # pdp_policies = st.session_state.pdp_policies
-    for pdp_pol_object in policies_from_pdp:
+    
+    if len(st.session_state.pdp_policies) > 0:
+        for pdp_pol_object in policies_from_pdp:
+            
+            with pdp_pol_container.chat_message('user', avatar=":material/gavel:"):
+                nlacp_col, btn_col = st.columns([7,1])
+                test_policy(pdp_pol_object, policy_tester, btn_col)
+                nlacp_col.markdown(f"**Policy Id: {pdp_pol_object.policyId}**")
+                st.markdown(pdp_pol_object.policyDescription + (" :red-badge[:material/family_history: Outside context]" if not pdp_pol_object.with_context else ""))
+                with st.expander(f"Generated Policy", expanded=False):
+                    st.dataframe(load_policy(pdp_pol_object.policy), use_container_width=True, key=f"pdp_policy_{pdp_pol_object.policyId}", hide_index=True)
+    else:
         
-        with pdp_pol_container.chat_message('user', avatar=":material/gavel:"):
-            nlacp_col, btn_col = st.columns([7,1])
-            test_policy(pdp_pol_object, policy_tester, btn_col)
-            nlacp_col.markdown(f"**Policy Id: {pdp_pol_object.policyId}**")
-            st.markdown(pdp_pol_object.policyDescription + (" :red-badge[:material/family_history: Outside context]" if not pdp_pol_object.with_context else ""))
-            with st.expander(f"Generated Policy", expanded=False):
-                st.dataframe(load_policy(pdp_pol_object.policy), use_container_width=True, key=f"pdp_policy_{pdp_pol_object.policyId}", hide_index=True)
+        pdp_pol_container.info(icon=":material/info:", body="You don't have access control policies published to test. Please go to the **:material/verified_user: Access Control Policies** page, publish the access control policies, and come back.")
 
     test_container = st.container(key="test_container")
     with test_container:

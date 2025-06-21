@@ -127,6 +127,9 @@ def show_correct_policies(ac_engine: AccessControlEngine):
             args=(ac_engine, overall_select_count, policies_to_pdp,)
         )
         
+        # if publish_all_btn:
+        #     publish_all(ac_engine, overall_select_count, policies_to_pdp)
+        
         # if publish_all_btn and MODE == 'All':
             # st.switch_page("pages/test_policies.py")
             

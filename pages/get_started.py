@@ -28,7 +28,7 @@ def start():
         with r1col1:
             gen_doc = streamlit_tile(
                 title="Generate from a Document",
-                description="Generate Access Control Policies from High-level Requirement Specification Document",
+                description="Upload High-level Requirement Specification Document and Generate Access Control Policies from it",
                 icon="article",
                 color_theme="blue",
                 height=HEIGHT,
