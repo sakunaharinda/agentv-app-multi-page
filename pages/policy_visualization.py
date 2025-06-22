@@ -7,6 +7,28 @@ from utils import change_page_icon
 from models.pages import PAGE
 from menus import standard_menu
 
+def process_cell(cell_content):
+    cell_str = []
+    perm_dict = {}
+    if isinstance(cell_content, list):
+        for i in cell_content:
+            decision, action = i
+            
+            if decision == "deny":
+                perm_dict[action] = "deny"
+            elif decision=="allow":
+                if action not in perm_dict:
+                    perm_dict[action] = "allow"
+        for act,dec in perm_dict.items():
+            if dec == "allow":
+                dec_symb = "✅"
+                cell_str.append(f"{dec_symb} {act}")
+        # return '\n'.join(cell_str)
+    if len(cell_str)>0:
+        return '\n'.join(cell_str)
+    else:
+        return "🚫 All"
+
 @st.cache_data(show_spinner = False)
 def create_access_matrix(correct_policies: List[JSONPolicyRecord]):
     
@@ -36,11 +58,12 @@ def create_access_matrix(correct_policies: List[JSONPolicyRecord]):
         for _, row in df.iterrows():
             decision, subject, action, resource = row['decision'], row['subject'], row['action'], row['resource']
             
-            if decision == 'allow':
-                entry = f"✅ {action}"
-            else:
-                entry = f"🚫 {action}"
+            # if decision == 'allow':
+            #     entry = ("✅", action)
+            # else:
+            #     entry = ("🚫", action)
             
+            entry = (decision, action)
             # If cell is empty, initialize with a list; otherwise, append new entry
             
             is_cell_empty = pd.isna(access_matrix.at[subject, resource])
@@ -55,7 +78,8 @@ def create_access_matrix(correct_policies: List[JSONPolicyRecord]):
                     access_matrix.at[subject, resource].append(entry)
 
         # Convert lists to readable string format
-        access_matrix = access_matrix.applymap(lambda x: '\n'.join(x) if isinstance(x, list) else '')
+        # lambda x: '\n'.join(x) if isinstance(x, list) else ''
+        access_matrix = access_matrix.applymap(process_cell)
         
         access_matrix.to_csv("logs/access_matrix.csv")
         

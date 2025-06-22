@@ -67,11 +67,11 @@ def generate_sent(hierarchy, models):
     with footer_container:
         cur_nlacp = st.text_input(label="Enter an access control requirement", help="Write a high-level access control requirement in natural language (i.e., English)", label_visibility='visible', placeholder="E.g., The LHCP can read medical records.")
             
-        generate_button = st.button(label='Generate', type='primary', key='generate_sent_btn', use_container_width=True, disabled=st.session_state.is_generating, help=f"Click to start generating access control policies", icon=":material/play_circle:")
+        generate_button = st.button(label='Generate', type='primary', key='generate_sent_btn', use_container_width=True, disabled=st.session_state.is_generating, help=f"Click to start generating access control policies", icon=":material/play_circle:", on_click=on_click_generate, args=('gen_sent_icon',))
         
-        if generate_button:
-            st.session_state.is_generating = True
-            st.session_state.new_doc = False
+        # if generate_button:
+        #     st.session_state.is_generating = True
+        #     st.session_state.new_doc = False
 
     if st.session_state.is_generating:
         

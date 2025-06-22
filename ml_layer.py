@@ -427,12 +427,12 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
                 st.write("Translating ...")
                 
                 # TODO: Remove
-                if os.getenv("TEST", False) == 'true' and nlacp == "Medical records cannot be accessed either by LTs or administrators, to protect patient confidentiality.":
+                if os.getenv("TEST", False) == 'true' and nlacp == "Medical records cannot be viewed either by LTs or administrators, to protect patient confidentiality.":
                     policy, success = [
                         {
                             'decision': 'deny',
                             'subject': 'lhcp',
-                            'action': 'access',
+                            'action': 'view',
                             'resource': 'medical record',
                             'purpose': 'protect patient confidentiality',
                             'condition': 'none'
@@ -440,7 +440,7 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
                         {
                             'decision': 'deny',
                             'subject': 'administrator',
-                            'action': 'access',
+                            'action': 'view',
                             'resource': 'medical record',
                             'purpose': 'protect patient confidentiality',
                             'condition': 'none'
@@ -595,12 +595,12 @@ def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_toke
             
             if do_align:
                 
-                if os.getenv("TEST", False) == 'true' and nlacp == "Medical records cannot be accessed either by LTs or administrators, to protect patient confidentiality.":
+                if os.getenv("TEST", False) == 'true' and nlacp == "Medical records cannot be viewed either by LTs or administrators, to protect patient confidentiality.":
                     policy, success = [
                         {
                             'decision': 'deny',
                             'subject': 'lhcp',
-                            'action': 'access',
+                            'action': 'view',
                             'resource': 'medical record',
                             'purpose': 'protect patient confidentiality',
                             'condition': 'none'
@@ -608,7 +608,7 @@ def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_toke
                         {
                             'decision': 'deny',
                             'subject': 'administrator',
-                            'action': 'access',
+                            'action': 'view',
                             'resource': 'medical record',
                             'purpose': 'protect patient confidentiality',
                             'condition': 'none'
