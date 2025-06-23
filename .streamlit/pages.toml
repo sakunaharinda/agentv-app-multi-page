@@ -17,3 +17,6 @@ toolbarMode = "minimal"
 
 [ui]
 hideTopBar = true
+
+[server]
+enableXsrfProtection=false

@@ -94,7 +94,7 @@ def visualize_page():
     st.title("Policy Visualization")
     change_page_icon('viz_icon')
     if len(st.session_state.pdp_policies)>0:
-        with st.container(height=400, border=False):
+        with st.container(border=False):
 
             st.dataframe(create_access_matrix(st.session_state.pdp_policies), use_container_width=True, key="access_matrix")
             
