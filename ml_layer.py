@@ -383,7 +383,8 @@ def align_policy_chroma(policy, _vectorstore: dict, hierarchy: dict):
             store = _vectorstore.get(k, None)
             if v!='none' and store is not None:
                 from_db, score = get_candidates_chroma(store, v, 1)
-                if score[0] > 0.75:
+                # print(v, from_db[0], score)
+                if score[0] > 0.8:
                     rule[k] = from_db[0].strip()
                 else:
                     outside_hierarchy = True
@@ -495,7 +496,7 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
                                 'policy': policy
                             })
                             
-                            save(json_policy, index=0)
+                            save(json_policy, index=0, with_context=do_align)
                             results.final_correct_policies.append(json_policy)
                             
                     else:
@@ -506,7 +507,7 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
                             'policy': policy
                         })
                         
-                        save(json_policy, index=0)
+                        save(json_policy, index=0, with_context=do_align)
                         results.final_correct_policies.append(json_policy)
                         # handlers.cor_policy_nav_last()
                 else:
@@ -663,7 +664,8 @@ def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_toke
                 })
                 
                 save(
-                    json_policy
+                    json_policy,
+                    with_context=do_align
                 )
                 
                 results.final_correct_policies.append(json_policy)
@@ -694,7 +696,8 @@ def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_toke
                     })
                     
                     save(
-                        json_policy
+                        json_policy,
+                        with_context=do_align
                     )
                     
                     results.final_correct_policies.append(json_policy)

@@ -374,11 +374,12 @@ def save_wo_duplicate(policy, record_list):
     
     return [policy] + [v for k,v in record_dict.items() if k != policy.policyId]
     
-def save(policy: JSONPolicyRecord, enforce_unique = False, index=None):
+def save(policy: JSONPolicyRecord, enforce_unique = False, index=None, with_context=True):
     
     ac_engine = AccessControlEngine()
-    
-    pdp_record = policy.to_json_record_pdp(not st.session_state.no_hierarchy)
+    print(f"\nNo hierarchy: {st.session_state.no_hierarchy}\n")
+    pdp_record = policy.to_json_record_pdp(with_context=with_context)
+    print(pdp_record)
     
     if enforce_unique:
         st.session_state.corrected_policies = save_wo_duplicate(policy, st.session_state.corrected_policies)

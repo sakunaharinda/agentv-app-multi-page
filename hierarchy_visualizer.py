@@ -217,7 +217,7 @@ def visualize_hierarchy_dialog():
     # if no_hierarchy or st.session_state._hierarchy_upload or st.session_state.hierarchy_upload:
     #     st.session_state.enable_generation = True
         
-    
+    print(f"\nAlign: {st.session_state.do_align}\n")
     ok = st.button("OK", key='ok', type='primary', use_container_width=True)
     
     if ok:
