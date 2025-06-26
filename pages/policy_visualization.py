@@ -92,6 +92,7 @@ def visualize_page():
     st.session_state.current_page = PAGE.VIZ_POLICY
         
     st.title("Policy Visualization")
+    st.container(height=50, border=False)
     change_page_icon('viz_icon')
     if len(st.session_state.pdp_policies)>0:
         with st.container(border=False):
@@ -102,6 +103,10 @@ def visualize_page():
 
         leg_col1.markdown("#### ✅ :green[Allowed]")
         leg_col2.markdown("#### 🚫 :red[Denied]")
+    
+    else:
+        cont = st.container(border=False)
+        cont.info(icon=":material/info:", body="You don't have access control policies published to visualize. Please go to the **:material/verified_user: Access Control Policies** page, publish the access control policies, and come back.")
     
         
 

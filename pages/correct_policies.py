@@ -121,7 +121,7 @@ def show_correct_policies(ac_engine: AccessControlEngine):
             use_container_width=True,
             key="publish_all",
             disabled=len(policies_to_pdp) < 1,
-            help="Publish the shown policies to the policy database",
+            help="Publish the all/shown the policies to AGentV's policy database.",
             icon=":material/database_upload:",
             on_click=publish_all,
             args=(ac_engine, overall_select_count, policies_to_pdp,)

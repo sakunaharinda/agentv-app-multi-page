@@ -108,9 +108,9 @@ def policy_db_feedback(status_code, single = False):
         
 def publish_delete_policy(policy: JSONPolicyRecordPDP, ac_engine, col, col_delete):
     
-    col.button("Publish", key=f"publish_{policy.policyId}", use_container_width=True, on_click=publish_single, args=(policy, ac_engine,), type='primary', help = "Publish the policy to the policy database", disabled=policy.published, icon=":material/database_upload:")
+    col.button("Publish", key=f"publish_{policy.policyId}", use_container_width=True, on_click=publish_single, args=(policy, ac_engine,), type='primary', help = "Publish the policy to AGentV's policy database.", disabled=policy.published, icon=":material/database_upload:")
     
-    col_delete.button("Unpublish", use_container_width=True, key = f"remove_{policy.policyId}", type='primary', help = "Remove the published policy from the policy database", disabled=not policy.published, icon=":material/delete:", on_click=delete_single, args=(policy, ac_engine,))
+    col_delete.button("Unpublish", use_container_width=True, key = f"remove_{policy.policyId}", type='primary', help = "Remove the published policy from AGentV's policy database.", disabled=not policy.published, icon=":material/delete:", on_click=delete_single, args=(policy, ac_engine,))
     
     
 def get_updated_description_inc(inc_policy):
