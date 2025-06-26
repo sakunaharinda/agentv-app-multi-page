@@ -8,7 +8,7 @@ from models.pages import PAGE
 from menus import standard_menu
 
 @st.fragment
-def test_policies(policy_tester: PolicyTester):
+def test_policies():
     
     st.markdown("""
         <style>
@@ -62,7 +62,7 @@ def test_policies(policy_tester: PolicyTester):
             
             with pdp_pol_container.chat_message('user', avatar=":material/gavel:"):
                 nlacp_col, btn_col = st.columns([7,1])
-                test_policy(pdp_pol_object, policy_tester, btn_col)
+                test_policy(pdp_pol_object, st.session_state.policy_tester, btn_col)
                 nlacp_col.markdown(f"**Policy Id: {pdp_pol_object.policyId}**")
                 st.markdown(pdp_pol_object.policyDescription + (" :red-badge[:material/family_history: Outside context]" if not pdp_pol_object.with_context else ""))
                 with st.expander(f"Generated Policy", expanded=False):
@@ -87,13 +87,17 @@ def test_policies(policy_tester: PolicyTester):
             icon=":material/output:"
         )
         
+        
         if test_sys:
-            test_system(policy_tester)
+            test_system(st.session_state.policy_tester)
+    if st.session_state.test_overall:
+        st.session_state.test_overall = False
+        st.session_state.policy_tester.test_overall()
 
 hierarchy = st.session_state.hierarchies
 
 standard_menu()
 
 ac_engine = AccessControlEngine()
-policy_tester = PolicyTester(hierarchy, ac_engine)
-test_policies(policy_tester)
+st.session_state.policy_tester = PolicyTester(hierarchy, ac_engine)
+test_policies()

@@ -52,6 +52,7 @@ def init():
     set_state('generate_wo_context', False)
     set_state('reviewed', False)
     set_state('select_count', 0)
+    set_state('test_overall', False)
     
     st.session_state.num_correct_policies = len(st.session_state.corrected_policies)
     st.session_state.num_incorrect_policies = len(st.session_state.inc_policies)

@@ -140,3 +140,31 @@ def failed_generation_feedback():
     with c1:
         st.markdown("<h2 style='text-align: center;'>Incorrectly Generated Policies Found!</h2>", unsafe_allow_html=True)
         st.markdown("<p style='text-align: center;'>Go to <strong>Incorrect Access Control Policies</strong> page to refine.</p>", unsafe_allow_html=True)
+        
+        
+@st.dialog(" ")
+def unpublished_policy_feedback():
+    lottie = LOTTIE_STATUS.format_map({"src": "https://lottie.host/5dc7df17-8776-4449-b159-369c51f3c884/2QL93saGVf.json"})
+    _,col1,_ = st.columns([1,1,1])
+    with col1:
+        st.components.v1.html(lottie, width=200, height=120)
+
+    _,c1,_ = st.columns([1,15,1]) 
+    
+    with c1:
+        st.markdown("<h2 style='text-align: center;'>You have unpublished policies!</h2>", unsafe_allow_html=True)
+        st.markdown("<p style='text-align: center;'>Are you sure you want to test only the published policies?</p>", unsafe_allow_html=True)
+        
+    b1,b2 = st.columns([1,1])
+    
+    btn2 = b2.button("Go back and publish", key="pub_unpub", help="Go to the Access Control Policies page and publish the unpublished policies.", type='secondary', use_container_width=True)
+    
+    btn1 = b1.button("Yes", key="pub_unpub_yes", help="Test only the published policies.", type='primary', use_container_width=True)
+    
+    if btn1:
+        st.session_state.test_overall=True
+        st.rerun()
+    elif btn2:
+        st.switch_page("pages/correct_policies.py")
+    
+        

@@ -1,6 +1,8 @@
+import streamlit as st
 from pages.policy_tester import PolicyTester
 from models.ac_engine_dto import JSONPolicyRecordPDP
 from utils import change_page_icon
+from feedback import unpublished_policy_feedback
 
 def test_policy(policy: JSONPolicyRecordPDP, policy_tester: PolicyTester, col):
     
@@ -14,6 +16,12 @@ def test_policy(policy: JSONPolicyRecordPDP, policy_tester: PolicyTester, col):
         
 def test_system(policy_tester: PolicyTester):
     
-    change_page_icon('test_icon')
-    policy_tester.test_overall()
+    for policy in st.session_state.corrected_policies_pdp:
+        if policy.published == False:
+            unpublished_policy_feedback()
+            break
+    else:
+    
+        change_page_icon('test_icon')
+        policy_tester.test_overall()
     

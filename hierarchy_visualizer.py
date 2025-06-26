@@ -6,6 +6,8 @@ from utils import store_value
 from loading import get_entity_hierarchy
 from vectorstore import build_vectorstores, build_vectorstores_chroma
 from hierarchy_editor import edit_hierarchy
+from ac_engine_service import AccessControlEngine
+from pages.policy_tester import PolicyTester
 
 
 ################################# OUTDATED #################################
@@ -65,6 +67,8 @@ def set_hierarchy(hierarchy_file, pbar):
             st.session_state.models.vectorestores = build_vectorstores(pbar)
         # st.session_state.enable_generation = True
         st.session_state.show_hierarchy = True
+        ac_engine = AccessControlEngine()
+        st.session_state.policy_tester = PolicyTester(st.session_state['hierarchies'], ac_engine) 
         
          # To show all the tabs
         
