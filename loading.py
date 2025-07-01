@@ -29,8 +29,14 @@ def load_policy(data):
 
 @st.cache_data
 def load_hierarchy_yaml(file):
-    content = file.getvalue().decode('utf-8')
-    return yaml.safe_load(content)
+    
+    if isinstance(file, str):
+        with open(file, 'r') as f:
+            content = yaml.safe_load(f)
+            return content
+    else:
+        content = file.getvalue().decode('utf-8')
+        return yaml.safe_load(content)
     
 @st.cache_data(show_spinner=False)
 def flatten(nested_list):

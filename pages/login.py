@@ -6,6 +6,7 @@ import streamlit_authenticator as stauth
 from streamlit_authenticator.utilities import LoginError
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
+from init_ui import init
 
 def load_auth_config(auth_file = 'auth_config.yaml'):
 
@@ -27,6 +28,8 @@ def load_auth_config(auth_file = 'auth_config.yaml'):
     return config
 
 def login():
+    
+    init()
     
     if 'authentication_status' in st.session_state:
         del st.session_state['authentication_status']

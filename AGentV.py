@@ -7,4 +7,4 @@ torch.classes.__path__ = []
 init()
 
 
-st.switch_page("pages/login.py")
+st.switch_page("pages/get_started.py")

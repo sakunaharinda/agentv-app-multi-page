@@ -13,8 +13,8 @@ def start():
 
 
     full_container = st.container()
-    call_name = st.session_state.name.split(" ")[0]
-    st.title(f"Welcome to AGentV, {call_name}")
+    # call_name = st.session_state.name.split(" ")[0]
+    st.title(f"Welcome to AGentV!")
 
     with full_container:
         

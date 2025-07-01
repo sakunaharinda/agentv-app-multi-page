@@ -8,7 +8,8 @@ from pages.generation_utils import review_individual, get_updated_description
 from models.pages import PAGE
 import streamlit_float
 from menus import standard_menu
-from hierarchy_visualizer import visualize_hierarchy_dialog
+from hierarchy_visualizer import visualize_hierarchy_dialog, set_hierarchy
+from init_ui import init
 
 # @st.fragment
 def generate_sent(hierarchy, models):
@@ -117,7 +118,11 @@ def generate_sent(hierarchy, models):
 
             st.rerun()
             
-            
+if 'new_session' not in st.session_state:
+    init()
+    set_hierarchy('data/Hierarchies.yaml')
+    visualize_hierarchy_dialog()
+
 hierarchy = st.session_state.hierarchies
 models = st.session_state.models
 standard_menu()

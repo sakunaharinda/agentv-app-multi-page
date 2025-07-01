@@ -4,6 +4,8 @@ from pages.review_utils import get_updated_description_inc, review_policy, revie
 from menus import standard_menu
 from feedback import get_locate_warning_msg
 from uuid import uuid4
+from init_ui import init
+from hierarchy_visualizer import set_hierarchy, visualize_hierarchy_dialog
 
 @st.fragment
 def show_incorrect_policies(models, hierarchy):
@@ -56,7 +58,11 @@ def show_incorrect_policies(models, hierarchy):
                 # review_policy(incorrect_pol_object, hierarchy, models)
                 review_policy_aggrid(incorrect_pol_object, info, hierarchy, models)
 
-        
+if 'new_session' not in st.session_state:
+    init()
+    set_hierarchy('data/Hierarchies.yaml')
+    visualize_hierarchy_dialog()
+       
 hierarchy = st.session_state.hierarchies
 models = st.session_state.models
 

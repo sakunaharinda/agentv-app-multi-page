@@ -6,6 +6,7 @@ from models.ac_engine_dto import JSONPolicyRecord
 from utils import change_page_icon
 from models.pages import PAGE
 from menus import standard_menu
+from init_ui import init
 
 def process_cell(cell_content):
     cell_str = []
@@ -109,6 +110,8 @@ def visualize_page():
         cont.info(icon=":material/info:", body="You don't have access control policies published to visualize. Please go to the **:material/verified_user: Access Control Policies** page, publish the access control policies, and come back.")
     
         
+if 'new_session' not in st.session_state:
+    init()
 
 standard_menu()
 visualize_page()

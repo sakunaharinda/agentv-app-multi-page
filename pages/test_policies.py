@@ -6,6 +6,8 @@ from pages.review_utils import filter
 from ac_engine_service import AccessControlEngine
 from models.pages import PAGE
 from menus import standard_menu
+from hierarchy_visualizer import visualize_hierarchy_dialog, set_hierarchy
+from init_ui import init
 
 @st.fragment
 def test_policies():
@@ -93,6 +95,12 @@ def test_policies():
     if st.session_state.test_overall:
         st.session_state.test_overall = False
         st.session_state.policy_tester.test_overall()
+
+
+if 'new_session' not in st.session_state:
+    init()
+    set_hierarchy('data/Hierarchies.yaml')
+    visualize_hierarchy_dialog()
 
 hierarchy = st.session_state.hierarchies
 

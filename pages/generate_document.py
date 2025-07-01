@@ -6,6 +6,9 @@ from models.pages import PAGE
 from menus import standard_menu
 from feedback import success_generation_feedback, failed_generation_feedback
 from hierarchy_visualizer import visualize_hierarchy_dialog
+from init_ui import init
+from hierarchy_visualizer import set_hierarchy
+import yaml
 
 # @st.fragment
 def generate_doc(hierarchy, models):
@@ -107,8 +110,11 @@ def generate_doc(hierarchy, models):
         
     
     # footer_container.float("bottom: 10px;")
+if 'new_session' not in st.session_state:
+    init()
+    set_hierarchy('data/Hierarchies.yaml')
+    visualize_hierarchy_dialog()
     
-
 
 hierarchy = st.session_state.hierarchies
 models = st.session_state.models

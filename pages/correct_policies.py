@@ -4,6 +4,8 @@ from ac_engine_service import AccessControlEngine
 from pages.review_utils import publish_all, publish_delete_policy, get_updated_description, filter
 from models.pages import PAGE
 from menus import standard_menu
+from init_ui import init
+from hierarchy_visualizer import set_hierarchy, visualize_hierarchy_dialog
     
 
 @st.fragment
@@ -132,7 +134,11 @@ def show_correct_policies(ac_engine: AccessControlEngine):
         
         # if publish_all_btn and MODE == 'All':
             # st.switch_page("pages/test_policies.py")
-            
+if 'new_session' not in st.session_state:
+    init()
+    set_hierarchy('data/Hierarchies.yaml')
+    visualize_hierarchy_dialog()
+
 standard_menu()
 ac_engine = AccessControlEngine()
 show_correct_policies(ac_engine)

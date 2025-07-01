@@ -9,6 +9,7 @@ from utils import change_page_icon, toast_download_sucess
 from models.pages import PAGE
 from menus import standard_menu
 import io
+from init_ui import init
 
 @st.cache_data
 def add_to_zip_buffer(xacml_policies):
@@ -180,7 +181,10 @@ def save_policies(ac_engine: AccessControlEngine, save_path = 'downloads'):
             
     
     btn_container.float("top: 50%;")
-    
+
+if 'new_session' not in st.session_state:
+    init()
+
 standard_menu()
 ac_engine = AccessControlEngine()
 
