@@ -95,6 +95,11 @@ def init():
         st.session_state["ac_engine"] = ac_engine
         
         if os.getenv("LOAD_PREV") == 'true':
+            
+            response, prev_written_policies = ac_engine.get_written_policies_json()
+            
+            if response == 200:
+                st.session_state.written_nlacps = prev_written_policies
         
             response, prev_policies = ac_engine.get_all_policies_json()
             

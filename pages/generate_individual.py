@@ -1,18 +1,18 @@
 import streamlit as st
 from utils import *
-from models.record_dto import WrittenPolicy
+from models.ac_engine_dto import WrittenPolicy
 from loading import load_policy
 from ml_layer import agentv_single
 from uuid import uuid4
 from pages.generation_utils import review_individual, get_updated_description
 from models.pages import PAGE
-import streamlit_float
+from ac_engine_service import AccessControlEngine
 from menus import standard_menu
 from hierarchy_visualizer import visualize_hierarchy_dialog, set_hierarchy
 from init_ui import init
 
 # @st.fragment
-def generate_sent(hierarchy, models):
+def generate_sent(hierarchy, models, ac_engine: AccessControlEngine):
     
     st.session_state.current_page = PAGE.GEN_SENT
     
@@ -53,9 +53,9 @@ def generate_sent(hierarchy, models):
 
     for written_p in st.session_state.written_nlacps:
         with nlacp_container.chat_message("user", avatar=":material/create:"):
-            st.markdown(f"**Policy Id: {written_p.id}**")
+            st.markdown(f"Policy Id: {written_p.id}")
             st.markdown(get_updated_description(written_p))
-            if written_p.error == None:
+            if written_p.error == "":
                 policy = load_policy(written_p.policy)
                 with st.expander("Generated Policy", expanded=False):
                     st.dataframe(policy, use_container_width=True, key=f'df_{written_p.id}', hide_index=True)
@@ -92,29 +92,34 @@ def generate_sent(hierarchy, models):
             uuid = agentv_single(nlacp_container, cur_nlacp, models.id_tokenizer, models.id_model, models.gen_tokenizer, models.gen_model, models.ver_model, models.ver_tokenizer, models.loc_tokenizer, models.loc_model, models.vectorestores, hierarchy, do_align=st.session_state.do_align)
             
             if len(st.session_state.results_individual['interrupted_errors']) > 0:
+                written_policy = WrittenPolicy.from_dict({
+                        "id": uuid,
+                        "sentence": cur_nlacp,
+                        "policy": [],
+                        "error": st.session_state.results_individual['interrupted_errors'][0],
+                        "is_incorrect": True,
+                        "is_reviewed": False
+                    })
                 st.session_state.written_nlacps.append(
-                    WrittenPolicy(
-                        id = uuid,
-                        sentence=cur_nlacp,
-                        policy=[],
-                        error=st.session_state.results_individual['interrupted_errors'][0],
-                        is_incorrect=True,
-                        is_reviewed=False
-                    )
+                    written_policy
                 )
                 
             else:
+                
+                written_policy = WrittenPolicy.from_dict({
+                        "id": uuid,
+                        "sentence": cur_nlacp,
+                        "policy": st.session_state.results_individual['final_policies'][0],
+                        "error": "",
+                        "is_incorrect": st.session_state.results_individual['final_verification'][0]!=11,
+                        "is_reviewed": False
+                    })
             
                 st.session_state.written_nlacps.append(
-                    WrittenPolicy(
-                        id = uuid,
-                        sentence=cur_nlacp,
-                        policy=st.session_state.results_individual['final_policies'][0],
-                        is_incorrect= st.session_state.results_individual['final_verification'][0]!=11,
-                        # is_unrelated=st.session_state.results_individual['final_verification'][0]==-1
-                        is_reviewed=False
-                    )
+                    written_policy
                 )
+            
+            ac_engine.create_written_policy_json(written_policy)
 
             st.rerun()
             
@@ -125,8 +130,9 @@ if 'new_session' not in st.session_state:
 
 hierarchy = st.session_state.hierarchies
 models = st.session_state.models
+ac_engine = AccessControlEngine()
 standard_menu()
-generate_sent(hierarchy, models)
+generate_sent(hierarchy, models, ac_engine)
 
             
         

@@ -2,7 +2,7 @@ import streamlit as st
 from feedback import warning
 
 import plotly.graph_objects as go
-from models.record_dto import WrittenPolicy
+from models.ac_engine_dto import WrittenPolicy
 from feedback import success_generation_feedback, failed_generation_feedback
 
 def get_updated_description(policy: WrittenPolicy):
@@ -17,7 +17,7 @@ def get_updated_description(policy: WrittenPolicy):
         
     #     new_description+= " :red-badge[:material/family_history: Outside context]"
         
-    return new_description
+    return f"**{new_description}**"
 
 def show_bar_chart(container):
     

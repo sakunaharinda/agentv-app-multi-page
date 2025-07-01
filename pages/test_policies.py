@@ -65,8 +65,8 @@ def test_policies():
             with pdp_pol_container.chat_message('user', avatar=":material/gavel:"):
                 nlacp_col, btn_col = st.columns([7,1])
                 test_policy(pdp_pol_object, st.session_state.policy_tester, btn_col)
-                nlacp_col.markdown(f"**Policy Id: {pdp_pol_object.policyId}**")
-                st.markdown(pdp_pol_object.policyDescription + (" :red-badge[:material/family_history: Outside context]" if not pdp_pol_object.with_context else ""))
+                nlacp_col.markdown(f"Policy Id: {pdp_pol_object.policyId}")
+                st.markdown("**" + pdp_pol_object.policyDescription + (" :red-badge[:material/family_history: Outside context]" if not pdp_pol_object.with_context else "") + "**")
                 with st.expander(f"Generated Policy", expanded=False):
                     st.dataframe(load_policy(pdp_pol_object.policy), use_container_width=True, key=f"pdp_policy_{pdp_pol_object.policyId}", hide_index=True)
     else:

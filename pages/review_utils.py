@@ -49,7 +49,7 @@ def get_updated_description(policy: JSONPolicyRecordPDP):
         
         new_description+= " :red-badge[:material/family_history: Outside context]"
         
-    return new_description
+    return "**" + new_description + "**"
 
     
 def publish_all(ac_engine: AccessControlEngine, count: int, policies_to_pdp: list):
@@ -116,9 +116,9 @@ def publish_delete_policy(policy: JSONPolicyRecordPDP, ac_engine, col, col_delet
 def get_updated_description_inc(inc_policy):
     if inc_policy['solved']:
         
-        return inc_policy['nlacp'] + " :green-badge[:material/check: Submitted]"
+        return "**" + inc_policy['nlacp'] + " :green-badge[:material/check: Submitted]" + "**"
     else:
-        return inc_policy['nlacp'] + " :orange-badge[:material/reviews: Ready to Review]"
+        return "**" + inc_policy['nlacp'] + " :orange-badge[:material/reviews: Ready to Review]" + "**"
 
 @st.cache_data(show_spinner=False)
 def update_options(df, subjects, actions, resources):

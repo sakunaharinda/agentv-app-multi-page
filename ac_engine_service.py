@@ -20,7 +20,10 @@ class AccessControlEngine():
                  create_policies_json_path = '/policy/addAll/json',
                  delete_policy_by_id_path = '/policy/{id}',
                  create_policy_xacml_path = '/policy/add/xacml',
-                 create_policy_json_path = '/policy/add/json'
+                 create_policy_json_path = '/policy/add/json',
+                 create_written_policy_json_path = '/policy/written/add/json',
+                 create_written_policies_json_path = '/policy/written/addAll/json',
+                 get_written_policies_json_path = '/policy/written/json',
                  ):
         self.base_url = base_url
         self.get_policies_url = base_url + get_policies_path
@@ -35,6 +38,9 @@ class AccessControlEngine():
         self.delete_policy_by_id_url = base_url + delete_policy_by_id_path
         self.create_policy_xacml_url = base_url + create_policy_xacml_path
         self.create_policy_json_url = base_url + create_policy_json_path
+        self.create_written_policy_json_url = base_url + create_written_policy_json_path
+        self.create_written_policies_json_url = base_url + create_written_policies_json_path
+        self.get_written_policies_json_url = base_url + get_written_policies_json_path
 
 
     def get_all_policies(self):
@@ -44,6 +50,14 @@ class AccessControlEngine():
     def get_all_policies_json(self):
         response = requests.get(self.get_policies_json_url)
         return response.status_code, [JSONPolicyRecordPDP.from_dict(record) for record in response.json()]
+    
+    def get_written_policies_json(self):
+        records = []
+        response = requests.get(self.get_written_policies_json_url)
+        for record in response.json():
+            record['is_reviewed'] = True
+            records.append(WrittenPolicy.from_dict(record))
+        return response.status_code, records
     
     def get_published_policies(self):
         response = requests.get(self.get_published_policies_url)
@@ -80,9 +94,19 @@ class AccessControlEngine():
         response = requests.post(self.create_policy_json_url, json=policy_create_request)
         return response.status_code
     
+    def create_written_policy_json(self, body: WrittenPolicy):
+        policy_create_request = body.to_dict()
+        response = requests.post(self.create_written_policy_json_url, json=policy_create_request)
+        return response.status_code
+    
     def create_multiple_policies_json(self, body: List[JSONPolicyRecordPDP]):
         policy_create_request = [r.to_dict() for r in body]
         response = requests.post(self.create_policies_json_url, json=policy_create_request)
+        return response.status_code
+    
+    def create_multiple_written_policies_json(self, body: List[WrittenPolicy]):
+        policy_create_request = [r.to_dict() for r in body]
+        response = requests.post(self.create_written_policies_json_url, json=policy_create_request)
         return response.status_code
         
     def create_multiple_policies(self, body: List[JSONPolicyRecord]):

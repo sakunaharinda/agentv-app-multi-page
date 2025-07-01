@@ -86,7 +86,7 @@ def show_correct_policies(ac_engine: AccessControlEngine):
         with cor_pol_container.chat_message('user', avatar=":material/gavel:"):
             nlacp_col, btn_col, cancel_col = st.columns([7,1.5, 1.7])
             publish_delete_policy(correct_pol_object, ac_engine, btn_col, cancel_col)
-            nlacp_col.markdown(f"**Policy Id: {correct_pol_object.policyId}**")
+            nlacp_col.markdown(f"Policy Id: {correct_pol_object.policyId}")
             st.markdown(get_updated_description(correct_pol_object))
             cbox, expander = st.columns([1,70])
             ready_publish = cbox.checkbox(label="Ready to publish", label_visibility='collapsed', key=f'publish_cbox_{correct_pol_object.policyId}', disabled=correct_pol_object.published, value=(correct_pol_object.published or correct_pol_object.ready_to_publish))

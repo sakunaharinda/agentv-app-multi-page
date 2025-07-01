@@ -155,6 +155,32 @@ class JSONPolicyRecordPDP:
     
 
 @dataclass
+class WrittenPolicy:
+    id: str = ""
+    sentence: str = ""
+    policy: List[ACR] = field(default_factory = list)
+    error: str = None
+    is_incorrect: bool = False
+    is_unrelated: bool = False
+    is_reviewed: bool = False
+    
+    def to_dict(self):
+        return asdict(self)
+    
+    @staticmethod
+    def from_dict(data):
+        policy = [ACR.from_dict(acr) for acr in data.get('policy', [])]
+        return WrittenPolicy(
+            id = data.get('id', ''),
+            sentence=data.get('sentence', ''),
+            policy = policy,
+            error = data.get('error',''),
+            is_incorrect = data.get('is_incorrect', False),
+            is_reviewed = data.get('is_reviewed', False)
+        )
+
+
+@dataclass
 class XACMLPolicyRecord:
     id: str
     policy: str
