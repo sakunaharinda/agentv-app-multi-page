@@ -19,6 +19,7 @@ def delete_single(pdp_policy: JSONPolicyRecordPDP, ac_engine: AccessControlEngin
         success_delete_feedback()
         st.session_state.pdp_policies.remove(pdp_policy)
         pdp_policy.published = False
+        pdp_policy.ready_to_publish = False
         ac_engine.create_policy_json(pdp_policy)
 
 def publish_single(pdp_policy: JSONPolicyRecordPDP, ac_engine: AccessControlEngine):
@@ -30,6 +31,7 @@ def publish_single(pdp_policy: JSONPolicyRecordPDP, ac_engine: AccessControlEngi
     if status == 200:
         if pdp_policy not in st.session_state.pdp_policies:
             pdp_policy.published = True
+            pdp_policy.ready_to_publish = True
             st.session_state.pdp_policies.append(pdp_policy)
             # st.session_state.pdp_policies = list(set(st.session_state.pdp_policies))
             
@@ -67,6 +69,7 @@ def publish_all(ac_engine: AccessControlEngine, count: int, policies_to_pdp: lis
             for policy in st.session_state.corrected_policies_pdp:
                 if policy in policies_to_pdp and policy.published == False:
                     policy.published = True
+                    policy.ready_to_publish = True
                     st.session_state.pdp_policies.append(policy)
             
     else:
@@ -80,6 +83,7 @@ def publish_all(ac_engine: AccessControlEngine, count: int, policies_to_pdp: lis
             for policy in st.session_state.corrected_policies_pdp:
                 if not policy.published and policy.ready_to_publish:
                     policy.published = True
+                    policy.ready_to_publish = True
                     st.session_state.pdp_policies.append(policy)
                     
     ac_engine.create_multiple_policies_json(st.session_state.pdp_policies)
