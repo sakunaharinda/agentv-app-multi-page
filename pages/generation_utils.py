@@ -134,7 +134,7 @@ def review_incorrects_notification(incorrects):
     
 
 def review_individual(written_p: WrittenPolicy):
-    print(written_p.is_incorrect)
+    # print(written_p.is_incorrect)
     review_container = st.container()
     if written_p.is_incorrect:
         review_container.error("The generated policy is found incorrect. Do you want to review it?", icon=":material/dangerous:")

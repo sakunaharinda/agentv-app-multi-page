@@ -412,95 +412,84 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
         is_nlacp = classify_single_sentence(
             nlacp, _id_tokenizer, _id_model
         )
-        if not is_nlacp:
-            _status.update(
-                label="Input is not an access control policy",
-                state="error",
-                expanded=False,
+        # if not is_nlacp:
+        #     _status.update(
+        #         label="Input is not an access control policy",
+        #         state="error",
+        #         expanded=False,
+        #     )
+            
+        #     results.interrupted_errors.append("The entered sentence is not an access control requirement. Please refine the sentence and re-submit again.")
+        # else:
+        results.nlacps.append(nlacp)
+        
+        if do_align:
+            ents = get_available_entities(nlacp, _vectorstores, n=3, chroma=st.session_state.use_chroma)
+            st.write("Translating ...")
+            
+            # TODO: Remove
+            if os.getenv("TEST", False) == 'true' and nlacp == "Medical records cannot be viewed either by LTs or administrators, to protect patient confidentiality.":
+                policy, success = [
+                    {
+                        'decision': 'deny',
+                        'subject': 'lhcp',
+                        'action': 'view',
+                        'resource': 'medical record',
+                        'purpose': 'protect patient confidentiality',
+                        'condition': 'none'
+                    },
+                    {
+                        'decision': 'deny',
+                        'subject': 'administrator',
+                        'action': 'view',
+                        'resource': 'medical record',
+                        'purpose': 'protect patient confidentiality',
+                        'condition': 'none'
+                    }
+                ], True
+            else:
+            
+                policy, success = generate_policy(
+                    nlacp, _gen_tokenizer, _gen_model, ents
+                )
+        else:
+            st.write("Translating ...")
+            policy, success = generate_policy(
+                nlacp, _gen_tokenizer, _gen_model
+            )
+        
+        if success:
+            policy = filter_policy(policy)
+            results.generated_nlacps.append(nlacp)
+            results.generated_policies.append(policy)
+            st.write("Verifying and Refining the translation ...")
+            ver_result = verify(
+                nlacp, policy, _ver_model, _ver_tokenizer
             )
             
-            results.interrupted_errors.append("The entered sentence is not an access control requirement. Please refine the sentence and re-submit again.")
-        else:
-            results.nlacps.append(nlacp)
-            
-            if do_align:
-                ents = get_available_entities(nlacp, _vectorstores, n=3, chroma=st.session_state.use_chroma)
-                st.write("Translating ...")
-                
-                # TODO: Remove
-                if os.getenv("TEST", False) == 'true' and nlacp == "Medical records cannot be viewed either by LTs or administrators, to protect patient confidentiality.":
-                    policy, success = [
-                        {
-                            'decision': 'deny',
-                            'subject': 'lhcp',
-                            'action': 'view',
-                            'resource': 'medical record',
-                            'purpose': 'protect patient confidentiality',
-                            'condition': 'none'
-                        },
-                        {
-                            'decision': 'deny',
-                            'subject': 'administrator',
-                            'action': 'view',
-                            'resource': 'medical record',
-                            'purpose': 'protect patient confidentiality',
-                            'condition': 'none'
-                        }
-                    ], True
-                else:
-                
-                    policy, success = generate_policy(
-                        nlacp, _gen_tokenizer, _gen_model, ents
-                    )
-            else:
-                st.write("Translating ...")
-                policy, success = generate_policy(
-                    nlacp, _gen_tokenizer, _gen_model
+            results.init_verification.append(ver_result)
+            # print(ver_result)
+            if ver_result != 11:
+                # st.write("Refining the translation ...")
+                policy, ver_result = verify_refine(
+                    nlacp,
+                    policy,
+                    _ver_tokenizer,
+                    _ver_model,
+                    _gen_tokenizer,
+                    _gen_model,
                 )
             
-            if success:
-                policy = filter_policy(policy)
-                results.generated_nlacps.append(nlacp)
-                results.generated_policies.append(policy)
-                st.write("Verifying and Refining the translation ...")
-                ver_result = verify(
-                    nlacp, policy, _ver_model, _ver_tokenizer
-                )
+            
+            if ver_result == 11:
                 
-                results.init_verification.append(ver_result)
-                # print(ver_result)
-                if ver_result != 11:
-                    # st.write("Refining the translation ...")
-                    policy, ver_result = verify_refine(
-                        nlacp,
-                        policy,
-                        _ver_tokenizer,
-                        _ver_model,
-                        _gen_tokenizer,
-                        _gen_model,
-                    )
-                
-                
-                if ver_result == 11:
+                if do_align:
+                    policy, outside_hierarchy = align_policy(policy, _vectorstores, hierarchy, chroma=st.session_state.use_chroma)
                     
-                    if do_align:
-                        policy, outside_hierarchy = align_policy(policy, _vectorstores, hierarchy, chroma=st.session_state.use_chroma)
+                    if outside_hierarchy:
+                        results.interrupted_errors.append("Sorry! AGentV has found that the entered access control requirement contains entities (i.e., subjects, actions, and resources) that do not align with the organization. Please refer to the **:material/family_history: Organization Hierarchy**, rephrase the access control requirement, and **:material/play_circle: Generate** again.")
                         
-                        if outside_hierarchy:
-                            results.interrupted_errors.append("Sorry! AGentV has found that the entered access control requirement contains entities (i.e., subjects, actions, and resources) that do not align with the organization. Please refer to the **:material/family_history: Organization Hierarchy**, rephrase the access control requirement, and **:material/play_circle: Generate** again.")
-                            
-                        else:
-                            json_policy = JSONPolicyRecord.from_dict({
-                                'policyId': uuid,
-                                'policyDescription': nlacp,
-                                'policy': policy
-                            })
-                            
-                            save(json_policy, index=0, with_context=do_align)
-                            results.final_correct_policies.append(json_policy)
-                            
                     else:
-                    
                         json_policy = JSONPolicyRecord.from_dict({
                             'policyId': uuid,
                             'policyDescription': nlacp,
@@ -509,49 +498,60 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
                         
                         save(json_policy, index=0, with_context=do_align)
                         results.final_correct_policies.append(json_policy)
-                        # handlers.cor_policy_nav_last()
+                        
                 else:
-                    if ver_result != 10:
-                        error_type = CAT2ERROR[ver_result]
-                        error_loc = locate_error(
-                            nlacp,
-                            str(policy),
-                            error_type,
-                            _loc_model,
-                            _loc_tokenizer,
-                        )
-                        warning = get_locate_warning_msg(error_type, error_loc)
-
-                    else:
-                        warning = get_locate_warning_missing_rule_msg()
-
-                    st.session_state.inc_policies.append(
-                        {
-                            "id": uuid,
-                            "nlacp": nlacp,
-                            "policy": policy,
-                            "warning": warning,
-                            "solved": False,
-                            "show": True
-                        }
-                    )
-                    # handlers.inc_policy_nav_last()
-                    handlers.inc_policy_nav_next()
-                    
-                results.final_verification.append(ver_result)
-                results.final_policies.append(policy)
-
-                _status.update(
-                    label="Generation complete!", state="complete", expanded=False
-                )
-            else:
-                results.interrupted_errors.append("Sorry! AGentV has failed to process the access control policy generated from the entered sentence. Please rephrase the sentence and **:material/play_circle: Generate** again.")
                 
-                _status.update(
-                    label="AGentV has failed to parse the access control policy",
-                    state="error",
-                    expanded=False,
+                    json_policy = JSONPolicyRecord.from_dict({
+                        'policyId': uuid,
+                        'policyDescription': nlacp,
+                        'policy': policy
+                    })
+                    
+                    save(json_policy, index=0, with_context=do_align)
+                    results.final_correct_policies.append(json_policy)
+                    # handlers.cor_policy_nav_last()
+            else:
+                if ver_result != 10:
+                    error_type = CAT2ERROR[ver_result]
+                    error_loc = locate_error(
+                        nlacp,
+                        str(policy),
+                        error_type,
+                        _loc_model,
+                        _loc_tokenizer,
+                    )
+                    warning = get_locate_warning_msg(error_type, error_loc)
+
+                else:
+                    warning = get_locate_warning_missing_rule_msg()
+
+                st.session_state.inc_policies.append(
+                    {
+                        "id": uuid,
+                        "nlacp": nlacp,
+                        "policy": policy,
+                        "warning": warning,
+                        "solved": False,
+                        "show": True
+                    }
                 )
+                # handlers.inc_policy_nav_last()
+                handlers.inc_policy_nav_next()
+                
+            results.final_verification.append(ver_result)
+            results.final_policies.append(policy)
+
+            _status.update(
+                label="Generation complete!", state="complete", expanded=False
+            )
+        else:
+            results.interrupted_errors.append("Sorry! AGentV has failed to process the access control policy generated from the entered sentence. Please rephrase the sentence and **:material/play_circle: Generate** again.")
+            
+            _status.update(
+                label="AGentV has failed to parse the access control policy",
+                state="error",
+                expanded=False,
+            )
             
         
         st.session_state['results_individual'] = results.to_dict()

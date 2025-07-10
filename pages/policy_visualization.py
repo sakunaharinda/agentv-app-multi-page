@@ -97,8 +97,11 @@ def visualize_page():
     change_page_icon('viz_icon')
     if len(st.session_state.pdp_policies)>0:
         with st.container(border=False):
-
-            st.dataframe(create_access_matrix(st.session_state.pdp_policies), use_container_width=True, key="access_matrix")
+            _,col_title = st.columns([1,9])
+            col_title.markdown("<h4 style='text-align: center;'>Resource</h4>", unsafe_allow_html=True)
+            row_title, table = st.columns([1, 9], vertical_alignment="center")
+            row_title.markdown("<h4 style='transform: rotate(270deg); align-items: center;'>Subject</h4>", unsafe_allow_html=True)
+            table.dataframe(create_access_matrix(st.session_state.pdp_policies), use_container_width=True, key="access_matrix")
             
         _,leg_col1,leg_col2,_ = st.columns([4,2,2,4])
 
