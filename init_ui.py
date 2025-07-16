@@ -72,6 +72,8 @@ def init():
     set_state('refresh', False)
     set_state('show_ask_hierarchy_dialog', True)
     set_state('new_session', True)
+    set_state('added_rule', False)
+    set_state('deleted_rule', False)
 
     set_state('current_page', PAGE.START)
     

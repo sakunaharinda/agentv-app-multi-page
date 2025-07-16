@@ -39,18 +39,24 @@ def get_rule_id_str(error_rules):
     return result[2:]
         
 
-def get_locate_warning_msg(error_type, error_rules: List):
+def get_locate_warning_msg(nlacp, error_type, error_rules: List):
     
-    msg = f"#### :material/dangerous: Error in Access Control Policy\nRule {get_rule_id_str(error_rules)} contain{'s a/an' if len(error_rules)==1 else ''} {error_type}{'s' if len(error_rules)>1 else ''} which may restrict or permit unintended access.\nTo correct this:\n1. **Locate Error**: In the table below, go to the row {get_rule_id_str(error_rules)} corresponding to the rule {get_rule_id_str(error_rules)}.\n2. **Edit the {error_type.split(' ')[-1]}**: Double-click the cell highlighted in red under the '{error_type.split(' ')[-1]}' column in this row. A dropdown menu will appear; select the appropriate {error_type.split(' ')[-1]} from the list.\n3. **Submit the Policy**: Click the **'Submit'** button to save the corrected policy."
+    msg = f"#### :material/dangerous: Error in Access Control Policy\n**Affected Access Requirement**: *{nlacp}*\n\nRule {get_rule_id_str(error_rules)} contain{'s a/an' if len(error_rules)==1 else ''} {error_type}{'s' if len(error_rules)>1 else ''} which may restrict or permit unintended access.\nTo correct this:\n1. **Locate Error**: In the table below, go to the row {get_rule_id_str(error_rules)} corresponding to the rule {get_rule_id_str(error_rules)}.\n2. **Edit the {error_type.split(' ')[-1]}**: Double-click the cell highlighted in red under the '{error_type.split(' ')[-1]}' column in this row. A dropdown menu will appear; select the appropriate {error_type.split(' ')[-1]} from the list.\n3. **Submit the Policy**: Click the **'Submit'** button to save the corrected policy."
     
     
     return msg, [error_rules, error_type.split(' ')[-1]]
 
-def get_locate_warning_missing_rule_msg():
+def get_locate_warning_missing_rule_msg(nlacp):
     
-    msg = f"#### :material/dangerous: Error: Missing Access Control Rules\nIt appears that one or more access control rules are absent from the current policy, which may lead to unintended access permissions.\nTo correct this:\n1. **Add a New Rule**: Click :material/add: Add rule to add an empty row to the table below.\n2. **Enter Rule Details**: Input the necessary policy components, such as decision, subject, action, resource, purpose, and condition, ensuring each field accurately reflects the intended access control requirement.\n3. **Submit the Policy**: Click the **'Submit'** button to save the corrected policy."
+    msg = f"#### :material/dangerous: Error: Missing Access Control Rules\n**Affected Access Requirement**: *{nlacp}*\n\nIt appears that one or more access control rules are absent from the current policy, which may lead to unintended access permissions.\nTo correct this:\n1. **Add a New Rule**: Click :material/add: Add rule to add an empty row to the table below.\n2. **Enter Rule Details**: Input the necessary policy components, such as decision, subject, action, resource, purpose, and condition, ensuring each field accurately reflects the intended access control requirement.\n3. **Submit the Policy**: Click the **'Submit'** button to save the corrected policy."
     
 
+    return msg, [None, None]
+
+def get_rule_conflict_message(nlacp, conflict_pairs):
+    
+    msg = f"#### :material/dangerous: Rule Conflict in Access Control Policy\n**Affected Access Requirement**: *{nlacp}*\n\nIt appears that one or more access control rules are conflicting with each other.\nTo correct this:\n1. **Decide which rules to remove**: Based on the **Affected Access Requirement** above, decide which rules to remove to resolve the conflict(s)\n2. **Select Rule(s)**: Select the rules that should be removed from the generated policy by checking the checkbox at the begining of each rule.\n3. **Remove the Selected Rules**: Click :material/delete: Delete Rule to delete the selected rules from the policy.\n4. **Submit the Policy**: Click the **'Submit'** button to save the corrected policy."
+    
     return msg, [None, None]
 
 

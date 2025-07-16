@@ -244,7 +244,7 @@ def review_policy_aggrid(inc_policy, err_info, hierarchy, models):
     st.button("Submit", key=f'submit_inc_btn_{pol_id}', use_container_width=True, type='primary', on_click=submit_corrected_policy, args=(inc_policy, grid_return['data'], hierarchy, models,), icon=":material/send:")
     
 def delete_rule(selected_rows, inc_policy):
-    
+    st.session_state.deleted_rule = True
     df = pd.DataFrame(inc_policy['policy'])
     
     has_selections = not selected_rows.empty
@@ -256,11 +256,13 @@ def delete_rule(selected_rows, inc_policy):
                 ids_to_delete.append(row['rule'])
         if ids_to_delete:
             df = df[~df['rule'].isin(ids_to_delete)].reset_index(drop=True)
-            
+    
+    df = df.drop('rule', axis='columns')
     inc_policy['policy'] = df.to_dict(orient='records')
         
     
 def add_new_rule(inc_policy):
+    st.session_state.added_rule = True
     new_rule = pd.DataFrame({
         "decision": ['allow'],
         "subject": ['none'],
@@ -270,7 +272,9 @@ def add_new_rule(inc_policy):
         "condition": ['none'],
     })
     
-    inc_policy['policy'] = pd.concat([pd.DataFrame(inc_policy['policy']), new_rule]).to_dict(orient='records')
+    df = pd.concat([pd.DataFrame(inc_policy['policy']), new_rule]).drop('rule', axis='columns')
+    
+    inc_policy['policy'] = df.to_dict(orient='records')
     
 
 def review_policy(inc_policy, hierarchy, models):
@@ -328,14 +332,24 @@ def submit_corrected_policy(inc_policy, edited_df: pd.DataFrame, hierarchy, mode
     
     ALL_SOLVED = True
     
-    edited_df = edited_df.drop('rule', axis='columns')
-    edited_df.columns = edited_df.columns.str.lower()
-    corrected_policy = [v for _, v in edited_df.reset_index(drop=True).to_dict("index").items()]
+    
+    if st.session_state.deleted_rule:
+        
+        corrected_policy = inc_policy['policy']
+        st.session_state.deleted_rule = False
+    elif st.session_state.added_rule:
+        corrected_policy = inc_policy['policy']
+        st.session_state.added_rule = False
+    else:
+        edited_df = edited_df.drop('rule', axis='columns')
+        edited_df.columns = edited_df.columns.str.lower()
+        corrected_policy = [v for _, v in edited_df.reset_index(drop=True).to_dict("index").items()]
     
     if st.session_state.do_align:
         policy, outside_hierarchy = align_policy(corrected_policy, models.vectorestores, hierarchy, chroma=st.session_state.use_chroma)
     else:
         policy = corrected_policy
+        
     json_policy = JSONPolicyRecord.from_dict({
         'policyId': inc_policy['id'],
         'policyDescription': inc_policy['nlacp'],
@@ -350,7 +364,7 @@ def submit_corrected_policy(inc_policy, edited_df: pd.DataFrame, hierarchy, mode
     
     # st.session_state.models.vectorestores['nlacps'].add(documents=[json_policy.policyDescription], ids=[json_policy.policyId])
     
-    inc_policy['policy'] = ast.literal_eval(edited_df.to_json(orient='records'))
+    inc_policy['policy'] = corrected_policy
     inc_policy['solved'] = True
     change_page_icon('incorrect_pol_icon')
     inc_policy['show'] = False
@@ -398,7 +412,25 @@ def filter(original_list, filter_container):
             filtered_policies = original_list
             
         if by_nlacp:
-            filtered_policies = filter_by_nlacp(by_nlacp, filtered_policies)
+            if len(by_nlacp.split(' ')) == 1:
+                if by_nlacp[-1] == 's':
+                    filtered1 = filter_by_nlacp(by_nlacp, filtered_policies)
+                    filtered2 = filter_by_nlacp(by_nlacp[:-1], filtered_policies)
+                    
+                    for p in filtered2:
+                        if p not in filtered1:
+                            filtered1.append(p)
+                    filtered_policies = filtered1
+                else:
+                    filtered1 = filter_by_nlacp(by_nlacp, filtered_policies)
+                    filtered2 = filter_by_nlacp(by_nlacp+'s', filtered_policies)
+                    
+                    for p in filtered2:
+                        if p not in filtered1:
+                            filtered1.append(p)
+                    filtered_policies = filtered1
+            else:
+                filtered_policies = filter_by_nlacp(by_nlacp, filtered_policies)
             
     return filtered_policies
     

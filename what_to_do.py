@@ -262,6 +262,7 @@ def correct_pol_help():
 def visualize_help():
     
     st.write("View what subjects/roles can do what actions to what resources, represented in an access matrix")
+    st.info("If you find that a newly generated policy does not show up in the access matrix, go to the **Access Control Policies** page, check whether the policy is generated correctly and is published to AGentV's internal database.")
     
 @st.dialog("What should I do?", width='large')
 def test_pol_help():

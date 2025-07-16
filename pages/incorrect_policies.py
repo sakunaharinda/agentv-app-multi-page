@@ -7,7 +7,7 @@ from uuid import uuid4
 from init_ui import init
 from hierarchy_visualizer import set_hierarchy, visualize_hierarchy_dialog
 
-@st.fragment
+# @st.fragment
 def show_incorrect_policies(models, hierarchy):
     
     st.session_state.current_page = PAGE.INCORRECT_POL

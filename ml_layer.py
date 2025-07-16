@@ -396,6 +396,20 @@ def align_policy_chroma(policy, _vectorstore: dict, hierarchy: dict):
             
     return expand_policy(unique_pols, hierarchy['subject_hierarchy'], hierarchy['action_hierarchy'], hierarchy['resource_hierarchy']), outside_hierarchy
 
+
+def check_conflicts_bf(policy):
+    conflict = False
+    conflict_pairs = []
+    for r1 in policy:
+        for r2 in policy:
+            if r1['decision'] != r2['decision']:
+                if (r1['subject'] == r2['subject']) and (r1['action'] == r2['action']) and (r1['resource'] == r2['resource']) and (r1['condition'] == r2['condition']) and (r1['purpose'] == r2['purpose']):
+                    conflict = True
+                    if ((r1, r2) not in conflict_pairs) and ((r2, r1) not in conflict_pairs):
+                        conflict_pairs.append((r1,r2))
+                    
+    return conflict, conflict_pairs
+
 # @st.cache_data(show_spinner=False)
 def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_tokenizer, _gen_model, _ver_model, _ver_tokenizer, _loc_tokenizer, _loc_model, _vectorstores, hierarchy, do_align=True):
     
@@ -448,14 +462,15 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
                     }
                 ], True
             else:
-            
+                nlacp_lower = nlacp.lower()
                 policy, success = generate_policy(
-                    nlacp, _gen_tokenizer, _gen_model, ents
+                    nlacp_lower, _gen_tokenizer, _gen_model, ents
                 )
         else:
+            nlacp_lower = nlacp.lower()
             st.write("Translating ...")
             policy, success = generate_policy(
-                nlacp, _gen_tokenizer, _gen_model
+                nlacp_lower, _gen_tokenizer, _gen_model
             )
         
         if success:
@@ -481,7 +496,11 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
                 )
             
             
-            if ver_result == 11:
+            expanded_policy,_ = align_policy(policy, _vectorstores, hierarchy, chroma=st.session_state.use_chroma)
+            conflict, conflict_pairs = check_conflicts_bf(expanded_policy)
+            
+            
+            if ver_result == 11 and conflict == False:
                 
                 if do_align:
                     policy, outside_hierarchy = align_policy(policy, _vectorstores, hierarchy, chroma=st.session_state.use_chroma)
@@ -510,20 +529,35 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
                     save(json_policy, index=0, with_context=do_align)
                     results.final_correct_policies.append(json_policy)
                     # handlers.cor_policy_nav_last()
+                    
+            elif (conflict == True):
+                warning = get_rule_conflict_message(nlacp, conflict_pairs)
+                st.session_state.inc_policies.append(
+                    {
+                        "id": uuid,
+                        "nlacp": nlacp,
+                        "policy": expanded_policy,
+                        "warning": warning,
+                        "solved": False,
+                        "show": True
+                    }
+                )
+                
             else:
                 if ver_result != 10:
+                    nlacp_lower = nlacp.lower()
                     error_type = CAT2ERROR[ver_result]
                     error_loc = locate_error(
-                        nlacp,
+                        nlacp_lower,
                         str(policy),
                         error_type,
                         _loc_model,
                         _loc_tokenizer,
                     )
-                    warning = get_locate_warning_msg(error_type, error_loc)
+                    warning = get_locate_warning_msg(nlacp, error_type, error_loc)
 
                 else:
-                    warning = get_locate_warning_missing_rule_msg()
+                    warning = get_locate_warning_missing_rule_msg(nlacp)
 
                 st.session_state.inc_policies.append(
                     {
@@ -713,7 +747,7 @@ def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_toke
                             _loc_tokenizer,
                         )
                             
-                        warning = get_locate_warning_msg(error_type, error_loc)
+                        warning = get_locate_warning_msg(nlacp, error_type, error_loc)
                         st.session_state.inc_policies.append(
                             {
                                 "id": str(uuid4()),
@@ -726,7 +760,7 @@ def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_toke
                         )
 
                     else:
-                        warning = get_locate_warning_missing_rule_msg()
+                        warning = get_locate_warning_missing_rule_msg(nlacp)
 
                         st.session_state.inc_policies.append(
                             {
