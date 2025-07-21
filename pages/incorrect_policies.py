@@ -53,10 +53,10 @@ def show_incorrect_policies(models, hierarchy):
             st.markdown(f"Policy Id: {incorrect_pol_object['id']}")
             st.markdown(get_updated_description_inc(incorrect_pol_object))
             with st.expander("Errorneous Policy" if not incorrect_pol_object['solved'] else "Corrected Policy", expanded=incorrect_pol_object['show']):
-                warning, info = incorrect_pol_object["warning"]
+                warning, info, conflicts = incorrect_pol_object["warning"]
                 st.error(warning)
                 # review_policy(incorrect_pol_object, hierarchy, models)
-                review_policy_aggrid(incorrect_pol_object, info, hierarchy, models)
+                review_policy_aggrid(incorrect_pol_object, info, conflicts, hierarchy, models)
 
 if 'new_session' not in st.session_state:
     init()

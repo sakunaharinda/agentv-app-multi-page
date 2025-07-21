@@ -499,8 +499,21 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
             expanded_policy,_ = align_policy(policy, _vectorstores, hierarchy, chroma=st.session_state.use_chroma)
             conflict, conflict_pairs = check_conflicts_bf(expanded_policy)
             
-            
-            if ver_result == 11 and conflict == False:
+            if (conflict == True):
+                warning = get_rule_conflict_message(nlacp, conflict_pairs)
+                st.session_state.inc_policies.append(
+                    {
+                        "id": uuid,
+                        "nlacp": nlacp,
+                        "policy": expanded_policy,
+                        "warning": warning,
+                        "solved": False,
+                        "show": True
+                    }
+                )
+                ver_result = -1 # Indicating a conflict
+                
+            elif ver_result == 11:
                 
                 if do_align:
                     policy, outside_hierarchy = align_policy(policy, _vectorstores, hierarchy, chroma=st.session_state.use_chroma)
@@ -529,19 +542,6 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
                     save(json_policy, index=0, with_context=do_align)
                     results.final_correct_policies.append(json_policy)
                     # handlers.cor_policy_nav_last()
-                    
-            elif (conflict == True):
-                warning = get_rule_conflict_message(nlacp, conflict_pairs)
-                st.session_state.inc_policies.append(
-                    {
-                        "id": uuid,
-                        "nlacp": nlacp,
-                        "policy": expanded_policy,
-                        "warning": warning,
-                        "solved": False,
-                        "show": True
-                    }
-                )
                 
             else:
                 if ver_result != 10:

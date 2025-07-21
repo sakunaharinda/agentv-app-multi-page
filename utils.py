@@ -9,6 +9,16 @@ from torch.utils.data import Dataset, DataLoader
 from models.record_dto import Results
 from models.ac_engine_dto import JSONPolicyRecord
 from ac_engine_service import AccessControlEngine
+import distinctipy
+
+def get_random_colors(n):
+  colors = distinctipy.get_colors(n, pastel_factor=0.7, exclude_colors=[(0.0, 1.0, 0.0)])  
+
+  colors_hex = ['#{:02x}{:02x}{:02x}'.format(
+          int(rgb[0] * 255), int(rgb[1] * 255), int(rgb[2] * 255)
+      ) for rgb in colors]
+
+  return colors_hex
 
 class Task(Enum):
     NLACP_ID = 'nlacp_identification',

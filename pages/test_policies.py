@@ -78,9 +78,9 @@ def test_policies():
         col,_,_ = st.columns([1,1,1])
         col.write(f"{len(policies_from_pdp)}/{len(st.session_state.pdp_policies)} records are shown.")
         test_sys = st.button(
-            "Test All",
+            "Test with all Policies",
             type="primary",
-            help="Test all the policies by sending an access request",
+            help="Test by sending an access request to the entire policy database",
             use_container_width=True,
             key="test_all",
             disabled=len(st.session_state.pdp_policies) < 1,

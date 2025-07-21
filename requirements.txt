@@ -26,3 +26,4 @@ nltk
 elasticsearch
 streamlit-authenticator
 streamlit-tile==3.0.0
+distinctipy

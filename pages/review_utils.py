@@ -1,6 +1,6 @@
 import streamlit as st
 from ac_engine_service import AccessControlEngine
-from utils import change_page_icon, save
+from utils import change_page_icon, save, get_random_colors
 from models.ac_engine_dto import JSONPolicyRecord, JSONPolicyRecordPDP
 from loading import load_policy
 from ml_layer import align_policy
@@ -32,7 +32,7 @@ def publish_single(pdp_policy: JSONPolicyRecordPDP, ac_engine: AccessControlEngi
         if pdp_policy not in st.session_state.pdp_policies:
             pdp_policy.published = True
             pdp_policy.ready_to_publish = True
-            st.session_state.pdp_policies.append(pdp_policy)
+            st.session_state.pdp_policies.insert(0, pdp_policy)
             # st.session_state.pdp_policies = list(set(st.session_state.pdp_policies))
             
             ac_engine.create_policy_json(pdp_policy)
@@ -151,6 +151,22 @@ def get_options(h: dict):
     return sorted(list(set(values)))
 
 
+def highlight_rows(row_highlights, gb: GridOptionsBuilder):
+    js_func = JsCode(f"""
+        function(params) {{
+            const map = {row_highlights};
+            const color = map[params.node.rowIndex];
+            if (color !== undefined) {{
+                return {{
+                    backgroundColor: color,
+                    color: 'black'
+                }};
+            }}
+        }}
+    """)
+    gb.configure_grid_options(getRowStyle=js_func)
+
+
 def highlight_errors(highlights, gb: GridOptionsBuilder):
     for highlight in highlights:
         row_index, column_field = highlight
@@ -174,7 +190,25 @@ def add_rule_ids(policy):
         p.append(rule)
     return p
 
-def review_policy_aggrid(inc_policy, err_info, hierarchy, models):
+def get_conflicting_rule_ids(df, conflicts):
+    all_ids = []
+    for pair in conflicts:
+        ids = []
+        for r in pair:
+            df_row = df[(df['Decision'] == r['decision']) & (df['Subject'] == r['subject']) & (df['Action'] == r['action']) & (df['Resource'] == r['resource'])]
+            if len(df_row) > 0:
+                ids.append(df_row['rule'].item())
+        if len(ids) > 1:
+            all_ids.append(ids)
+            
+    colors = get_random_colors(len(all_ids))
+    color_rule = {}
+    for p,c in zip(all_ids, colors):
+        for p_sub in p:
+            color_rule[p_sub-1] = c
+    return color_rule
+
+def review_policy_aggrid(inc_policy, err_info, conflicts, hierarchy, models):
     
     highlights = []
     
@@ -220,6 +254,10 @@ def review_policy_aggrid(inc_policy, err_info, hierarchy, models):
             highlights.append((row, error_type.capitalize()))
         if not inc_policy['solved']:
             highlight_errors(highlights, gb)
+    
+    if len(conflicts)>0:
+        color_rules = get_conflicting_rule_ids(df, conflicts)
+        highlight_rows(color_rules, gb)
     
     grid_options = gb.build()
     grid_return = AgGrid(df, gridOptions=grid_options,

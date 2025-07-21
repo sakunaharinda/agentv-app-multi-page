@@ -44,7 +44,7 @@ def generate_sent(hierarchy, models, ac_engine: AccessControlEngine):
     st.session_state['sentence_page'] = True
     st.session_state['document_page'] = False
     
-    if st.session_state.show_ask_hierarchy_dialog:
+    if st.session_state.show_ask_hierarchy_dialog or st.session_state.hierarchies==None:
         visualize_hierarchy_dialog()
     
     st.title("Policy Generation from a Sentence")

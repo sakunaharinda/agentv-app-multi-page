@@ -44,27 +44,27 @@ def get_locate_warning_msg(nlacp, error_type, error_rules: List):
     msg = f"#### :material/dangerous: Error in Access Control Policy\n**Affected Access Requirement**: *{nlacp}*\n\nRule {get_rule_id_str(error_rules)} contain{'s a/an' if len(error_rules)==1 else ''} {error_type}{'s' if len(error_rules)>1 else ''} which may restrict or permit unintended access.\nTo correct this:\n1. **Locate Error**: In the table below, go to the row {get_rule_id_str(error_rules)} corresponding to the rule {get_rule_id_str(error_rules)}.\n2. **Edit the {error_type.split(' ')[-1]}**: Double-click the cell highlighted in red under the '{error_type.split(' ')[-1]}' column in this row. A dropdown menu will appear; select the appropriate {error_type.split(' ')[-1]} from the list.\n3. **Submit the Policy**: Click the **'Submit'** button to save the corrected policy."
     
     
-    return msg, [error_rules, error_type.split(' ')[-1]]
+    return msg, [error_rules, error_type.split(' ')[-1]],[]
 
 def get_locate_warning_missing_rule_msg(nlacp):
     
     msg = f"#### :material/dangerous: Error: Missing Access Control Rules\n**Affected Access Requirement**: *{nlacp}*\n\nIt appears that one or more access control rules are absent from the current policy, which may lead to unintended access permissions.\nTo correct this:\n1. **Add a New Rule**: Click :material/add: Add rule to add an empty row to the table below.\n2. **Enter Rule Details**: Input the necessary policy components, such as decision, subject, action, resource, purpose, and condition, ensuring each field accurately reflects the intended access control requirement.\n3. **Submit the Policy**: Click the **'Submit'** button to save the corrected policy."
     
 
-    return msg, [None, None]
+    return msg, [None, None],[]
 
 def get_rule_conflict_message(nlacp, conflict_pairs):
     
     msg = f"#### :material/dangerous: Rule Conflict in Access Control Policy\n**Affected Access Requirement**: *{nlacp}*\n\nIt appears that one or more access control rules are conflicting with each other.\nTo correct this:\n1. **Decide which rules to remove**: Based on the **Affected Access Requirement** above, decide which rules to remove to resolve the conflict(s)\n2. **Select Rule(s)**: Select the rules that should be removed from the generated policy by checking the checkbox at the begining of each rule.\n3. **Remove the Selected Rules**: Click :material/delete: Delete Rule to delete the selected rules from the policy.\n4. **Submit the Policy**: Click the **'Submit'** button to save the corrected policy."
     
-    return msg, [None, None]
+    return msg, [None, None], conflict_pairs
 
 
 def get_unrelated_warning():
     
     msg = f"#### :material/dangerous: Error: Unrelated Access Control Rule\nIt appears that one or more access control rules are not aligining with the organization hierarchy you uploaded.\nTo correct this:\n1. **Go to 'Generate from a Sentence'**: Go back to the 'Generate from Sentence' page.\n2. **Re-write the access control policy**: Re-write the access control requirement ensuring that it aligns with the subjects, actions, and resources of the organization\n3. **Re-generate**: Re-generate the access control policy by clicking the **Generate** button"
     
-    return msg, [None, None]
+    return msg, [None, None],[]
 
 @st.dialog(" ")
 def success_publish_feedback(mode: Literal['single', 'multiple']='single'):
