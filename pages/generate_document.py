@@ -42,7 +42,8 @@ def generate_doc(hierarchy, models):
         </style>
         """, unsafe_allow_html=True)
     
-    if st.session_state.show_ask_hierarchy_dialog or st.session_state.hierarchies==None:
+    if (st.session_state.show_ask_hierarchy_dialog_document) and st.session_state.hierarchies==None:
+        st.session_state.show_ask_hierarchy_dialog_document = False
         visualize_hierarchy_dialog()
 
     st.session_state['document_page'] = True

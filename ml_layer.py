@@ -414,6 +414,7 @@ def check_conflicts_bf(policy):
 def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_tokenizer, _gen_model, _ver_model, _ver_tokenizer, _loc_tokenizer, _loc_model, _vectorstores, hierarchy, do_align=True):
     
     uuid = str(uuid4())
+    expanded_policy = []
     
     with _status_container.status("Generating the policy ...", expanded=True) as _status:
 
@@ -495,9 +496,12 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
                     _gen_model,
                 )
             
-            
-            expanded_policy,_ = align_policy(policy, _vectorstores, hierarchy, chroma=st.session_state.use_chroma)
-            conflict, conflict_pairs = check_conflicts_bf(expanded_policy)
+            if do_align:
+                expanded_policy,_ = align_policy(policy, _vectorstores, hierarchy, chroma=st.session_state.use_chroma)
+                
+                conflict, conflict_pairs = check_conflicts_bf(expanded_policy)
+            else:
+                conflict, conflict_pairs = check_conflicts_bf(policy)
             
             if (conflict == True):
                 warning = get_rule_conflict_message(nlacp, conflict_pairs)
@@ -505,7 +509,7 @@ def agentv_single(_status_container, nlacp, _id_tokenizer, _id_model, _gen_token
                     {
                         "id": uuid,
                         "nlacp": nlacp,
-                        "policy": expanded_policy,
+                        "policy": expanded_policy if len(expanded_policy) > 0 else policy,
                         "warning": warning,
                         "solved": False,
                         "show": True
