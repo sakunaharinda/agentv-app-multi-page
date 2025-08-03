@@ -634,29 +634,29 @@ def agentv_batch(_status_container, content, _id_tokenizer, _id_model, _gen_toke
             
             if do_align:
                 
-                if os.getenv("TEST", False) == 'true' and nlacp == "Medical records cannot be viewed either by LTs or administrators, to protect patient confidentiality.":
-                    policy, success = [
-                        {
-                            'decision': 'deny',
-                            'subject': 'lhcp',
-                            'action': 'view',
-                            'resource': 'medical record',
-                            'purpose': 'protect patient confidentiality',
-                            'condition': 'none'
-                        },
-                        {
-                            'decision': 'deny',
-                            'subject': 'administrator',
-                            'action': 'view',
-                            'resource': 'medical record',
-                            'purpose': 'protect patient confidentiality',
-                            'condition': 'none'
-                        }
-                    ], True
-                else:
-                    policy, success = generate_policy(
-                        nlacp, _gen_tokenizer, _gen_model, context=context
-                    )
+                # if os.getenv("TEST", False) == 'true' and nlacp == "Medical records cannot be viewed either by LTs or administrators, to protect patient confidentiality.":
+                #     policy, success = [
+                #         {
+                #             'decision': 'deny',
+                #             'subject': 'lhcp',
+                #             'action': 'view',
+                #             'resource': 'medical record',
+                #             'purpose': 'protect patient confidentiality',
+                #             'condition': 'none'
+                #         },
+                #         {
+                #             'decision': 'deny',
+                #             'subject': 'administrator',
+                #             'action': 'view',
+                #             'resource': 'medical record',
+                #             'purpose': 'protect patient confidentiality',
+                #             'condition': 'none'
+                #         }
+                #     ], True
+                # else:
+                policy, success = generate_policy(
+                    nlacp, _gen_tokenizer, _gen_model, context=context
+                )
             else:
                 policy, success = generate_policy(nlacp, _gen_tokenizer, _gen_model)
         
