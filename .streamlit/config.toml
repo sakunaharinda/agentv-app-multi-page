@@ -1,3 +1,11 @@
 [theme]
 base="light"
-primaryColor="#1c83e1"
+primaryColor="#4285F4"
+backgroundColor="#F9F9F9"
+
+[client]
+showSidebarNavigation = false
+toolbarMode = "minimal"
+
+[ui]
+hideTopBar = true

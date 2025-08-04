@@ -2,6 +2,22 @@ import streamlit as st
 from feedback import warning
 
 import plotly.graph_objects as go
+from models.ac_engine_dto import WrittenPolicy
+from feedback import success_generation_feedback, failed_generation_feedback
+
+def get_updated_description(policy: WrittenPolicy):
+    
+    if not policy.is_incorrect:
+        
+        new_description = policy.sentence + " :green-badge[:material/check: Generated]"
+    else:
+        new_description = policy.sentence + " :red-badge[:material/error: Attention Needed]"
+        
+    # if not policy.with_context:
+        
+    #     new_description+= " :red-badge[:material/family_history: Outside context]"
+        
+    return f"**{new_description}**"
 
 def show_bar_chart(container):
     
@@ -44,7 +60,7 @@ def show_bar_chart(container):
     # Update layout for a stacked bar chart
     fig.update_layout(
         barmode='stack',
-        height=140,
+        height=130,
         margin=dict(l=50, r=50, t=50, b=50),
         legend=dict(orientation='h', yanchor='bottom', y=1.02, xanchor='right', x=1),
         xaxis=dict(title='Percentage (%)', range=[0, 100])
@@ -58,7 +74,7 @@ def show_summary(status_container):
 
     summary = f"Sentences in uploaded document: {len(st.session_state.results_document['sentences'])}\nAccess control requirements identified: {len(st.session_state.results_document['generated_nlacps'])}\nCorrectly generated policies: {st.session_state.results_document['final_verification'].count(11)}\nIncorrectly generated policies: {len(st.session_state.results_document['generated_nlacps']) - st.session_state.results_document['final_verification'].count(11)}"
     
-    status_container.text_area("Summary", summary, help=f"A summary of the completed access control policy generation process, outlining the total number of sentences found in the input document, the number of access control requirement found among the sentences, the number of correctly translated access control requirements into structured access control policies (See **Correct Policies** page), and the number of failed translations (See **Incorrect Policies** page)",disabled=False, height=150)
+    status_container.text_area("Summary", summary, help=f"A summary of the completed access control policy generation process, outlining the total number of sentences found in the input document, the number of access control requirement found among the sentences, the number of correctly translated access control requirements into structured access control policies (See **Correct Policies** page), and the number of failed translations (See **Incorrect Policies** page)",disabled=False, height=112)
         
         
 @st.dialog("Generation without Organization Hierarchy")
@@ -81,14 +97,14 @@ def generating_wo_hierarchy():
         
     elif upload_hierarchy:
         st.session_state.is_generating = False
-        st.switch_page('sections/get_started.py')
+        st.switch_page('pages/get_started.py')
     
 
 def on_click_review():
-    st.switch_page('sections/review/incorrect_policies.py')
+    st.switch_page('pages/incorrect_policies.py')
     
 def on_click_publish():
-    st.switch_page('sections/review/correct_policies.py')
+    st.switch_page('pages/correct_policies.py')
 
 @st.dialog("Review Incorrectly Generated Policies")
 def review_incorrects(incorrects):
@@ -103,26 +119,42 @@ def review_incorrects(incorrects):
     review = gencol1.button("Yes", key="review_now", help="Review the incorrectly generated policies.", type='primary', use_container_width=True)
     
     if review:
-        st.switch_page('sections/review/incorrect_policies.py')
+        st.switch_page('pages/incorrect_policies.py')
         
     elif wait:
         st.rerun()
         
     st.session_state.reviewed = True
     
-
-def review_individual(id, incorrect = False):
+def review_incorrects_notification(incorrects):
     
+    st.toast(f"You have incorrectly generated policies. Go to **Incorrect Access Control Policies** page to review.",icon=":material/warning:")
+        
+    st.session_state.reviewed = True
+    
+
+def review_individual(written_p: WrittenPolicy):
+    # print(written_p.is_incorrect)
     review_container = st.container()
-    if incorrect:
+    if written_p.is_incorrect:
         review_container.error("The generated policy is found incorrect. Do you want to review it?", icon=":material/dangerous:")
-        if review_container.button("Review", key=f'review_btn_{id}', use_container_width=True, type='secondary'):
+        if review_container.button("Review", key=f'review_btn_{written_p.id}', use_container_width=True, type='primary', icon=":material/rate_review:"):
             on_click_review()
+            
+        if not written_p.is_reviewed:
+            # st.toast(f"You have an incorrectly generated policy. Go to **Incorrect Access Control Policies** page to review.",icon=":material/warning:")
+            failed_generation_feedback()
+            written_p.is_reviewed = True
         
     else:
         review_container.info("Do you want to review and publish the generated policy to the policy database?", icon=":material/rate_review:")
-        if review_container.button("Review", key=f'review_btn_{id}', use_container_width=True, type='secondary'):
+        if review_container.button("Review", key=f'review_btn_{written_p.id}', use_container_width=True, type='primary', icon=":material/rate_review:"):
             on_click_publish()
+            
+        if not written_p.is_reviewed:
+            # st.toast(f"Policy is generated successfully. Go to **Access Control Policies** page to review and publish.",icon=":material/check:")
+            success_generation_feedback(mode='single')
+            written_p.is_reviewed = True
         
     return review_container
     

@@ -30,23 +30,6 @@ class Results:
             'interrupted_errors': self.interrupted_errors
         }
         
-@dataclass
-class WrittenPolicy:
-    id: str = "1"
-    sentence: str = ""
-    policy: List[dict] = field(default_factory = list)
-    error: str = None
-    is_incorrect: bool = False
-    
-    def to_dict(self):
-        return {
-            'id': self.id,
-            'sentence': self.sentence,
-            'policy': self.policy,
-            'error': self.error,
-            'is_incorrect': self.is_incorrect
-        }
-        
 
 class Hierarchy:
     subject_hierarchy: dict

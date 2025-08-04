@@ -1,0 +1,33 @@
+.venv
+.env
+downloads
+logs
+data
+vectorestore_server
+.gitignore
+agentv.png
+*.sh
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+
+# Git directory
+.git/
+.gitignore
+
+# Docker
+.dockerignore
+Dockerfile
+
+run.sh
+cleanup.sh
+run_lazy.sh
+seed_users.py
+pass_gen.py
+password_generator.sh
+test.py

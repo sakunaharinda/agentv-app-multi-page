@@ -4,14 +4,11 @@ import streamlit as st
 import json
 import pandas as pd
 from transformers import AutoTokenizer, BertForSequenceClassification, BertTokenizerFast, AutoModelForCausalLM, BertForQuestionAnswering, AutoModelForSequenceClassification
-from dotenv import load_dotenv
-from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 import yaml
 from models.record_dto import Hierarchy
-from typing import Literal
-
-_ = load_dotenv()
+import chromadb
+import chromadb.utils.embedding_functions as embedding_functions
 
 @st.cache_data
 def load_json_output(data):    
@@ -19,12 +16,27 @@ def load_json_output(data):
 
 @st.cache_data
 def load_policy(data):
-    return pd.DataFrame(data)
+    df = pd.DataFrame(data)
+    df.rename(columns={
+        'decision': 'Decision',
+        'subject': 'Subject',
+        'action': 'Action',
+        'resource': 'Resource',
+        'condition': 'Condition',
+        'purpose': 'Purpose'
+    }, inplace=True)
+    return df
 
 @st.cache_data
 def load_hierarchy_yaml(file):
-    content = file.getvalue().decode('utf-8')
-    return yaml.safe_load(content)
+    
+    if isinstance(file, str):
+        with open(file, 'r') as f:
+            content = yaml.safe_load(f)
+            return content
+    else:
+        content = file.getvalue().decode('utf-8')
+        return yaml.safe_load(content)
     
 @st.cache_data(show_spinner=False)
 def flatten(nested_list):
@@ -67,6 +79,20 @@ def flatten(nested_list):
     
     return result
 
+def reverse_hierarchy(hierarchy):
+    
+    reversed = {}
+    
+    for k,v in hierarchy.items():
+        for vv in v:
+            if vv not in reversed:
+                reversed[vv] = [k]
+            else:
+                if k not in reversed[vv]:
+                    reversed[vv].append(k)
+                    
+    return reversed
+
 @st.cache_data(show_spinner=False)
 def remove_itself(hierarchy: dict):
     
@@ -80,12 +106,12 @@ def remove_itself(hierarchy: dict):
             
     return new_hierarchy
     
-@st.cache_data(show_spinner=False)
+@st.cache_resource(show_spinner=False)
 def get_entity_hierarchy(hierarchy_file):
     
     main_hierarchy = load_hierarchy_yaml(hierarchy_file)
     
-    subject_h = flatten(main_hierarchy.get('subjects', {}))
+    subject_h = remove_itself(flatten(main_hierarchy.get('subjects', {})))
     action_h = remove_itself(flatten(main_hierarchy.get('actions', {})))
     resource_h = remove_itself(flatten(main_hierarchy.get('resources', {})))
     condition_h = remove_itself(flatten(main_hierarchy.get('conditions', {})))
@@ -100,8 +126,14 @@ def load_models():
     ver_model, ver_tokenizer = load_ver_model()
     loc_model, loc_tokenizer = load_loc_model()
     vectorestores = None #load_vectorstores("data/vectorstores")
-    embedding_model = HuggingFaceEmbeddings(model_name="mixedbread-ai/mxbai-embed-large-v1",
+    if st.session_state.use_chroma:
+        embedding_model = None
+        chroma_client = chromadb.HttpClient(host=os.environ['CHROMA_HOST'], port=os.environ['CHROMA_PORT'])
+        vectorestores = load_vectorstores(chroma_client) 
+    else:
+        embedding_model = HuggingFaceEmbeddings(model_name="mixedbread-ai/mxbai-embed-large-v1",
                                     model_kwargs={'device':"cuda", "trust_remote_code": True})
+        vectorestores = None 
     
     return id_model, id_tokenizer, gen_model, gen_tokenizer, ver_model, ver_tokenizer, loc_model, loc_tokenizer, vectorestores, embedding_model
     
@@ -161,53 +193,26 @@ def load_loc_model():
     model.eval()
     return model, tokenizer  
 
-@st.cache_resource
-def load_vectorstores(store_location = "../data/vectorstores"):
-    embeddings = HuggingFaceEmbeddings(
-        model_name="mixedbread-ai/mxbai-embed-large-v1", model_kwargs={"device": "cuda:0"}
-    )
-
-    vector_store_subjects = FAISS.load_local(
-        f"{store_location}/subjects_index",
-        embeddings,
-        allow_dangerous_deserialization=True,
-    )
-    vector_store_resources = FAISS.load_local(
-        f"{store_location}/resources_index",
-        embeddings,
-        allow_dangerous_deserialization=True,
-    )
-    # vector_store_purposes = FAISS.load_local(
-    #     f"{store_location}/purposes_index",
-    #     embeddings,
-    #     allow_dangerous_deserialization=True,
-    # )
-    vector_store_conditions = FAISS.load_local(
-        f"{store_location}/conditions_index",
-        embeddings,
-        allow_dangerous_deserialization=True,
-    )
-    
-    vector_store_actions = FAISS.load_local(
-        f"{store_location}/actions_index",
-        embeddings,
-        allow_dangerous_deserialization=True,
-    )
+def load_vectorstores(client):
 
     stores = {
-        "subject": vector_store_subjects,
-        "action": vector_store_actions,
-        "resource": vector_store_resources,
+        "subject": client.get_or_create_collection(name="subject", embedding_function=embedding_functions.SentenceTransformerEmbeddingFunction(model_name="mixedbread-ai/mxbai-embed-large-v1", device='cuda'), metadata={"hnsw:space": "cosine"}),
+        "action": client.get_or_create_collection(name="action", embedding_function=embedding_functions.SentenceTransformerEmbeddingFunction(model_name="mixedbread-ai/mxbai-embed-large-v1", device='cuda'), metadata={"hnsw:space": "cosine"}),
+        "resource": client.get_or_create_collection(name="resource", embedding_function=embedding_functions.SentenceTransformerEmbeddingFunction(model_name="mixedbread-ai/mxbai-embed-large-v1", device='cuda'), metadata={"hnsw:space": "cosine"}),
         # "purpose": vector_store_purposes,
-        "condition": vector_store_conditions,
+        "condition": client.get_or_create_collection(name="condition", embedding_function=embedding_functions.SentenceTransformerEmbeddingFunction(model_name="mixedbread-ai/mxbai-embed-large-v1", device='cuda'), metadata={"hnsw:space": "cosine"}),
+        # "nlacps": client.get_or_create_collection(name="nlacps", embedding_function=embedding_functions.SentenceTransformerEmbeddingFunction(model_name="mixedbread-ai/mxbai-embed-large-v1", device='cuda'), metadata={"hnsw:space": "cosine"})
+        "bm25": None
     }
 
     return stores
 
+
+
 class ModelStore:
     
     def __init__(self, fake=False):
-        
+            
         if fake:
             self.id_model, self.id_tokenizer, self.gen_model, self.gen_tokenizer, self.ver_model, self.ver_tokenizer, self.loc_model, self.loc_tokenizer, self.vectorestores, self.embedding_model = 10*[None]
         

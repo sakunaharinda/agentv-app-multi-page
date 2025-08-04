@@ -3,6 +3,7 @@ from ac_engine_service import AccessControlEngine
 from loading import ModelStore
 from uuid import uuid4
 from models.pages import PAGE
+import os
 
 def set_state(state, value):
     if state not in st.session_state:
@@ -10,6 +11,8 @@ def set_state(state, value):
         
         
 def init():
+    
+    st.set_page_config(layout="wide")
     
     set_state('start_icon', ':material/radio_button_unchecked:')
     set_state('correct_pol_icon', ':material/radio_button_unchecked:')
@@ -20,6 +23,10 @@ def init():
     set_state('viz_icon', ':material/radio_button_unchecked:')
     set_state('test_icon', ':material/radio_button_unchecked:')
     set_state('save_icon', ':material/radio_button_unchecked:')
+    set_state('no_hierarchy', False)
+    set_state('review_single', False)
+    set_state('inc_policy_count', 0)
+    set_state('corr_policy_count', 0)
     
     
     set_state('enable_generation', False)
@@ -30,6 +37,9 @@ def init():
     set_state('cor_count', -1)
     set_state('inc_policies', [])
     set_state('corrected_policies', [])
+    set_state('corrected_policies_pdp', [])
+    set_state('interrupted_errors', [])
+    set_state('all_published', False)
     set_state('pdp_count', -1)
     set_state('pdp_policies', [])
     
@@ -41,6 +51,8 @@ def init():
     set_state('do_align', True)
     set_state('generate_wo_context', False)
     set_state('reviewed', False)
+    set_state('select_count', 0)
+    set_state('test_overall', False)
     
     st.session_state.num_correct_policies = len(st.session_state.corrected_policies)
     st.session_state.num_incorrect_policies = len(st.session_state.inc_policies)
@@ -53,10 +65,17 @@ def init():
     set_state('policy_viz_title', 'Visualize Policies')
     set_state('write_xacml_title', 'Write in XACML')
     set_state('policy_test_title', "Test Policies")
-    set_state('policy_export_title', "Save Policies")
+    set_state('policy_export_title', "Download Policies")
     set_state('started', False)
     set_state('new_doc', True)
-    set_state('show_hierarchy', False)
+    set_state('use_chroma', os.getenv('USE_CHROMA'))
+    set_state('refresh', False)
+    set_state('show_ask_hierarchy_dialog', True)
+    set_state('show_ask_hierarchy_dialog_individual', True)
+    set_state('show_ask_hierarchy_dialog_document', True)
+    set_state('new_session', True)
+    set_state('added_rule', False)
+    set_state('deleted_rule', False)
 
     set_state('current_page', PAGE.START)
     
@@ -64,6 +83,11 @@ def init():
     #     st.session_state.show_hierarchy = True
     # else:
     #     st.session_state.show_hierarchy = False
+    
+    if 'show_hierarchy' not in st.session_state:
+        st.session_state.show_hierarchy = True
+    else:
+        st.session_state.show_hierarchy = False
         
     if 'first_time' not in st.session_state:
         st.session_state.first_time = True
@@ -71,13 +95,35 @@ def init():
         st.session_state.first_time = False
         
     if 'ac_engine' not in st.session_state:
-
-        st.session_state["ac_engine"] = AccessControlEngine()
+        ac_engine = AccessControlEngine()
+        st.session_state["ac_engine"] = ac_engine
+        
+        if os.getenv("LOAD_PREV") == 'true':
+            
+            response, prev_written_policies = ac_engine.get_written_policies_json()
+            
+            if response == 200:
+                st.session_state.written_nlacps = prev_written_policies
+        
+            response, prev_policies = ac_engine.get_all_policies_json()
+            
+            if response == 200:
+                st.session_state.corrected_policies_pdp = prev_policies
+                st.session_state.corrected_policies = [policy.to_json_record() for policy in prev_policies]
+                
+            response, published_policies = ac_engine.get_published_policies()
+            
+            if response == 200:
+                
+                st.session_state.pdp_policies = published_policies
+            
         
     if 'models' not in st.session_state:
         
         st.session_state['models'] = ModelStore(fake=False)
         
     st.session_state.xacml_uuid = str(uuid4())
+    
+    
     
     

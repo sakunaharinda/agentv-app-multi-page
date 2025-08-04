@@ -1,13 +1,24 @@
+import os
 import streamlit as st
 from enum import Enum
 import random
 import ast
 import streamlit as st
-import numpy as np
+from typing import List
 from torch.utils.data import Dataset, DataLoader
 from models.record_dto import Results
-from loading import get_entity_hierarchy
-from vectorstore import build_vectorstores
+from models.ac_engine_dto import JSONPolicyRecord
+from ac_engine_service import AccessControlEngine
+import distinctipy
+
+def get_random_colors(n):
+  colors = distinctipy.get_colors(n, pastel_factor=0.7, exclude_colors=[(0.0, 1.0, 0.0)])  
+
+  colors_hex = ['#{:02x}{:02x}{:02x}'.format(
+          int(rgb[0] * 255), int(rgb[1] * 255), int(rgb[2] * 255)
+      ) for rgb in colors]
+
+  return colors_hex
 
 class Task(Enum):
     NLACP_ID = 'nlacp_identification',
@@ -200,6 +211,7 @@ def prepare_inputs_bart(s,l,tokenizer, device = 'cuda:0'):
     return {k:v.to(device) for k,v in tokens.items()}
 
 def convert_to_sent(sample):
+    random.seed(0)
     error = 0
     sample = ast.literal_eval(str(sample))
     pol_sent = []
@@ -337,25 +349,6 @@ class DataLoaders():
             
         return loader
     
-
-def set_hierarchy(hierarchy_file, pbar):
-    
-    # try:
-    if hierarchy_file is not None:
-        main_hierarchy, hierarchies = get_entity_hierarchy(hierarchy_file)
-        st.session_state['main_hierarchy'] = main_hierarchy
-        st.session_state['hierarchies'] = hierarchies.to_dict()
-        
-        st.session_state.models.vectorestores = build_vectorstores(pbar)
-        st.session_state.enable_generation = True
-        st.session_state.show_hierarchy = True
-        
-         # To show all the tabs
-        
-    
-def store_value_gen_h(key, pbar):
-    store_value(key)
-    set_hierarchy(st.session_state[key], pbar)
     
 def store_value_pol_doc(key):
     st.session_state.reviewed = False
@@ -378,6 +371,39 @@ def on_click_generate(page_icon):
 def change_page_icon(state, icon = ":material/task_alt:"):
     
     st.session_state[state] = icon
+    
+def toast_download_sucess():
+    
+    st.toast("Policies were downloaded successfully!", icon=":material/download_done:")
+
+@st.cache_resource(show_spinner=False)
+def save_wo_duplicate(policy, record_list):
+    
+    record_dict = {obj.policyId: obj for obj in record_list}
+    record_dict[policy.policyId] = policy
+    
+    return [policy] + [v for k,v in record_dict.items() if k != policy.policyId]
+    
+def save(policy: JSONPolicyRecord, enforce_unique = False, index=None, with_context=True):
+    
+    ac_engine = AccessControlEngine()
+
+    pdp_record = policy.to_json_record_pdp(with_context=with_context)
+    
+    if enforce_unique:
+        st.session_state.corrected_policies = save_wo_duplicate(policy, st.session_state.corrected_policies)
+        st.session_state.corrected_policies_pdp = save_wo_duplicate(pdp_record, st.session_state.corrected_policies_pdp)
+        
+    else:
+        
+        if index != None:
+            st.session_state.corrected_policies.insert(index, policy)
+            st.session_state.corrected_policies_pdp.insert(index, pdp_record)
+        else:
+            st.session_state.corrected_policies.append(policy)
+            st.session_state.corrected_policies_pdp.append(pdp_record)
+            
+    ac_engine.create_policy_json(pdp_record)
     
 
     

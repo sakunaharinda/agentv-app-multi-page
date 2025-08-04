@@ -60,7 +60,10 @@ def get_cor_policy():
 def get_pdp_nlacp():
     if len(st.session_state.pdp_policies)<1:
         return ""
-    return st.session_state.pdp_policies[st.session_state.pdp_count].to_dict()['policyDescription']
+    
+    desc = st.session_state.pdp_policies[st.session_state.pdp_count].to_dict()['policyDescription']
+    published_status = ":green-badge[:material/check: Published]"
+    return  desc.split(published_status)[0] if published_status in desc else desc
     
     
 def get_pdp_policy():

@@ -1,11 +1,14 @@
+import os
 import json
-from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_community.vectorstores import FAISS
-from langchain_community.document_loaders.json_loader import JSONLoader
-from models.record_dto import Hierarchy
+import numpy as np
 from langchain_core.documents import Document
 import streamlit as st
+from models.ac_engine_dto import JSONPolicyRecordPDP
+from typing import List
+import bm25s
+# import time
 
 def create_ent_list(h_dict: dict, combine_key_val = False, save_path = None):
     
@@ -31,6 +34,9 @@ def create_ent_list(h_dict: dict, combine_key_val = False, save_path = None):
 
 def extract_entities(hierarchies: dict, save_path = None):
     
+    if not os.path.exists(save_path):
+        os.makedirs(save_path)
+    
     subjects = create_ent_list(hierarchies['subject_hierarchy'], save_path= save_path + "/subjects.json" if save_path is not None else None)
     actions = create_ent_list(hierarchies['action_hierarchy'], save_path= save_path + "/actions.json" if save_path is not None else None)
     resources = create_ent_list(hierarchies['resource_hierarchy'], save_path= save_path + "/resources.json" if save_path is not None else None)
@@ -41,7 +47,7 @@ def extract_entities(hierarchies: dict, save_path = None):
 
 
 # @st.cache_resource(show_spinner=False)
-def load_vectorstore(component, entity_list, save_location = "data/vectorstores", cache = "/mnt/huggingface/"):
+def load_vectorstore(component, entity_list, save_location = "data/vectorstores"):
     
     documents = [Document(page_content=ent, metadata={'component': f'{component}'}) for ent in entity_list]
     text_splitter  = RecursiveCharacterTextSplitter(chunk_size=100,chunk_overlap=0)
@@ -70,3 +76,53 @@ def build_vectorstores(pbar, save_path = 'data/entities'):
     
     st.session_state.vs_generated = True
     return stores
+    
+
+def build_vectorstores_chroma(pbar, save_path = 'data/entities'):
+    
+    subjects, actions, resources, conditions = extract_entities(st.session_state['hierarchies'], save_path)
+    
+    stores = {}
+    progress_text = "Processing the hierarchy ..."
+    if pbar != None:
+        vs_build_bar = pbar.progress(0, text=progress_text)
+    
+    for i, ent in enumerate([('subject', subjects), ('action', actions), ('resource', resources), ('condition', conditions)]):
+        # time.sleep(3)
+        st.session_state.models.vectorestores[ent[0]].add(documents=ent[1], ids=[f"id {k+1}" for k in range(len(ent[1]))])
+        if pbar != None:
+            if i==3:
+                progress_text = "Uploaded hierarchy is processed successfully!"
+            vs_build_bar.progress((i+1)*25, text=progress_text)
+    
+    st.session_state.vs_generated = True
+    return stores
+
+def get_candidates_chroma(collection, query, k = 3, return_scores = True):
+    if collection != None:
+        res = collection.query(query_texts=query,n_results=k)
+        dists = res['distances'][0]
+        scores = 1 - np.array(dists)
+        if return_scores:
+            return res['documents'][0], scores.tolist()
+        return res['documents'][0]
+    else:
+        if return_scores:
+            return [], [1]
+        return []
+
+@st.cache_data(show_spinner=False)
+def get_available_entities_chroma(query: str, _vectorstores: dict, n=3, return_scores = False):
+    
+    entities = {'subject': [], 'action': [], 'resource': [], 'purpose': [], 'condition': []}
+    for key in entities:
+        entities[key] = get_candidates_chroma(_vectorstores.get(key, None), query, k=n, return_scores=return_scores)
+
+    return entities
+
+@st.cache_resource(show_spinner=False)
+def create_bm25_retriever(policies: List[JSONPolicyRecordPDP] = st.session_state.corrected_policies_pdp):
+    retriever = bm25s.BM25(corpus=policies)
+    retriever.index(bm25s.tokenize([d.policyDescription for d in policies]))
+    return retriever
+    

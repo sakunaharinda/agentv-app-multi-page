@@ -4,8 +4,9 @@ import xml.etree.ElementTree as ET
 from ac_engine_service import AccessControlEngine
 from models.ac_engine_dto import XACMLPolicyRecord
 from utils import change_page_icon
-from sections.generation.generation_utils import write_feedback
+from pages.generation_utils import write_feedback
 from models.pages import PAGE
+from menus import standard_menu
 
 @st.fragment
 def write_xacml(ac_engine: AccessControlEngine):
@@ -17,7 +18,11 @@ def write_xacml(ac_engine: AccessControlEngine):
             /* Target the container with the specific key */
             [data-testid="stVerticalBlock"] .st-key-xacml_container {
                 position: fixed !important;
-                bottom: 10px !important;
+                bottom: 0.0% !important;
+                background-color: #F9F9F9 !important;
+                padding-top: 10px !important;
+                padding-bottom: 20px !important;
+                z-index: 9999 !important;
             }
             
             /* Add padding at the bottom of the page to prevent content from being hidden */
@@ -75,7 +80,6 @@ def write_xacml(ac_engine: AccessControlEngine):
     </Rule>
 </Policy>""",
         lang="xml",
-        height="465px",
         focus=False,
         allow_reset=True,
         options={"showLineNumbers": True},
@@ -98,11 +102,13 @@ def write_xacml(ac_engine: AccessControlEngine):
         feedback_container.warning("Policies manually created with XACML will not be appeared in the **Policy Visualization**, but can be tested in the **Policy Testing** stage.", icon=":material/warning:")
         
         submit = st.button(
-                "Publish Policy to Database",
+                "Publish",
                 type="primary",
                 use_container_width=True,
                 key="publish_cur",
                 disabled=code_editor_response["text"] == "",
+                help="Publish the written XACML policy to the policy database",
+                icon=":material/database_upload:"
             )
     
     if submit:
@@ -122,6 +128,7 @@ def write_xacml(ac_engine: AccessControlEngine):
             print(e)
             feedback_container.error(body=str(e), icon=':material/dangerous:')
     
+standard_menu()
 
 ac_engine = AccessControlEngine()
 write_xacml(ac_engine)

@@ -175,3 +175,7 @@ cython_debug/
 vectorestore_server/.vvenv
 logs
 data/
+vectorestore_server/http_ca.crt
+seed_users.py
+test.py
+test_app
